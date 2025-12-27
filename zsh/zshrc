@@ -11,10 +11,7 @@ fi
 # Oh-my-zsh
 export ZSH_DISABLE_COMPFIX="true"
 export ZSH="$HOME/.config/oh-my-zsh"
-plugins=(
-  git
-  zoxide
-)
+plugins=(git)
 source "$ZSH/oh-my-zsh.sh"
 
 # zsh-autosuggestions
@@ -29,18 +26,10 @@ if command -v starship &>/dev/null; then
     eval "$(starship init zsh)"
 fi
 
-# Fzf
-__fzf_loaded=0
-_fzf_load() {
-  if [[ $__fzf_loaded -eq 0 ]]; then
-    source <(fzf --zsh)
-    __fzf_loaded=1
-  fi
-}
-fzf() {
-  _fzf_load
-  command fzf "$@"
-}
+# FZF
+if command -v fzf >/dev/null; then
+  source <(fzf --zsh)
+fi
 
 # Alias
 alias c='clear'
@@ -70,7 +59,10 @@ alias ta='tmux attach'
 alias tn='tmux new -s'
 alias tk='tmux kill-session -t'
 
-alias fzf="fzf --style full --preview 'fzf-preview.sh {}' --bind 'focus:transform-header:file --brief {}'"
+alias fzf='fzf \
+  --style full \
+  --preview "fzf-preview.sh {}" \
+  --bind "focus:transform-header:file --brief {}"'
 alias fzd='cd $(find * -type d | fzf)'
 alias fzh="history | fzf"
 alias vzf='nvim $(fzf)'
@@ -104,16 +96,14 @@ function y() {
 }
 
 # Zoxide
-cd() {
-  if [[ $# -eq 0 ]]; then
-    builtin cd ~
-    return
-  fi
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh --cmd cd)"
+fi
 
-  if [[ -d "$1" || "$1" == -* ]]; then
-    builtin cd "$@"
-    return
-  fi
-
-  z "$@"
+# Compinit
+autoload -Uz compinit
+_compinit_once() {
+  unfunction _compinit_once
+  compinit -C
 }
+zle -N complete-word _compinit_once
