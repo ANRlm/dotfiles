@@ -1,37 +1,50 @@
 # Zsh Caching & History Setup
 [[ -d "$HOME/.cache/zsh" ]] || mkdir -p "$HOME/.cache/zsh"
-export ZSH_COMPDUMP="$HOME/.cache/zsh/zcompdump-$ZSH_VERSION"
+export ZSH_COMPDUMP="$HOME/.cache/zsh/zcompdump"
 export HISTFILE="$HOME/.cache/zsh/history"
 
 # Homebrew
-if [ -x /opt/homebrew/bin/brew ]; then
+if command -v brew >/dev/null; then
   fpath=($(brew --prefix)/share/zsh-completions $fpath)
 fi
 
 # Oh-my-zsh
 export ZSH_DISABLE_COMPFIX="true"
 export ZSH="$HOME/.config/oh-my-zsh"
-ZSH_THEME=""
 plugins=(
   git
   zoxide
 )
 source "$ZSH/oh-my-zsh.sh"
 
-# Plugins
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+# zsh-autosuggestions
+source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+# zsh-history-substring-search
+source "$(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+# zsh-syntax-highlighting
+source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # Starship
 if command -v starship &>/dev/null; then
     eval "$(starship init zsh)"
 fi
 
+# Fzf
+__fzf_loaded=0
+_fzf_load() {
+  if [[ $__fzf_loaded -eq 0 ]]; then
+    source <(fzf --zsh)
+    __fzf_loaded=1
+  fi
+}
+fzf() {
+  _fzf_load
+  command fzf "$@"
+}
+
 # Alias
 alias c='clear'
-alias cd='z'
-alias s='source ~/.zshrc && source ~/.zprofile'
+alias s='exec zsh -l'
 alias el='eza --long --header --icons --git --all'
 alias et='eza --tree --level=2 --long --header --icons --git'
 alias ip='ipconfig getifaddr en0'
@@ -90,32 +103,17 @@ function y() {
 	rm -f -- "$tmp"
 }
 
-# Fzf
-source <(fzf --zsh)
+# Zoxide
+cd() {
+  if [[ $# -eq 0 ]]; then
+    builtin cd ~
+    return
+  fi
 
-# Conda
-__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
-        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
-    fi
-fi
-unset __conda_setup
+  if [[ -d "$1" || "$1" == -* ]]; then
+    builtin cd "$@"
+    return
+  fi
 
-# Homebrew Tsinghua Mirror Configuration
-export HOMEBREW_API_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
-export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
-export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
-export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/cnhyk/.lmstudio/bin"
-# End of LM Studio CLI section
-
-
-# Added by Antigravity
-export PATH="/Users/cnhyk/.antigravity/antigravity/bin:$PATH"
+  z "$@"
+}
