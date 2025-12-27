@@ -1,0 +1,33 @@
+# Homebrew
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# Core Environment Variables
+export EDITOR=nvim
+export DYLD_LIBRARY_PATH=/usr/local/lib:$DYLD_LIBRARY_PATH
+
+# Homebrew Configuration
+export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_INSTALL_CLEANUP=1
+
+# PATH Configuration
+typeset -U path
+path=(
+  "/opt/homebrew/opt/make/libexec/gnubin"
+  "/usr/local/share/dotnet"
+  "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+  "$HOME/.lmstudio/bin"
+  "/opt/homebrew/opt/openjdk/bin"
+  "/opt/homebrew/opt/llvm/bin"
+  $path
+)
+export PATH
+
+# OrbStack
+source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+
+# Zoxide
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh)"
+fi

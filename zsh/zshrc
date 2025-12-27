@@ -1,0 +1,121 @@
+# Zsh Caching & History Setup
+[[ -d "$HOME/.cache/zsh" ]] || mkdir -p "$HOME/.cache/zsh"
+export ZSH_COMPDUMP="$HOME/.cache/zsh/zcompdump-$ZSH_VERSION"
+export HISTFILE="$HOME/.cache/zsh/history"
+
+# Homebrew
+if [ -x /opt/homebrew/bin/brew ]; then
+  fpath=($(brew --prefix)/share/zsh-completions $fpath)
+fi
+
+# Oh-my-zsh
+export ZSH_DISABLE_COMPFIX="true"
+export ZSH="$HOME/.config/oh-my-zsh"
+ZSH_THEME=""
+plugins=(
+  git
+  zoxide
+)
+source "$ZSH/oh-my-zsh.sh"
+
+# Plugins
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+
+# Starship
+if command -v starship &>/dev/null; then
+    eval "$(starship init zsh)"
+fi
+
+# Alias
+alias c='clear'
+alias cd='z'
+alias s='source ~/.zshrc && source ~/.zprofile'
+alias el='eza --long --header --icons --git --all'
+alias et='eza --tree --level=2 --long --header --icons --git'
+alias ip='ipconfig getifaddr en0'
+alias ports='lsof -i -P | grep -i "listen"'
+alias disk='smartctl -a disk3'
+alias df='df -h'
+alias py='python'
+alias f='fastfetch'
+alias lg='lazygit'
+
+alias bu='brew update && brew upgrade && brew upgrade --cask && brew cleanup --prune=all'
+alias bc='brew cleanup --prune=all && brew autoremove'
+alias bi='brew install'
+alias bri='brew reinstall'
+alias bl='brew list'
+alias bui='brew uninstall --zap'
+alias bs='brew search'
+alias bd='brew deps --installed --tree'
+
+alias ts='tmux source-file ~/.config/tmux/tmux.conf'
+alias tls='tmux ls'
+alias ta='tmux attach'
+alias tn='tmux new -s'
+alias tk='tmux kill-session -t'
+
+alias fzf="fzf --style full --preview 'fzf-preview.sh {}' --bind 'focus:transform-header:file --brief {}'"
+alias fzd='cd $(find * -type d | fzf)'
+alias fzh="history | fzf"
+alias vzf='nvim $(fzf)'
+alias fzb='git branch | fzf | xargs git checkout'
+alias fzp='ps aux | fzf'
+
+alias cel='conda env list'
+alias ci='conda install'
+alias cui='conda remove'
+alias cu='conda update --all'
+alias cs='conda search'
+alias cl='conda list'
+alias cc='conda clean --all -y'
+alias ca='conda activate'
+alias cde='conda deactivate'
+
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit -m'
+alias gp='git push'
+alias gpl='git pull'
+alias gd='git diff'
+
+# Yazi
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}
+
+# Fzf
+source <(fzf --zsh)
+
+# Conda
+__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
+        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+
+# Homebrew Tsinghua Mirror Configuration
+export HOMEBREW_API_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
+export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/cnhyk/.lmstudio/bin"
+# End of LM Studio CLI section
+
+
+# Added by Antigravity
+export PATH="/Users/cnhyk/.antigravity/antigravity/bin:$PATH"
