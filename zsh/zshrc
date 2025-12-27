@@ -107,3 +107,21 @@ _compinit_once() {
   compinit -C
 }
 zle -N complete-word _compinit_once
+
+# Conda
+__load_conda() {
+  unset -f conda
+  unset -f __load_conda
+
+  if [[ -f "$CONDA_ROOT/etc/profile.d/conda.sh" ]]; then
+    source "$CONDA_ROOT/etc/profile.d/conda.sh"
+  else
+    echo "conda.sh not found"
+    return 1
+  fi
+}
+
+conda() {
+  __load_conda
+  conda "$@"
+}
