@@ -1,4 +1,3 @@
-# custom-shader = shaders/glow.glsl
 shell-integration = zsh
 clipboard-read = allow
 clipboard-write = allow
