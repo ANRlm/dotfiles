@@ -1,0 +1,28 @@
+# custom-shader = shaders/glow.glsl
+shell-integration = zsh
+clipboard-read = allow
+clipboard-write = allow
+copy-on-select = false
+clipboard-paste-protection = false
+window-subtitle = working-directory
+window-colorspace = display-p3
+window-padding-balance = true
+background-opacity = 0.85
+background-blur = 50
+window-step-resize = true
+bold-is-bright = true
+cursor-style = bar
+mouse-hide-while-typing = true
+macos-titlebar-style = hidden
+term = xterm-ghostty
+
+font-family = "Monaspace Argon NF"
+# theme = nord
+
+# Automatic dark/light switching
+# theme = dark:Rose Pine,light:Rose Pine Dawn
+
+# Or set individual themes
+theme = Rose Pine
+# theme = Rose Pine Moon
+# theme = Rose Pine Dawn
