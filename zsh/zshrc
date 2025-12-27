@@ -44,7 +44,7 @@ alias py='python'
 alias lg='lazygit'
 
 alias bu='brew update && brew upgrade && brew upgrade --cask && brew cleanup --prune=all'
-alias bc='brew cleanup --prune=all && brew autoremove'
+alias bc='brew autoremove && brew cleanup --prune=all'
 alias bi='brew install'
 alias bri='brew reinstall'
 alias bl='brew leaves'
