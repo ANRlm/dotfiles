@@ -41,7 +41,6 @@ alias ports='lsof -i -P | grep -i "listen"'
 alias disk='smartctl -a disk3'
 alias df='df -h'
 alias py='python'
-alias f='fastfetch'
 alias lg='lazygit'
 
 alias bu='brew update && brew upgrade && brew upgrade --cask && brew cleanup --prune=all'

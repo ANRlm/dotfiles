@@ -34,4 +34,4 @@ path=(
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
 
 # Conda
-export CONDA_ROOT="/opt/homebrew/Caskroom/miniconda/base"
+export CONDA_ROOT="/opt/homebrew/Caskroom/miniforge/base"
