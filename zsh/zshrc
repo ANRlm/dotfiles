@@ -49,7 +49,7 @@ alias bu='brew update && brew upgrade && brew upgrade --cask && brew cleanup --p
 alias bc='brew autoremove && brew cleanup --prune=all'
 alias bi='brew install'
 alias bri='brew reinstall'
-alias bl='brew leaves'
+alias bl='brew leaves && brew list --cask'
 alias bui='brew uninstall --zap'
 alias bs='brew search'
 alias bd='brew deps --installed --tree'
