@@ -42,6 +42,8 @@ alias disk='smartctl -a disk3'
 alias df='df -h'
 alias py='python'
 alias lg='lazygit'
+alias xcode-clt='sudo xcode-select -s /Library/Developer/CommandLineTools'
+alias xcode-app='sudo xcode-select -s /Applications/Xcode.app/Contents/Developer'
 
 alias bu='brew update && brew upgrade && brew upgrade --cask && brew cleanup --prune=all'
 alias bc='brew autoremove && brew cleanup --prune=all'
