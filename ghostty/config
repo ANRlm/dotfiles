@@ -1,27 +1,48 @@
-shell-integration = zsh
-clipboard-read = allow
-clipboard-write = allow
-copy-on-select = false
-clipboard-paste-protection = false
-window-subtitle = working-directory
-window-colorspace = display-p3
-window-padding-balance = true
-background-opacity = 0.85
-background-blur = 50
-window-step-resize = true
-bold-is-bright = true
-cursor-style = bar
-mouse-hide-while-typing = true
-macos-titlebar-style = hidden
+shell-integration = detect
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
+
 term = xterm-ghostty
+right-click-action = context-menu
+alpha-blending = native
+
+macos-titlebar-style          = tabs
+macos-titlebar-proxy-icon     = visible
+macos-window-buttons          = visible
+macos-window-shadow           = true
+macos-option-as-alt           = true
+macos-secure-input-indication = true
 
 font-family = "Monaspace Argon NF"
-# theme = nord
+bold-color = bright
+font-thicken = true
 
-# Automatic dark/light switching
-# theme = dark:Rose Pine,light:Rose Pine Dawn
-
-# Or set individual themes
 theme = Rose Pine
-# theme = Rose Pine Moon
-# theme = Rose Pine Dawn
+# theme = dark:,light:
+# Rose Pine Moon, Rose Pine Dawn, nord
+background-opacity = 0.85
+background-blur = 50
+cursor-style = bar
+mouse-hide-while-typing = true
+
+clipboard-read                 = allow
+clipboard-write                = allow
+clipboard-paste-protection     = true
+clipboard-trim-trailing-spaces = true
+copy-on-select                 = false
+
+window-width  = 165
+window-height = 60
+
+window-decoration      = auto
+window-subtitle        = working-directory
+window-colorspace      = display-p3
+window-padding-balance = true
+window-step-resize     = true
+
+keybind = global:f12=toggle_quick_terminal
+quick-terminal-position = center
+quick-terminal-size = 60%,70%
+quick-terminal-autohide = true
+quick-terminal-animation-duration = 0.1
+quick-terminal-screen = mouse
+quick-terminal-screen = macos-menu-bar
