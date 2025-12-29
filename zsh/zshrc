@@ -45,7 +45,7 @@ alias lg='lazygit'
 alias xcode-clt='sudo xcode-select -s /Library/Developer/CommandLineTools'
 alias xcode-app='sudo xcode-select -s /Applications/Xcode.app/Contents/Developer'
 
-alias bu='brew update && brew upgrade && brew upgrade --cask && brew cleanup --prune=all'
+alias bu='brew update && brew upgrade && brew upgrade --cask'
 alias bc='brew autoremove && brew cleanup --prune=all'
 alias bi='brew install'
 alias bri='brew reinstall'
