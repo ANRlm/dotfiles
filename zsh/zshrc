@@ -8,12 +8,6 @@ if command -v brew >/dev/null; then
   fpath=($(brew --prefix)/share/zsh-completions $fpath)
 fi
 
-# Oh-my-zsh
-export ZSH_DISABLE_COMPFIX="true"
-export ZSH="$HOME/.config/oh-my-zsh"
-plugins=(git)
-source "$ZSH/oh-my-zsh.sh"
-
 # zsh-autosuggestions
 source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 # zsh-history-substring-search
