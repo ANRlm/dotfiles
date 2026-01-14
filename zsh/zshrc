@@ -122,3 +122,10 @@ conda() {
   __load_conda
   conda "$@"
 }
+
+lazygit-widget() {
+  lazygit
+  zle reset-prompt
+}
+zle -N lazygit-widget
+bindkey '^g' lazygit-widget
