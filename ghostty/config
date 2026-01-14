@@ -6,7 +6,7 @@ term = xterm-ghostty
 right-click-action = context-menu
 alpha-blending = native
 # -------------------------------------------------- #
-macos-titlebar-style          = tabs
+macos-titlebar-style          = transparent
 macos-titlebar-proxy-icon     = visible
 macos-window-buttons          = visible
 macos-window-shadow           = true
@@ -19,7 +19,7 @@ font-thicken = true
 # -------------------------------------------------- #
 theme = Rose Pine
 # theme = dark:,light:
-# Rose Pine Moon, Rose Pine Dawn, nord
+# Rose Pine Moon, Rose Pine Dawn, Rose Pine, nord
 background-opacity      = 0.85
 background-blur         = 50
 cursor-style            = bar
