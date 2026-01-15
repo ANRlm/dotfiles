@@ -25,14 +25,3 @@ end
 
 require "lazy_setup"
 require "polish"
-
-return {
-  mappings = {
-    n = {
-      ["<leader>w"] = { "<cmd>w<CR>", desc = "Save file" },
-      ["<leader>q"] = { "<cmd>q<CR>", desc = "Quit" },
-      ["<leader>wq"] = { "<cmd>wq<CR>", desc = "Save and quit" },
-      ["<leader>Q"] = { "<cmd>q!<CR>", desc = "Force quit" },
-    },
-  },
-}
