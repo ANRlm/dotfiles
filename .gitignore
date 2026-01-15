@@ -7,3 +7,8 @@ raycast/
 zed/
 macmon.json
 tmux/plugins/
+fish/completions/
+fish/fzf.fish
+fish/functions/
+fish/fish_variables
+fish/conf.d/
