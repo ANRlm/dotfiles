@@ -2,18 +2,19 @@
 [[ -d "$HOME/.cache/zsh" ]] || mkdir -p "$HOME/.cache/zsh"
 export ZSH_COMPDUMP="$HOME/.cache/zsh/zcompdump"
 export HISTFILE="$HOME/.cache/zsh/history"
+export HISTSIZE=10000
+export SAVEHIST=10000
 
-# Homebrew
-if command -v brew >/dev/null; then
-  fpath=($(brew --prefix)/share/zsh-completions $fpath)
+# Plugins
+if [[ -d "/opt/homebrew/share/zsh-completions" ]]; then
+  fpath=(/opt/homebrew/share/zsh-completions $fpath)
 fi
 
-# zsh-autosuggestions
-source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-# zsh-history-substring-search
-source "$(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
-# zsh-syntax-highlighting
-source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+BREW_PREFIX=$(brew --prefix)
+
+[[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[[ -f "$BREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]] && source "$BREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+[[ -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # Starship
 if command -v starship &>/dev/null; then
@@ -101,7 +102,7 @@ fi
 autoload -Uz compinit
 _compinit_once() {
   unfunction _compinit_once
-  compinit -C
+  compinit -C -d "$ZSH_COMPDUMP"
 }
 zle -N complete-word _compinit_once
 

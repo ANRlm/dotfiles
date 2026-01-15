@@ -7,7 +7,7 @@ export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebr
 export HOMEBREW_NO_AUTO_UPDATE=1
 export HOMEBREW_NO_INSTALL_CLEANUP=0
 export HOMEBREW_NO_ANALYTICS=1
-export HOMEBREW_NO_ENV_HINTS=1
+export HOMEBREW_NO_ENV_HINTS=0
 export HOMEBREW_MAKE_JOBS=logical_cpu
 
 if [ -x /opt/homebrew/bin/brew ]; then
