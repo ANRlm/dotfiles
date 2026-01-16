@@ -1,0 +1,26 @@
+[user]
+	name = cnhyk
+	email = nai.ying.cnhyk@gmail.com
+
+[include]
+    path = ~/.config/git/themes.gitconfig
+
+[core]
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true  # use n and N to move between diff sections
+    side-by-side = true
+    line-numbers = true
+    dark = true      # or light = true, or omit for auto-detection
+    syntax-theme = rose-pine
+    features = mellow-barbet
+
+[merge]
+    conflictStyle = zdiff3
+
+[diff]
+    colorMoved = default
