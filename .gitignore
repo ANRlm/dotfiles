@@ -1,14 +1,7 @@
 .DS_Store
-filezilla/
-github-copilot/
-mole/
-raycast/
-zed/
-macmon.json
 tmux/plugins/
 fish/completions/
 fish/fzf.fish
 fish/functions/
 fish/fish_variables
 fish/conf.d/
-iterm2/
