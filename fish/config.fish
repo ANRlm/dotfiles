@@ -131,34 +131,15 @@ if status is-interactive
     end
 
     # FZF
-    set -gx FZF_DEFAULT_OPTS '--style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
-    
-    function fzd
-        set -l dir (find * -type d | fzf)
-        if test -n "$dir"
-            cd "$dir"
-        end
-    end
+    set -gx FZF_DEFAULT_COMMAND 'rg --files --hidden --follow --glob "!.git/*"'
 
-    function fzh
-        history | fzf
-    end
+    set -gx fzf_preview_dir_cmd eza --all --color=always
+    set -gx fzf_preview_file_cmd bat -n
+    set fzf_diff_highlighter delta --paging=never --features="mellow-barbet" --syntax-theme="rose-pine"
+    set fzf_history_time_format %d-%m-%y
 
-    function vzf
-        set -l file (fzf)
-        if test -n "$file"
-            nvim "$file"
-        end
-    end
-
-    function fzb
-        set -l branch (git branch | fzf | string trim)
-        if test -n "$branch"
-            git checkout "$branch"
-        end
-    end
-
-    function fzp
-        ps aux | fzf
+    # Bat
+    if not test -d ~/.cache/bat
+        bat cache --build 2>/dev/null
     end
 end

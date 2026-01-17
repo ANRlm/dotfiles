@@ -1,28 +1,32 @@
 #!/bin/bash
 
-mkdir -p ~/.config
+DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
+CONFIG_DIR="$HOME/.config"
+MACOS_APP_SUPPORT="$HOME/Library/Application Support"
 
-remove_if_exists() {
-    if [ -e "$1" ] || [ -L "$1" ]; then
-        rm -rf "$1"
-    fi
-}
+echo "Starting dotfiles restoration from $DOTFILES_DIR"
 
-ln -sf ~/dotfiles/zsh/.hushlogin ~/.hushlogin
-ln -sf ~/dotfiles/zsh/zprofile ~/.zprofile
-ln -sf ~/dotfiles/zsh/zshrc ~/.zshrc
+mkdir -p "$CONFIG_DIR"
+mkdir -p "$CONFIG_DIR/git"
+mkdir -p "$MACOS_APP_SUPPORT/lazygit"
+mkdir -p "$MACOS_APP_SUPPORT/eza"
 
 for dir in aerospace bat btop fish ghostty nvim yazi; do
-    remove_if_exists ~/.config/$dir
-    ln -sf ~/dotfiles/$dir ~/.config/$dir
+    ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
 done
 
-ln -sf ~/dotfiles/starship/starship.toml ~/.config/starship.toml
-ln -sf ~/dotfiles/conda/.condarc ~/.condarc
-ln -sf ~/dotfiles/idea/.ideavimrc ~/.ideavimrc
+ln -sf "$DOTFILES_DIR/zsh/.hushlogin" "$HOME/.hushlogin"
+ln -sf "$DOTFILES_DIR/zsh/zprofile"   "$HOME/.zprofile"
+ln -sf "$DOTFILES_DIR/zsh/zshrc"      "$HOME/.zshrc"
 
-mkdir -p ~/.config/git
-ln -sf ~/dotfiles/git/themes.gitconfig ~/.config/git/themes.gitconfig
-ln -sf ~/dotfiles/git/.gitconfig ~/.gitconfig
+ln -sf "$DOTFILES_DIR/starship/starship.toml" "$CONFIG_DIR/starship.toml"
+ln -sf "$DOTFILES_DIR/conda/.condarc"         "$HOME/.condarc"
+ln -sf "$DOTFILES_DIR/idea/.ideavimrc"        "$HOME/.ideavimrc"
 
-echo "Dotfiles restored successfully"
+ln -sf "$DOTFILES_DIR/git/themes.gitconfig" "$CONFIG_DIR/git/themes.gitconfig"
+ln -sf "$DOTFILES_DIR/git/.gitconfig"       "$HOME/.gitconfig"
+
+ln -sfn "$DOTFILES_DIR/eza" "$MACOS_APP_SUPPORT/eza"
+ln -sf "$DOTFILES_DIR/lazygit/config.yml" "$MACOS_APP_SUPPORT/lazygit/config.yml"
+
+echo "Dotfiles restored successfully!"
