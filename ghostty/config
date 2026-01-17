@@ -25,6 +25,10 @@ background-blur         = 50
 cursor-style            = bar
 mouse-hide-while-typing = true
 # -------------------------------------------------- #
+custom-shader-animation = always
+custom-shader = "shaders/cursor_warp.glsl"
+custom-shader = "shaders/ripple_cursor.glsl"
+# -------------------------------------------------- #
 clipboard-read                 = allow
 clipboard-write                = allow
 clipboard-paste-protection     = true
