@@ -78,7 +78,7 @@ if status is-interactive
     abbr -a bui 'brew uninstall --zap'
     abbr -a bs 'brew search'
     abbr -a bif 'brew info'
-    abbr -a bu 'brew update; and brew upgrade; and brew upgrade --cask'
+    abbr -a bu 'brew update; and brew upgrade; and brew upgrade --cask --greedy'
     abbr -a bc 'brew autoremove; and brew cleanup --prune=all'
     abbr -a bl 'brew leaves; and brew list --cask'
     abbr -a bd 'brew deps --installed --tree'
