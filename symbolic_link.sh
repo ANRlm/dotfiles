@@ -12,7 +12,7 @@ ln -sf ~/dotfiles/zsh/.hushlogin ~/.hushlogin
 ln -sf ~/dotfiles/zsh/zprofile ~/.zprofile
 ln -sf ~/dotfiles/zsh/zshrc ~/.zshrc
 
-for dir in aerospace bat btop fish fzf ghostty nvim yazi; do
+for dir in aerospace bat btop fish ghostty nvim yazi; do
     remove_if_exists ~/.config/$dir
     ln -sf ~/dotfiles/$dir ~/.config/$dir
 done
