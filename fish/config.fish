@@ -1,9 +1,5 @@
 set -g fish_greeting ""
 
-if type -q zoxide
-    zoxide init fish --cmd cd | source
-end
-
 # Environment Variables
 set -gx EDITOR nvim
 set -gx HOMEBREW_API_DOMAIN "https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
@@ -52,6 +48,11 @@ end
 
 # Interactive Configuration
 if status is-interactive
+    # zoxide
+    if type -q zoxide
+        zoxide init fish --cmd cd | source
+    end
+    
     # Theme
     fish_config theme choose "Rosé Pine"
 
@@ -119,7 +120,7 @@ if status is-interactive
     alias et 'eza --tree --level=2 --long --header --icons --git'
     alias df 'df -h'
 
-    # Yazi wrapper
+    # Yazi 
     function y
         set tmp (mktemp -t "yazi-cwd.XXXXXX")
         command yazi $argv --cwd-file="$tmp"
