@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "Installing packages for Arch Linux..."
-
 sudo pacman -Syyu --noconfirm
 
 sudo pacman -S --needed --noconfirm \
@@ -22,32 +20,19 @@ sudo pacman -S --needed --noconfirm \
     fd
 
 if ! command -v paru &> /dev/null; then
-    echo "Installing paru..."
     sudo pacman -S --needed --noconfirm base-devel git
-    
     cd /tmp
     git clone https://aur.archlinux.org/paru.git
     cd paru
-    
     echo -e "1\ny" | makepkg -si
-    
     cd ~
     rm -rf /tmp/paru
 fi
 
-echo "Package installation completed!"
-
-echo ""
-echo "=================================="
-echo "Please set a new password for user: $USER"
-echo "=================================="
 sudo passwd $USER
 
-echo ""
-echo "Setting fish as default shell..."
 if command -v fish &> /dev/null; then
     if ! grep -q "$(which fish)" /etc/shells; then
-        echo "Adding fish to /etc/shells..."
         which fish | sudo tee -a /etc/shells
     fi
     
