@@ -11,7 +11,7 @@ mkdir -p "$CONFIG_DIR/git"
 mkdir -p "$MACOS_APP_SUPPORT/lazygit"
 mkdir -p "$MACOS_APP_SUPPORT/eza"
 
-for dir in aerospace bat btop fish ghostty nvim yazi; do
+for dir in aerospace bat btop fish ghostty nvim yazi tmux; do
     ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
 done
 
