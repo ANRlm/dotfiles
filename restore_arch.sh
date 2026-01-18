@@ -39,20 +39,19 @@ echo "Package installation completed!"
 
 echo ""
 echo "=================================="
-echo "Please set/update your password before changing default shell:"
+echo "Please set a new password for user: $USER"
 echo "=================================="
-passwd
+sudo passwd $USER
 
 echo ""
 echo "Setting fish as default shell..."
 if command -v fish &> /dev/null; then
-    # Add fish to /etc/shells if not already present
     if ! grep -q "$(which fish)" /etc/shells; then
         echo "Adding fish to /etc/shells..."
         which fish | sudo tee -a /etc/shells
     fi
     
-    chsh -s $(which fish)
+    sudo chsh -s $(which fish) $USER
     echo "Default shell changed to fish. Please log out and log back in for changes to take effect."
 else
     echo "Fish installation failed, skipping shell change."
