@@ -2,9 +2,9 @@
 
 echo "Installing packages for Arch Linux..."
 
-sudo pacman -Syyu
+sudo pacman -Syyu --noconfirm
 
-sudo pacman -S --needed \
+sudo pacman -S --needed --noconfirm \
     bat \
     btop \
     lazygit \
@@ -23,18 +23,30 @@ sudo pacman -S --needed \
 
 if ! command -v paru &> /dev/null; then
     echo "Installing paru..."
-    sudo pacman -S --needed base-devel git
+    sudo pacman -S --needed --noconfirm base-devel git
+    
     cd /tmp
     git clone https://aur.archlinux.org/paru.git
     cd paru
-    makepkg -si
+    
+    echo -e "1\ny" | makepkg -si
+    
     cd ~
+    rm -rf /tmp/paru
 fi
 
 echo "Package installation completed!"
 
+echo ""
+echo "=================================="
+echo "Please set/update your password before changing default shell:"
+echo "=================================="
+passwd
+
+echo ""
 echo "Setting fish as default shell..."
 if command -v fish &> /dev/null; then
+    # Add fish to /etc/shells if not already present
     if ! grep -q "$(which fish)" /etc/shells; then
         echo "Adding fish to /etc/shells..."
         which fish | sudo tee -a /etc/shells
@@ -46,4 +58,5 @@ else
     echo "Fish installation failed, skipping shell change."
 fi
 
+echo ""
 echo "Setup completed!"
