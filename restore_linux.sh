@@ -8,7 +8,7 @@ echo "Starting dotfiles restoration from $DOTFILES_DIR"
 mkdir -p "$CONFIG_DIR"
 mkdir -p "$CONFIG_DIR/git"
 
-for dir in bat btop lazygit eza yazi helix nvim; do
+for dir in bat btop lazygit eza yazi helix nvim fish; do
     ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
 done
 

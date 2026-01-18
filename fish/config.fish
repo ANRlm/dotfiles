@@ -2,48 +2,50 @@ set -g fish_greeting ""
 
 # Environment Variables
 set -gx EDITOR nvim
-set -gx HOMEBREW_API_DOMAIN "https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
-set -gx HOMEBREW_BOTTLE_DOMAIN "https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
-set -gx HOMEBREW_BREW_GIT_REMOTE "https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
-set -gx HOMEBREW_CORE_GIT_REMOTE "https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
-set -gx HOMEBREW_NO_AUTO_UPDATE 1
-set -gx HOMEBREW_NO_INSTALL_CLEANUP 0
-set -gx HOMEBREW_NO_ANALYTICS 1
-set -gx HOMEBREW_NO_ENV_HINTS 0
-set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
-set -gx CONDA_ROOT "/opt/homebrew/Caskroom/miniforge/base"
 
 # PATH Configuration (Global)
 # Use fish_add_path which handles duplicates automatically
-fish_add_path -g "/opt/homebrew/opt/make/libexec/gnubin"
 fish_add_path -g "/usr/local/share/dotnet"
-fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
-fish_add_path -g "$HOME/.lmstudio/bin"
-fish_add_path -g "/opt/homebrew/opt/openjdk/bin"
-fish_add_path -g "/opt/homebrew/opt/llvm/bin"
-fish_add_path -g "$HOME/.antigravity/antigravity/bin"
-fish_add_path -g "$CONDA_ROOT/bin"
 
 # Tool Initializations (Global/Conditional)
-# Homebrew
-if test -x /opt/homebrew/bin/brew
-    /opt/homebrew/bin/brew shellenv | source
-end
-
-# OrbStack
-if test -f ~/.orbstack/shell/init.fish
-    source ~/.orbstack/shell/init.fish 2>/dev/null
-end
-
 # Conda
-if test -f "$CONDA_ROOT/bin/conda"
-    eval "$CONDA_ROOT/bin/conda" "shell.fish" "hook" $argv | source
+if test -f /opt/miniforge/bin/conda
+    eval /opt/miniforge/bin/conda "shell.fish" "hook" $argv | source
 else
-    if test -f "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
-        source "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
+    if test -f "/opt/miniforge/etc/fish/conf.d/conda.fish"
+        . "/opt/miniforge/etc/fish/conf.d/conda.fish"
     else
-        fish_add_path -g "$CONDA_ROOT/bin"
+        set -x PATH "/opt/miniforge/bin" $PATH
     end
+end
+
+function clean
+    sudo find /var/cache/pacman/pkg/ -name 'download-*' -type d -delete 2>/dev/null
+
+    echo "y" | sudo paru -Sc
+    echo "y" | paru -c
+
+    echo -e "y\ny" | sudo pacman -Scc
+
+    sudo journalctl --vacuum-time=7d
+
+    for dir in ~/.cache/{paru,yay,pip,go-build,yarn,npm}
+        if test -d $dir
+            rm -rf $dir
+        end
+    end
+
+    set orphans (pacman -Qtdq 2>/dev/null)
+    if test -n "$orphans"
+        sudo pacman -Rns $orphans --noconfirm
+    end
+
+    command -v npm >/dev/null; and npm cache clean --force 2>/dev/null
+    command -v cargo >/dev/null; and cargo cache -a 2>/dev/null
+
+    sudo find /etc -name '*.pacsave' -o -name '*.pacnew' 2>/dev/null | head -5
+
+    rm -rf ~/.local/share/Trash/*
 end
 
 # Interactive Configuration
@@ -68,20 +70,6 @@ if status is-interactive
     abbr -a py python
     abbr -a ip 'ipconfig getifaddr en0'
     abbr -a ports 'lsof -i -P | grep -i "listen"'
-    abbr -a disk 'smartctl -a disk3'
-    abbr -a xcode-clt 'sudo xcode-select -s /Library/Developer/CommandLineTools'
-    abbr -a xcode-app 'sudo xcode-select -s /Applications/Xcode.app/Contents/Developer'
-
-    # Homebrew
-    abbr -a bi 'brew install'
-    abbr -a bri 'brew reinstall'
-    abbr -a bui 'brew uninstall --zap'
-    abbr -a bs 'brew search'
-    abbr -a bif 'brew info'
-    abbr -a bu 'brew update; and brew upgrade; and brew upgrade --cask --greedy'
-    abbr -a bc 'brew autoremove; and brew cleanup --prune=all'
-    abbr -a bl 'brew leaves; and brew list --cask'
-    abbr -a bd 'brew deps --installed --tree'
 
     # Git
     abbr -a gs 'git status'
