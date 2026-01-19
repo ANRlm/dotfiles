@@ -66,6 +66,7 @@ if status is-interactive
     abbr -a c clear
     abbr -a s 'exec fish'
     abbr -a py python
+    abbr -a v nvim
     abbr -a ip 'ipconfig getifaddr en0'
     abbr -a ports 'lsof -i -P | grep -i "listen"'
     abbr -a disk 'smartctl -a disk3'
