@@ -89,23 +89,28 @@ unfocused-split-opacity = 0.5
 # Keybinding
 # -------------------------------------------------- #
 # new window
-keybind = shift+super+h=new_split:left
-keybind = shift+super+j=new_split:down
-keybind = shift+super+k=new_split:up
-keybind = shift+super+l=new_split:right
+# keybind = =new_split:left
+# keybind = =new_split:down
+# keybind = =new_split:up
+# keybind = =new_split:right
 # fullscreen
-keybind = cmd+ctrl+f=toggle_split_zoom
+keybind = cmd+control+shift+opt+f=toggle_split_zoom
 # focus
-keybind = cmd+ctrl+l=goto_split:right
-keybind = cmd+ctrl+k=goto_split:up
-keybind = cmd+ctrl+j=goto_split:down
-keybind = cmd+ctrl+h=goto_split:left
+keybind = cmd+control+shift+opt+l=goto_split:right
+keybind = cmd+control+shift+opt+k=goto_split:up
+keybind = cmd+control+shift+opt+j=goto_split:down
+keybind = cmd+control+shift+opt+h=goto_split:left
 
-keybind = cmd+ctrl+bracket_left=goto_split:previous
-keybind = cmd+ctrl+bracket_right=goto_split:next
+keybind = cmd+control+shift+opt+bracket_left=goto_split:previous
+keybind = cmd+control+shift+opt+bracket_right=goto_split:next
 # resize
-keybind = opt+ctrl+equal=equalize_splits
-keybind = opt+ctrl+l=resize_split:right,10
-keybind = opt+ctrl+k=resize_split:up,10
-keybind = opt+ctrl+h=resize_split:left,10
-keybind = opt+ctrl+j=resize_split:down,10
+keybind = cmd+shift+equal=equalize_splits
+keybind = cmd+shift+l=resize_split:right,10
+keybind = cmd+shift+k=resize_split:up,10
+keybind = cmd+shift+h=resize_split:left,10
+keybind = cmd+shift+j=resize_split:down,10
+
+# -------------------------------------------------- #
+# Tmux
+# -------------------------------------------------- #
+keybind = super+ctrl+alt+shift+a=text:\x01
