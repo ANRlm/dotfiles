@@ -70,6 +70,8 @@ if status is-interactive
     abbr -a ip 'ipconfig getifaddr en0'
     abbr -a ports 'lsof -i -P | grep -i "listen"'
     abbr -a disk 'smartctl -a disk3'
+
+    # Xcode
     abbr -a xcode-clt 'sudo xcode-select -s /Library/Developer/CommandLineTools'
     abbr -a xcode-app 'sudo xcode-select -s /Applications/Xcode.app/Contents/Developer'
 
@@ -146,4 +148,9 @@ if status is-interactive
     if not test -d ~/.cache/bat
         bat cache --build 2>/dev/null
     end
+
+    function copy
+        bat -p $argv | pbcopy
+    end
+
 end
