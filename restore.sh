@@ -16,7 +16,7 @@ if [[ "$OS" == "Darwin" ]]; then
     mkdir -p "$MACOS_APP_SUPPORT/lazygit"
     mkdir -p "$MACOS_APP_SUPPORT/eza"
     
-    for dir in aerospace bat btop fish ghostty nvim yazi tmux; do
+    for dir in aerospace bat btop fish ghostty nvim yazi tmux karabiner; do
         ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
     done
     
