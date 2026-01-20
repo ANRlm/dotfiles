@@ -5,7 +5,7 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "Hyper+r and Hyper+v to Ctrl+r and Ctrl+v",
+                        "description": "Hyper+ravtf to Ctrl+ravtf",
                         "manipulators": [
                             {
                                 "from": {
@@ -22,12 +22,51 @@
                             },
                             {
                                 "from": {
+                                    "key_code": "a",
+                                    "modifiers": { "mandatory": ["left_shift", "left_command", "left_control", "left_option"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "a",
+                                        "modifiers": ["left_control"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
                                     "key_code": "v",
                                     "modifiers": { "mandatory": ["left_shift", "left_command", "left_control", "left_option"] }
                                 },
                                 "to": [
                                     {
                                         "key_code": "v",
+                                        "modifiers": ["left_control"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "t",
+                                    "modifiers": { "mandatory": ["left_shift", "left_command", "left_control", "left_option"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "t",
+                                        "modifiers": ["left_control"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f",
+                                    "modifiers": { "mandatory": ["left_shift", "left_command", "left_control", "left_option"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "f",
                                         "modifiers": ["left_control"]
                                     }
                                 ],

@@ -14,8 +14,7 @@ alpha-blending = native
 # -------------------------------------------------- #
 # Macos
 # -------------------------------------------------- #
-# macos-titlebar-style          = transparent
-macos-titlebar-style          = tabs
+macos-titlebar-style          = transparent
 macos-titlebar-proxy-icon     = visible
 macos-window-buttons          = visible
 macos-window-shadow           = true
@@ -94,15 +93,21 @@ unfocused-split-opacity = 0.5
 # keybind = =new_split:up
 # keybind = =new_split:right
 # fullscreen
-keybind = cmd+control+shift+opt+f=toggle_split_zoom
+# keybind = cmd+control+shift+opt+f=toggle_split_zoom
+keybind = control+f=toggle_split_zoom
 # focus
-keybind = cmd+control+shift+opt+l=goto_split:right
-keybind = cmd+control+shift+opt+k=goto_split:up
-keybind = cmd+control+shift+opt+j=goto_split:down
-keybind = cmd+control+shift+opt+h=goto_split:left
-
-keybind = cmd+control+shift+opt+bracket_left=goto_split:previous
-keybind = cmd+control+shift+opt+bracket_right=goto_split:next
+# keybind = cmd+control+shift+opt+l=goto_split:right
+# keybind = cmd+control+shift+opt+k=goto_split:up
+# keybind = cmd+control+shift+opt+j=goto_split:down
+# keybind = cmd+control+shift+opt+h=goto_split:left
+# keybind = cmd+control+shift+opt+bracket_left=goto_split:previous
+# keybind = cmd+control+shift+opt+bracket_right=goto_split:next
+keybind = control+l=goto_split:right                   
+keybind = control+k=goto_split:up                      
+keybind = control+j=goto_split:down                    
+keybind = control+h=goto_split:left                    
+keybind = control+bracket_left=goto_split:previous     
+keybind = control+bracket_right=goto_split:next        
 # resize
 keybind = cmd+shift+equal=equalize_splits
 keybind = cmd+shift+l=resize_split:right,10
@@ -113,4 +118,4 @@ keybind = cmd+shift+j=resize_split:down,10
 # -------------------------------------------------- #
 # Tmux
 # -------------------------------------------------- #
-keybind = super+ctrl+alt+shift+a=text:\x01
+# keybind = super+ctrl+alt+shift+a=text:\x01

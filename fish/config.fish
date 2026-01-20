@@ -133,11 +133,14 @@ if status is-interactive
 
     # FZF
     set -gx FZF_DEFAULT_COMMAND 'rg --files --hidden --follow --glob "!.git/*"'
-
-    set -gx fzf_preview_dir_cmd eza --all --color=always
-    set -gx fzf_preview_file_cmd bat -n
-    set fzf_diff_highlighter delta --paging=never --features="mellow-barbet" --syntax-theme="rose-pine"
-    set fzf_history_time_format %d-%m-%y
+    set -gx FZF_DEFAULT_OPTS '--height 75% --layout=reverse --border --info=inline --preview "bat --style=numbers --color=always --theme=rose-pine {}" --preview-window right:60%:wrap'
+    
+    set -g fzf_fd_opts --hidden --follow --exclude .git
+    fzf_configure_bindings --directory=\ct --history=\cr
+    set -g fzf_preview_dir_cmd eza --all --color=always --icons --git --tree --level=2
+    set -g fzf_preview_file_cmd bat --style=numbers --color=always --theme=rose-pine
+    set -g fzf_diff_highlighter delta --paging=never --features="mellow-barbet" --syntax-theme="rose-pine"
+    set -g fzf_history_time_format %d-%m-%y
 
     # Bat
     if not test -d ~/.cache/bat
