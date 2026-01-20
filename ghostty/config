@@ -3,14 +3,12 @@
 # -------------------------------------------------- #
 shell-integration = detect
 shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
-
 # -------------------------------------------------- #
 # Terminal
 # -------------------------------------------------- #
 term = xterm-ghostty
 right-click-action = context-menu
 alpha-blending = native
-
 # -------------------------------------------------- #
 # Macos
 # -------------------------------------------------- #
@@ -20,7 +18,6 @@ macos-window-buttons          = visible
 macos-window-shadow           = true
 macos-option-as-alt           = true
 macos-secure-input-indication = true
-
 # -------------------------------------------------- #
 # Font
 # -------------------------------------------------- #
@@ -28,7 +25,6 @@ font-family  = "Monaspace Argon NF"
 # font-family  = "FiraCode Nerd Font Mono"
 bold-color   = bright
 font-thicken = true
-
 # -------------------------------------------------- #
 # Theme 
 # -------------------------------------------------- #
@@ -39,7 +35,6 @@ background-opacity      = 0.85
 background-blur         = 50
 cursor-style            = bar
 mouse-hide-while-typing = true
-
 # -------------------------------------------------- #
 # Shader 
 # -------------------------------------------------- #
@@ -47,7 +42,6 @@ custom-shader-animation = always
 custom-shader = "shaders/cursor_warp.glsl"
 custom-shader = "shaders/ripple_cursor.glsl"
 custom-shader = "shaders/ghostty-shaders/bloom.glsl"
-
 # -------------------------------------------------- #
 # Clipboard 
 # -------------------------------------------------- #
@@ -56,7 +50,6 @@ clipboard-write                = allow
 clipboard-paste-protection     = true
 clipboard-trim-trailing-spaces = true
 copy-on-select                 = false
-
 # -------------------------------------------------- #
 # Window 
 # -------------------------------------------------- #
@@ -67,7 +60,6 @@ window-padding-balance = true
 window-step-resize     = true
 window-width           = 150
 window-height          = 50
-
 # -------------------------------------------------- #
 # Quick-terminal
 # -------------------------------------------------- #
@@ -78,12 +70,10 @@ quick-terminal-autohide           = true
 quick-terminal-animation-duration = 0.1
 quick-terminal-screen             = mouse
 quick-terminal-screen             = macos-menu-bar
-
 # -------------------------------------------------- #
 # Split 
 # -------------------------------------------------- #
 unfocused-split-opacity = 0.5
-
 # -------------------------------------------------- #
 # Keybinding
 # -------------------------------------------------- #
@@ -93,28 +83,27 @@ unfocused-split-opacity = 0.5
 # keybind = =new_split:up
 # keybind = =new_split:right
 # fullscreen
-# keybind = cmd+control+shift+opt+f=toggle_split_zoom
-keybind = control+f=toggle_split_zoom
+keybind = cmd+control+shift+opt+f=toggle_split_zoom
+# keybind = control+f=toggle_split_zoom
 # focus
-# keybind = cmd+control+shift+opt+l=goto_split:right
-# keybind = cmd+control+shift+opt+k=goto_split:up
-# keybind = cmd+control+shift+opt+j=goto_split:down
-# keybind = cmd+control+shift+opt+h=goto_split:left
-# keybind = cmd+control+shift+opt+bracket_left=goto_split:previous
-# keybind = cmd+control+shift+opt+bracket_right=goto_split:next
-keybind = control+l=goto_split:right                   
-keybind = control+k=goto_split:up                      
-keybind = control+j=goto_split:down                    
-keybind = control+h=goto_split:left                    
-keybind = control+bracket_left=goto_split:previous     
-keybind = control+bracket_right=goto_split:next        
+keybind = cmd+control+shift+opt+l=goto_split:right
+keybind = cmd+control+shift+opt+k=goto_split:up
+keybind = cmd+control+shift+opt+j=goto_split:down
+keybind = cmd+control+shift+opt+h=goto_split:left
+keybind = cmd+control+shift+opt+bracket_left=goto_split:previous
+keybind = cmd+control+shift+opt+bracket_right=goto_split:next
+# keybind = control+l=goto_split:right 
+# keybind = control+k=goto_split:up 
+# keybind = control+j=goto_split:down 
+# keybind = control+h=goto_split:left 
+# keybind = control+bracket_left=goto_split:previous 
+# keybind = control+bracket_right=goto_split:next 
 # resize
 keybind = cmd+shift+equal=equalize_splits
 keybind = cmd+shift+l=resize_split:right,10
 keybind = cmd+shift+k=resize_split:up,10
 keybind = cmd+shift+h=resize_split:left,10
 keybind = cmd+shift+j=resize_split:down,10
-
 # -------------------------------------------------- #
 # Tmux
 # -------------------------------------------------- #
