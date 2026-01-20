@@ -15,7 +15,7 @@ alpha-blending = native
 # Macos
 # -------------------------------------------------- #
 # macos-titlebar-style          = transparent
-macos-titlebar-style          = hidden
+macos-titlebar-style          = tabs
 macos-titlebar-proxy-icon     = visible
 macos-window-buttons          = visible
 macos-window-shadow           = true
