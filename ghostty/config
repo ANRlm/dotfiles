@@ -5,7 +5,7 @@ shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 # -------------------------------------------------- #
 # Macos
 # -------------------------------------------------- #
-macos-titlebar-style          = tabs
+macos-titlebar-style          = hidden
 macos-titlebar-proxy-icon     = visible
 macos-window-buttons          = hidden
 macos-window-shadow           = false
@@ -33,12 +33,12 @@ font-size = 14
 theme = Rose Pine
 # theme = dark:,light:
 # Rose Pine Moon, Rose Pine Dawn, Rose Pine, nord
-background-opacity      = 0.85
+background-opacity      = 0.9
 background-blur         = true
 mouse-hide-while-typing = true
-unfocused-split-opacity = 0.85
-# window-padding-x        = 2
-# window-padding-y        = 2
+unfocused-split-opacity = 0.9
+window-padding-x        = 8
+# window-padding-y        = 8
 window-padding-balance  = true
 window-decoration       = auto
 window-theme            = auto

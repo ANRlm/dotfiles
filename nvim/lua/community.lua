@@ -9,12 +9,12 @@ return {
   { import = "astrocommunity/colorscheme/rose-pine" },
   -- import/override with your plugins folder
 
-  -- {
-  --   "rose-pine/neovim",
-  --   name = "rose-pine",
-  --   opts = {
-  --     disable_background = true,
-  --     disable_float_background = true,
-  --   },
-  -- },
+  {
+    "rose-pine/neovim",
+    name = "rose-pine",
+    opts = {
+      disable_background = true,
+      disable_float_background = true,
+    },
+  },
 }
