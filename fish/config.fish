@@ -71,19 +71,21 @@ if status is-interactive
     abbr -a ports 'lsof -i -P | grep -i "listen"'
     abbr -a disk 'smartctl -a disk3'
     abbr -a u \
-        'brew update; and \
-         brew upgrade; and \
-         brew upgrade --cask --greedy; and \
-         brew autoremove; and brew cleanup --prune=all; and \
-         brew bundle dump --force --file ~/dotfiles/Brewfile; and \
-         conda update conda -y; and \
-         conda update conda -y; and \
-         conda clean --all -y; and \
-         ya pkg upgrade; and \
-         fisher update; and \
-         npm update -g; and \
-         npm cache clean --force; and\
-         mas update'
+    'brew update; and \
+     brew upgrade; and \
+     brew upgrade --cask --greedy; and \
+     brew autoremove; and brew cleanup --prune=all; and \
+     brew bundle dump --force --file ~/dotfiles/Brewfile; and \
+     conda update conda -y; and \
+     conda update --all -y; and \
+     conda clean --all -y; and \
+     ya pkg upgrade; and \
+     fisher update; and \
+     npm update -g; and \
+     npm cache clean --force; and \
+     mas update; and \
+     mo clean; and \
+     mo purge'
 
     # Xcode
     abbr -a xcode-clt 'sudo xcode-select -s /Library/Developer/CommandLineTools'
@@ -173,4 +175,6 @@ if status is-interactive
         bat -p $argv | pbcopy
     end
 
+    # Mole
+    set -l output (mole completion fish 2>/dev/null); and echo "$output" | source
 end
