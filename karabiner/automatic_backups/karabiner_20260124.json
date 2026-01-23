@@ -23,19 +23,9 @@
                         ]
                     },
                     {
-                        "description": "Hyper+R/A/V/C/T/F/D/U -> Ctrl+R/A/V/C/T/F/D/U in specific apps",
+                        "description": "Hyper + ravctfdu to Ctrl + ravctfdu",
                         "manipulators": [
                             {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty",
-                                            "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide"
-                                        ],
-                                        "type": "frontmost_application_if"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "r",
                                     "modifiers": { "mandatory": ["command", "control", "option", "shift"] }
@@ -49,16 +39,6 @@
                                 "type": "basic"
                             },
                             {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty",
-                                            "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide"
-                                        ],
-                                        "type": "frontmost_application_if"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "a",
                                     "modifiers": { "mandatory": ["command", "control", "option", "shift"] }
@@ -72,16 +52,6 @@
                                 "type": "basic"
                             },
                             {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty",
-                                            "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide"
-                                        ],
-                                        "type": "frontmost_application_if"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "v",
                                     "modifiers": { "mandatory": ["command", "control", "option", "shift"] }
@@ -95,16 +65,6 @@
                                 "type": "basic"
                             },
                             {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty",
-                                            "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide"
-                                        ],
-                                        "type": "frontmost_application_if"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "c",
                                     "modifiers": { "mandatory": ["command", "control", "option", "shift"] }
@@ -118,16 +78,6 @@
                                 "type": "basic"
                             },
                             {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty",
-                                            "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide"
-                                        ],
-                                        "type": "frontmost_application_if"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "t",
                                     "modifiers": { "mandatory": ["command", "control", "option", "shift"] }
@@ -141,16 +91,6 @@
                                 "type": "basic"
                             },
                             {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty",
-                                            "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide"
-                                        ],
-                                        "type": "frontmost_application_if"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "f",
                                     "modifiers": { "mandatory": ["command", "control", "option", "shift"] }
@@ -164,16 +104,6 @@
                                 "type": "basic"
                             },
                             {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty",
-                                            "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide"
-                                        ],
-                                        "type": "frontmost_application_if"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "d",
                                     "modifiers": { "mandatory": ["command", "control", "option", "shift"] }
@@ -187,16 +117,6 @@
                                 "type": "basic"
                             },
                             {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty",
-                                            "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide"
-                                        ],
-                                        "type": "frontmost_application_if"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "u",
                                     "modifiers": { "mandatory": ["command", "control", "option", "shift"] }
@@ -212,7 +132,7 @@
                         ]
                     },
                     {
-                        "description": "Hyper+H/J/K/L to Ctrl+H/J/K/L in specific programs, Arrow keys elsewhere",
+                        "description": "Hyper+H/J/K/L: Ctrl+H/J/K/L in Some Apps, Arrow keys elsewhere",
                         "manipulators": [
                             {
                                 "conditions": [
