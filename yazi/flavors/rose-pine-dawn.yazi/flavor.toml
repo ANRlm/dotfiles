@@ -1,13 +1,17 @@
 # vim:fileencoding=utf-8:foldmethod=marker
 
+# : App {{{
+
+[app]
+overall = { bg = "#faf4ed" }
+
+# : }}}
+
+
 # : Manager {{{
 
 [mgr]
 cwd = { fg = "#56949f" }
-
-# Hovered
-hovered         = { reversed = true }
-preview_hovered = { underline = true }
 
 # Find
 find_keyword  = { fg = "#ea9d34", bold = true, italic = true, underline = true }
@@ -17,9 +21,9 @@ find_position = { fg = "#907aa9", bg = "reset", bold = true, italic = true }
 symlink_target = { italic = true }
 
 # Marker
-marker_copied   = { fg = "#286983",  bg = "#286983" }
-marker_cut      = { fg = "#b4637a",    bg = "#b4637a" }
-marker_marked   = { fg = "#d7827e",   bg = "#d7827e" }
+marker_copied   = { fg = "#286983", bg = "#286983" }
+marker_cut      = { fg = "#b4637a", bg = "#b4637a" }
+marker_marked   = { fg = "#d7827e", bg = "#d7827e" }
 marker_selected = { fg = "#ea9d34", bg = "#ea9d34" }
 
 # Count
@@ -63,6 +67,17 @@ select_alt  = { fg = "#faf4ed", bg = "#575279", bold = true }
 # Unset mode
 unset_main = { fg = "#faf4ed", bg = "#b4637a", bold = true }
 unset_alt  = { fg = "#faf4ed", bg = "#575279", bold = true }
+
+# : }}}
+
+
+# : Indicator of hovered file {{{
+
+[indicator]
+parent  = { reversed = true }
+current = { reversed = true }
+preview = { underline = true }
+padding = { open = "", close = "" }
 
 # : }}}
 
@@ -137,6 +152,10 @@ title_info  = { fg = "#286983" }
 title_warn  = { fg = "#ea9d34" }
 title_error = { fg = "#b4637a" }
 
+# Icons
+icon_info  = ""
+icon_warn  = ""
+icon_error = ""
 
 # : }}}
 
@@ -146,7 +165,7 @@ title_error = { fg = "#b4637a" }
 [pick]
 border   = { fg = "#286983" }
 active   = { fg = "#907aa9", bold = true }
-inactive = { fg = "#797593"}
+inactive = { fg = "#797593" }
 
 # : }}}
 
@@ -156,7 +175,7 @@ inactive = { fg = "#797593"}
 [input]
 border   = { fg = "#286983" }
 title    = { bold = true }
-value    = { fg = "#575279"}
+value    = { fg = "#575279" }
 selected = { reversed = true }
 
 # : }}}
@@ -169,6 +188,10 @@ border   = { fg = "#286983" }
 active   = { bg = "#575279", fg = "#faf4ed", bold = true }
 inactive = { fg = "#797593" }
 
+# Icons
+icon_file    = ""
+icon_folder  = ""
+icon_command = ""
 
 # : }}}
 
@@ -177,7 +200,7 @@ inactive = { fg = "#797593" }
 
 [tasks]
 border  = { fg = "#286983" }
-title   = { bold = true}
+title   = { bold = true }
 hovered = { fg = "#907aa9", bold = true, reversed = true }
 
 # : }}}
@@ -188,7 +211,7 @@ hovered = { fg = "#907aa9", bold = true, reversed = true }
 [help]
 on      = { fg = "#56949f" }
 run     = { fg = "#907aa9" }
-desc    = { fg = "#ea9d34"}
+desc    = { fg = "#ea9d34" }
 hovered = { reversed = true, bold = true }
 footer  = { fg = "#faf4ed", bg = "#575279" }
 
@@ -199,32 +222,32 @@ footer  = { fg = "#faf4ed", bg = "#575279" }
 
 [filetype]
 rules = [
-	# Images
-	{ mime = "image/*", fg = "#907aa9" },
+  # Images
+  { mime = "image/*", fg = "#907aa9" },
 
-	# Media
-	{ mime = "{audio,video}/*", fg = "#ea9d34" },
+  # Media
+  { mime = "{audio,video}/*", fg = "#ea9d34" },
 
-	# Archives
-	{ mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#b4637a" },
+  # Archives
+  { mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#b4637a" },
 
-	# Documents
-	{ mime = "application/{pdf,doc,rtf}", fg = "#d7827e" },
+  # Documents
+  { mime = "application/{pdf,doc,rtf}", fg = "#d7827e" },
 
-	# Empty files
-	# { mime = "inode/empty", fg = "#b4637a" },
+  # Empty files
+  # { mime = "inode/empty", fg = "#b4637a" },
 
-	# Special files
-	{ name = "*", is = "orphan", fg = "#faf4ed", bg = "#b4637a" },
-	{ name = "*", is = "exec"  , fg = "#56949f" },
+  # Special files
+  { url = "*", is = "orphan", fg = "#faf4ed", bg = "#b4637a" },
+  { url = "*", is = "exec", fg = "#56949f" },
 
-	# Dummy files
-	{ name = "*", is = "dummy",  fg = "#faf4ed", bg = "#b4637a" },
-	{ name = "*/", is = "dummy", fg = "#faf4ed", bg = "#b4637a" },
+  # Dummy files
+  { url = "*", is = "dummy", fg = "#faf4ed", bg = "#b4637a" },
+  { url = "*/", is = "dummy", fg = "#faf4ed", bg = "#b4637a" },
 
-	# Fallback
-	{ name = "*",  fg = "#575279" },
-	{ name = "*/", fg = "#286983" }
+  # Fallback
+  { url = "*", fg = "#575279" },
+  { url = "*/", fg = "#286983" }
 ]
 
 # : }}}
