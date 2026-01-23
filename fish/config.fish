@@ -74,10 +74,12 @@ if status is-interactive
         'brew update; and \
          brew upgrade; and \
          brew upgrade --cask --greedy; and \
+         brew bundle dump --force --file ~/dotfiles/Brewfile; and \
          conda update --all -y; and \
          ya pkg upgrade; and \
          fisher update; and \
-         npm update -g'
+         npm update -g; and \
+         mas update'
 
     # Xcode
     abbr -a xcode-clt 'sudo xcode-select -s /Library/Developer/CommandLineTools'

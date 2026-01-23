@@ -23,6 +23,9 @@ if [[ "$OS" == "Darwin" ]]; then
     ln -sfn "$DOTFILES_DIR/eza" "$MACOS_APP_SUPPORT/eza"
     ln -sf "$DOTFILES_DIR/lazygit/config.yml" "$MACOS_APP_SUPPORT/lazygit/config.yml"
 
+    echo "Restoring Homebrew packages..."
+    brew bundle
+
 elif [[ "$OS" == "Linux" ]]; then
     echo "Configuring for Linux..."
 
