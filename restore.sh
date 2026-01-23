@@ -15,21 +15,21 @@ if [[ "$OS" == "Darwin" ]]; then
     MACOS_APP_SUPPORT="$HOME/Library/Application Support"
     mkdir -p "$MACOS_APP_SUPPORT/lazygit"
     mkdir -p "$MACOS_APP_SUPPORT/eza"
-    
+
     for dir in aerospace bat btop fish ghostty nvim yazi tmux karabiner neovide; do
         ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
     done
-    
+
     ln -sfn "$DOTFILES_DIR/eza" "$MACOS_APP_SUPPORT/eza"
     ln -sf "$DOTFILES_DIR/lazygit/config.yml" "$MACOS_APP_SUPPORT/lazygit/config.yml"
-    
+
 elif [[ "$OS" == "Linux" ]]; then
     echo "Configuring for Linux..."
-    
+
     for dir in bat btop lazygit eza yazi helix nvim fish tmux; do
         ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
     done
-    
+
 else
     echo "Unsupported operating system: $OS"
     exit 1
