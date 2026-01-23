@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -Eeuo pipefail
+IFS=$'\n\t'
+
 OS="$(uname -s)"
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 CONFIG_DIR="$HOME/.config"
@@ -40,6 +43,6 @@ ln -sf "$DOTFILES_DIR/zsh/zshrc"      "$HOME/.zshrc"
 ln -sf "$DOTFILES_DIR/starship/starship.toml" "$CONFIG_DIR/starship.toml"
 ln -sf "$DOTFILES_DIR/conda/.condarc"         "$HOME/.condarc"
 ln -sf "$DOTFILES_DIR/idea/.ideavimrc"        "$HOME/.ideavimrc"
-ln -sf "$DOTFILES_DIR/git/.gitconfig"       "$HOME/.gitconfig"
+ln -sf "$DOTFILES_DIR/.gitconfig"       "$HOME/.gitconfig"
 
 echo "Dotfiles restored successfully!"
