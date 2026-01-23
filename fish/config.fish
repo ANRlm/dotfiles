@@ -74,11 +74,15 @@ if status is-interactive
         'brew update; and \
          brew upgrade; and \
          brew upgrade --cask --greedy; and \
+         brew autoremove; and brew cleanup --prune=all; and \
          brew bundle dump --force --file ~/dotfiles/Brewfile; and \
-         conda update --all -y; and \
+         conda update conda -y; and \
+         conda update conda -y; and \
+         conda clean --all -y; and \
          ya pkg upgrade; and \
          fisher update; and \
          npm update -g; and \
+         npm cache clean --force; and\
          mas update'
 
     # Xcode
@@ -117,7 +121,7 @@ if status is-interactive
     abbr -a cel 'conda env list'
     abbr -a ci 'conda install'
     abbr -a cui 'conda remove'
-    abbr -a cu 'conda update --all -y'
+    abbr -a cu 'conda update conda -y; and conda update -all -y'
     abbr -a cs 'conda search'
     abbr -a cl 'conda list'
     abbr -a cc 'conda clean --all -y'
