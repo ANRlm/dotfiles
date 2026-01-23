@@ -22,6 +22,9 @@ if [[ "$OS" == "Darwin" ]]; then
 
     ln -sfn "$DOTFILES_DIR/eza" "$MACOS_APP_SUPPORT/eza"
 
+    echo "Disabling Gatekeeper..."
+    sudo spctl --master-disable || true
+
     echo "Restoring Homebrew packages..."
     brew bundle
 
