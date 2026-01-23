@@ -8,7 +8,6 @@ echo "Detected OS: $OS"
 echo "Starting dotfiles restoration from $DOTFILES_DIR"
 
 mkdir -p "$CONFIG_DIR"
-mkdir -p "$CONFIG_DIR/git"
 
 if [[ "$OS" == "Darwin" ]]; then
     echo "Configuring for macOS..."
@@ -16,7 +15,7 @@ if [[ "$OS" == "Darwin" ]]; then
     mkdir -p "$MACOS_APP_SUPPORT/lazygit"
     mkdir -p "$MACOS_APP_SUPPORT/eza"
 
-    for dir in aerospace bat btop fish ghostty nvim yazi tmux karabiner neovide mole; do
+    for dir in aerospace bat btop fish ghostty nvim yazi tmux karabiner neovide mole git; do
         ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
     done
 
@@ -29,7 +28,7 @@ if [[ "$OS" == "Darwin" ]]; then
 elif [[ "$OS" == "Linux" ]]; then
     echo "Configuring for Linux..."
 
-    for dir in bat btop lazygit eza yazi helix nvim fish tmux; do
+    for dir in bat btop lazygit eza yazi helix nvim fish tmux git; do
         ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
     done
 
@@ -44,7 +43,6 @@ ln -sf "$DOTFILES_DIR/zsh/zshrc"      "$HOME/.zshrc"
 ln -sf "$DOTFILES_DIR/starship/starship.toml" "$CONFIG_DIR/starship.toml"
 ln -sf "$DOTFILES_DIR/conda/.condarc"         "$HOME/.condarc"
 ln -sf "$DOTFILES_DIR/idea/.ideavimrc"        "$HOME/.ideavimrc"
-ln -sf "$DOTFILES_DIR/git/themes.gitconfig" "$CONFIG_DIR/git/themes.gitconfig"
 ln -sf "$DOTFILES_DIR/git/.gitconfig"       "$HOME/.gitconfig"
 
 echo "Dotfiles restored successfully!"
