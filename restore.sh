@@ -12,15 +12,12 @@ mkdir -p "$CONFIG_DIR"
 if [[ "$OS" == "Darwin" ]]; then
     echo "Configuring for macOS..."
     MACOS_APP_SUPPORT="$HOME/Library/Application Support"
-    mkdir -p "$MACOS_APP_SUPPORT/lazygit"
-    mkdir -p "$MACOS_APP_SUPPORT/eza"
 
-    for dir in aerospace bat btop fish ghostty nvim yazi tmux karabiner neovide mole git; do
+    for dir in aerospace bat btop fish ghostty nvim yazi tmux karabiner neovide mole git lazygit; do
         ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
     done
 
     ln -sfn "$DOTFILES_DIR/eza" "$MACOS_APP_SUPPORT/eza"
-    ln -sf "$DOTFILES_DIR/lazygit/config.yml" "$MACOS_APP_SUPPORT/lazygit/config.yml"
 
     echo "Restoring Homebrew packages..."
     brew bundle

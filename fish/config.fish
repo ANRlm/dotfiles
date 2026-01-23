@@ -12,6 +12,7 @@ set -gx HOMEBREW_NO_ANALYTICS 1
 set -gx HOMEBREW_NO_ENV_HINTS 0
 set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 set -gx CONDA_ROOT "/opt/homebrew/Caskroom/miniforge/base"
+set -Ux XDG_CONFIG_HOME ~/.config
 
 # PATH Configuration (Global)
 # Use fish_add_path which handles duplicates automatically
