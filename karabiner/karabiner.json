@@ -212,15 +212,15 @@
                         ]
                     },
                     {
-                        "description": "Hyper+H/J/K/L to Ctrl+H/J/K/L in specific programs, Arrow keys elsewhere",
+                        "description": "Hyper+H/J/K/L -> Ctrl in specific apps, Arrow elsewhere",
                         "manipulators": [
                             {
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty$",
-                                            "^com\\.googlecode\\.iterm2$",
-                                            "^com\\.neovide\\.neovide$"
+                                            "^com\\.mitchellh\\.ghostty",
+                                            "^com\\.googlecode\\.iterm2",
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -241,9 +241,9 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty$",
-                                            "^com\\.googlecode\\.iterm2$",
-                                            "^com\\.neovide\\.neovide$"
+                                            "^com\\.mitchellh\\.ghostty",
+                                            "^com\\.googlecode\\.iterm2",
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -264,9 +264,9 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty$",
-                                            "^com\\.googlecode\\.iterm2$",
-                                            "^com\\.neovide\\.neovide$"
+                                            "^com\\.mitchellh\\.ghostty",
+                                            "^com\\.googlecode\\.iterm2",
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -287,9 +287,9 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "^com\\.mitchellh\\.ghostty$",
-                                            "^com\\.googlecode\\.iterm2$",
-                                            "^com\\.neovide\\.neovide$"
+                                            "^com\\.mitchellh\\.ghostty",
+                                            "^com\\.googlecode\\.iterm2",
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
