@@ -93,7 +93,34 @@
   },
   "Cursor Type" : 1,
   "Keyboard Map" : {
-
+    "0x68-0x40000-0x4" : {
+      "Version" : 2,
+      "Apply Mode" : 0,
+      "Action" : 18,
+      "Text" : "",
+      "Escaping" : 2
+    },
+    "0x6c-0x40000-0x25" : {
+      "Version" : 2,
+      "Apply Mode" : 0,
+      "Action" : 19,
+      "Text" : "",
+      "Escaping" : 2
+    },
+    "0x6b-0x40000-0x28" : {
+      "Version" : 2,
+      "Apply Mode" : 0,
+      "Action" : 20,
+      "Text" : "",
+      "Escaping" : 2
+    },
+    "0x6a-0x40000-0x26" : {
+      "Version" : 2,
+      "Apply Mode" : 0,
+      "Action" : 21,
+      "Text" : "",
+      "Escaping" : 2
+    }
   },
   "Ansi 3 Color (Dark)" : {
     "Red Component" : 0.96470588445663452,
@@ -616,8 +643,9 @@
           },
           "layout advanced configuration dictionary value" : {
             "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
+            "font" : ".AppleSystemUIFont 12",
+            "algorithm" : 0,
+            "auto-rainbow style" : 0
           }
         }
       },
@@ -631,8 +659,9 @@
           },
           "layout advanced configuration dictionary value" : {
             "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
+            "font" : ".AppleSystemUIFont 12",
+            "algorithm" : 0,
+            "auto-rainbow style" : 0
           }
         }
       },
@@ -647,8 +676,9 @@
           },
           "layout advanced configuration dictionary value" : {
             "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
+            "font" : ".AppleSystemUIFont 12",
+            "algorithm" : 0,
+            "auto-rainbow style" : 0
           }
         }
       },
@@ -661,8 +691,9 @@
           },
           "layout advanced configuration dictionary value" : {
             "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
+            "font" : ".AppleSystemUIFont 12",
+            "algorithm" : 0,
+            "auto-rainbow style" : 0
           }
         }
       },
@@ -675,8 +706,9 @@
           },
           "layout advanced configuration dictionary value" : {
             "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
+            "font" : ".AppleSystemUIFont 12",
+            "algorithm" : 0,
+            "auto-rainbow style" : 0
           }
         }
       },
@@ -689,30 +721,16 @@
           },
           "layout advanced configuration dictionary value" : {
             "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
-          }
-        }
-      },
-      {
-        "class" : "iTermStatusBarClockComponent",
-        "configuration" : {
-          "knobs" : {
-            "base: priority" : 5,
-            "format" : "M\/dd h:mm",
-            "base: compression resistance" : 1
-          },
-          "layout advanced configuration dictionary value" : {
-            "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
+            "font" : ".AppleSystemUIFont 12",
+            "algorithm" : 0,
+            "auto-rainbow style" : 0
           }
         }
       }
     ],
     "advanced configuration" : {
       "remove empty components" : false,
-      "font" : ".AppleSystemUIFont 12",
+      "font" : ".SFNS-Regular 12",
       "algorithm" : 0,
       "auto-rainbow style" : 0
     }
