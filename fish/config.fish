@@ -70,6 +70,14 @@ if status is-interactive
     abbr -a ip 'ipconfig getifaddr en0'
     abbr -a ports 'lsof -i -P | grep -i "listen"'
     abbr -a disk 'smartctl -a disk3'
+    abbr -a u \
+        'brew update; and \
+         brew upgrade; and \
+         brew upgrade --cask --greedy; and \
+         conda update --all -y; and \
+         ya pkg upgrade; and \
+         fisher update; and \
+         npm update -g'
 
     # Xcode
     abbr -a xcode-clt 'sudo xcode-select -s /Library/Developer/CommandLineTools'
@@ -107,12 +115,18 @@ if status is-interactive
     abbr -a cel 'conda env list'
     abbr -a ci 'conda install'
     abbr -a cui 'conda remove'
-    abbr -a cu 'conda update --all'
+    abbr -a cu 'conda update --all -y'
     abbr -a cs 'conda search'
     abbr -a cl 'conda list'
     abbr -a cc 'conda clean --all -y'
     abbr -a ca 'conda activate'
     abbr -a cde 'conda deactivate'
+
+    # Yazi
+    abbr -a yau 'ya pkg upgrade'
+    abbr -a yaa 'ya pkg add'
+    abbr -a yad 'ya pkg delete'
+    abbr -a yal 'ya pkg list'
 
     # Tools
     abbr -a mf musicfox

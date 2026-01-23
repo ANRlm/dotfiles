@@ -1,7 +1,7 @@
 .DS_Store
 tmux/plugins/
-fish/completions/
-fish/fzf.fish
-fish/functions/
 fish/fish_variables
-fish/conf.d/
+fish/completions
+fish/conf.d
+fish/functions
+fish/themes
