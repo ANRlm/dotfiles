@@ -14,3 +14,6 @@ require("git"):setup()
 
 -- starship
 require("starship"):setup()
+
+-- no-status
+require("no-status"):setup()
