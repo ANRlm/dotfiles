@@ -66,21 +66,21 @@ cask "unity-hub"
 cask "visual-studio-code"
 cask "wetype"
 cask "zed"
+mas "BaiduNetdisk", id: 547166701
 mas "Canva", id: 897446215
-mas "Keynote讲演", id: 409183694
-mas "Numbers表格", id: 409203825
-mas "Pages文稿", id: 409201541
+mas "Keynote", id: 409183694
+mas "Live Wallpaper", id: 1456235760
+mas "NetEaseMusic", id: 944848654
+mas "Numbers", id: 409203825
+mas "Pages", id: 409201541
 mas "Picview", id: 6452016140
 mas "QQ", id: 451108668
 mas "uBlock Origin Lite", id: 6745342698
 mas "UPDF", id: 1619925971
+mas "WeChat", id: 836500024
 mas "WPS Office", id: 1443749478
 mas "Xcode", id: 497799835
 mas "剪映专业版", id: 1529999940
-mas "微信", id: 836500024
-mas "百度网盘", id: 547166701
-mas "网易云音乐", id: 944848654
-mas "花見", id: 1456235760
 vscode "be5invis.vscode-custom-css"
 vscode "brandonkirbyson.vscode-animations"
 vscode "christian-kohler.path-intellisense"
