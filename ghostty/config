@@ -18,15 +18,16 @@ macos-secure-input-indication = true
 # font-family = FiraCode Nerd Font Mono
 # font-family = JetBrainsMono Nerd Font Mono
 font-family = MesloLGS Nerd Font Mono
+font-family = Sarasa Mono SC
 font-thicken = true
 font-thicken-strength = 128
 font-size = 14
 # -------------------------------------------------- #
 # Custom 
 # -------------------------------------------------- #
+# theme = Catppuccin Mocha
 theme = Rose Pine
 # theme = dark:,light:
-# Rose Pine Moon, Rose Pine Dawn, Rose Pine, nord
 background-opacity      = 1
 background-blur         = 85
 mouse-hide-while-typing = true
