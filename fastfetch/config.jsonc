@@ -1,0 +1,177 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "padding": {
+      "top": 2
+    },
+    "color": {
+      "1": "38;5;42",
+      "2": "38;5;222",
+      "3": "38;5;168",
+      "4": "38;5;177",
+      "5": "38;5;39"
+    }
+  },
+  "display": {
+    "size": {
+      "binaryPrefix": "jedec"
+    },
+    "separator": " 󰑃  ",
+    "constants": [
+      "────────────────────" // {$1}, used in custom module
+    ]
+  },
+  "modules": [
+    // DISTRO SECTION
+    {
+      "type": "os",
+      "key": " OS",
+      "keyColor": "38;5;168"
+    },
+    {
+      "type": "kernel",
+      "key": "│ ├ KERNEL",
+      "keyColor": "38;5;168"
+    },
+    {
+      "type": "packages",
+      "key": "│ ├󰏖 PACKAGES",
+      "keyColor": "38;5;168"
+    },
+    {
+      "type": "shell",
+      "key": "│ └ SHELL",
+      "keyColor": "38;5;168"
+    },
+    {
+      "type": "custom",
+      "format": "├{$1}",
+      "outputColor": "38;5;244"
+    },
+    // THEME SECTION
+    {
+      "type": "wmtheme",
+      "key": "󰉼 THEME",
+      "keyColor": "38;5;39"
+    },
+    {
+      "type": "wm",
+      "key": "│ ├ WM",
+      "keyColor": "38;5;39"
+    },
+    {
+      "type": "de",
+      "key": "│ ├ DE",
+      "keyColor": "38;5;39"
+    },
+    {
+      "type": "icons",
+      "key": "│ ├󰀻 ICONS",
+      "keyColor": "38;5;39"
+    },
+    {
+      "type": "cursor",
+      "key": "│ ├ CURSOR",
+      "keyColor": "38;5;39"
+    },
+    {
+      "type": "font",
+      "key": "│ ├ FONT",
+      "keyColor": "38;5;39"
+    },
+    {
+      "type": "terminal",
+      "key": "│ ├ TERMINAL",
+      "keyColor": "38;5;39"
+    },
+    {
+      "type": "terminalfont",
+      "key": "│ └󰘳 TERMINAL FONT",
+      "keyColor": "38;5;39"
+    },
+    {
+      "type": "custom",
+      "format": "├{$1}",
+      "outputColor": "38;5;244"
+    },
+    // SYSTEM SECTION
+    {
+      "type": "host",
+      "key": "󰌢 SYSTEM",
+      "keyColor": "38;5;42"
+    },
+    {
+      "type": "cpu",
+      "key": "│ ├󰻠 CPU",
+      "keyColor": "38;5;42"
+    },
+    {
+      "type": "gpu",
+      "key": "│ ├󰻑 GPU",
+      "keyColor": "38;5;42"
+    },
+    {
+      "type": "display",
+      "key": "│ ├󰍹 DISPLAY",
+      "keyColor": "38;5;42",
+      "compactType": "original-with-refresh-rate"
+    },
+    {
+      "type": "memory",
+      "key": "│ ├󰾆 MEMORY",
+      "keyColor": "38;5;42"
+    },
+    {
+      "type": "swap",
+      "key": "│ ├󰓡 SWAP",
+      "keyColor": "38;5;42"
+    },
+    {
+      "type": "disk",
+      "key": "│ ├󰋊 DISK",
+      "keyColor": "38;5;42"
+    },
+    {
+      "type": "uptime",
+      "key": "│ └󰅐 UPTIME",
+      "keyColor": "38;5;42"
+    },
+    {
+      "type": "localip",
+      "key": "│ ├󰩟 NETWORK",
+      "keyColor": "38;5;42"
+    },
+    {
+      "type": "battery",
+      "key": "│ ├󱟢 BATTERY",
+      "keyColor": "38;5;42"
+    },
+    {
+      "type": "poweradapter",
+      "key": "│ ├󰚥 ADAPTER",
+      "keyColor": "38;5;42"
+    },
+    {
+      "type": "locale",
+      "key": "│ └󰌌 LOCALE",
+      "keyColor": "38;5;42"
+    },
+    {
+      "type": "custom",
+      "format": "├{$1}",
+      "outputColor": "38;5;244"
+    },
+    // AUDIO SECTION
+    {
+      "type": "sound",
+      "key": " AUDIO",
+      "keyColor": "38;5;177"
+    },
+    "break",
+    // COLOR BAR
+    {
+      "type": "custom",
+      "format": "\u001b[90m  \u001b[31m  \u001b[32m  \u001b[33m  \u001b[34m  \u001b[35m  \u001b[36m  \u001b[37m  \u001b[38m  \u001b[39m  \u001b[39m    \u001b[38m  \u001b[37m  \u001b[36m  \u001b[35m  \u001b[34m  \u001b[33m  \u001b[32m  \u001b[31m  \u001b[90m"
+    }
+  ]
+}
