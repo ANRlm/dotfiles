@@ -42,7 +42,7 @@ window-step-resize      = true
 window-width            = 150
 window-height           = 50
 window-new-tab-position = current
-focus-follows-mouse     = true
+focus-follows-mouse     = false
 # -------------------------------------------------- #
 # Shader 
 # -------------------------------------------------- #
