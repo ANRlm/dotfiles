@@ -5,18 +5,18 @@
       "top": 2
     },
     "color": {
-      "1": "38;2;49;116;143",
-      "2": "38;2;246;193;119",
-      "3": "38;2;235;111;146",
-      "4": "38;2;196;167;231",
-      "5": "38;2;156;207;216"
+    "1": "38;2;49;116;143",      // Pine
+    "2": "38;2;246;193;119",     // Gold
+    "3": "38;2;235;111;146",     // Love
+    "4": "38;2;196;167;231",     // Iris
+    "5": "38;2;156;207;216"      // Foam
     }
   },
   "display": {
     "size": {
       "binaryPrefix": "jedec"
     },
-    "separator": " - ",
+    "separator": " 󰑃  ",
     "constants": [
       "────────────────────" // {$1}, used in custom module
     ]
@@ -25,12 +25,12 @@
     // DISTRO SECTION
     {
       "type": "os",
-      "key": " OS",
-      "keyColor": "38;2;235;111;146"
+      "key": " OS",
+      "keyColor": "38;5;168"
     },
     {
       "type": "kernel",
-      "key": "│ ├ KERNEL",
+      "key": "│ ├ KERNEL",
       "keyColor": "38;2;235;111;146"
     },
     {
@@ -40,13 +40,13 @@
     },
     {
       "type": "shell",
-      "key": "│ └ SHELL",
+      "key": "│ └ SHELL",
       "keyColor": "38;2;235;111;146"
     },
     {
       "type": "custom",
       "format": "├{$1}",
-      "outputColor": "38;2;110;106;134"
+      "outputColor": "38;2;144;140;170"
     },
     // THEME SECTION
     {
@@ -56,12 +56,12 @@
     },
     {
       "type": "wm",
-      "key": "│ ├ WM",
+      "key": "│ ├ WM",
       "keyColor": "38;2;156;207;216"
     },
     {
       "type": "de",
-      "key": "│ ├ DE",
+      "key": "│ ├ DE",
       "keyColor": "38;2;156;207;216"
     },
     {
@@ -71,17 +71,17 @@
     },
     {
       "type": "cursor",
-      "key": "│ ├ CURSOR",
+      "key": "│ ├ CURSOR",
       "keyColor": "38;2;156;207;216"
     },
     {
       "type": "font",
-      "key": "│ ├ FONT",
+      "key": "│ ├ FONT",
       "keyColor": "38;2;156;207;216"
     },
     {
       "type": "terminal",
-      "key": "│ ├ TERMINAL",
+      "key": "│ ├ TERMINAL",
       "keyColor": "38;2;156;207;216"
     },
     {
@@ -92,7 +92,7 @@
     {
       "type": "custom",
       "format": "├{$1}",
-      "outputColor": "38;2;110;106;134"
+      "outputColor": "38;2;144;140;170"
     },
     // SYSTEM SECTION
     {
@@ -159,12 +159,12 @@
     {
       "type": "custom",
       "format": "├{$1}",
-      "outputColor": "38;2;110;106;134"
+      "outputColor": "38;2;144;140;170"
     },
     // AUDIO SECTION
     {
       "type": "sound",
-      "key": " AUDIO",
+      "key": " AUDIO",
       "keyColor": "38;2;196;167;231"
     },
     "break",

@@ -15,17 +15,11 @@ macos-secure-input-indication = true
 # -------------------------------------------------- #
 # Font
 # -------------------------------------------------- #
-# font-family             = Monaspace Argon NF
-
-font-family             = FiraCode Nerd Font Mono Ret
-font-family-bold        = FiraCode Nerd Font Mono SemBd
-
-# font-family             = JetBrainsMono NFM Regular
-# font-family-bold        = JetBrainsMono NFM Bold
-# font-family-italic      = JetBrainsMono NFM Italic
-# font-family-bold-italic = JetBrainsMono NFM Bold Italic
-
+# font-family = FiraCode Nerd Font Mono
+# font-family = JetBrainsMono Nerd Font Mono
+font-family = MesloLGS Nerd Font Mono
 font-thicken = true
+font-thicken-strength = 128
 font-size = 14
 # -------------------------------------------------- #
 # Custom 
