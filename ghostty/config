@@ -33,7 +33,7 @@ font-size = 14
 theme = Rose Pine
 # theme = dark:,light:
 # Rose Pine Moon, Rose Pine Dawn, Rose Pine, nord
-background-opacity      = 0.8
+background-opacity      = 1
 background-blur         = 85
 mouse-hide-while-typing = true
 unfocused-split-opacity = 0.8
