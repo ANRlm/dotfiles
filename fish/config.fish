@@ -14,41 +14,41 @@ set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 set -gx CONDA_ROOT "/opt/homebrew/Caskroom/miniforge/base"
 set -Ux XDG_CONFIG_HOME ~/.config
 
-# PATH Configuration (Global)
-# Use fish_add_path which handles duplicates automatically
-fish_add_path -g "/opt/homebrew/opt/make/libexec/gnubin"
-fish_add_path -g "/usr/local/share/dotnet"
-fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
-fish_add_path -g "$HOME/.lmstudio/bin"
-fish_add_path -g "/opt/homebrew/opt/openjdk/bin"
-fish_add_path -g "/opt/homebrew/opt/llvm/bin"
-fish_add_path -g "$HOME/.antigravity/antigravity/bin"
-fish_add_path -g "$CONDA_ROOT/bin"
-
-# Tool Initializations (Global/Conditional)
-# Homebrew
-if test -x /opt/homebrew/bin/brew
-    /opt/homebrew/bin/brew shellenv | source
-end
-
-# OrbStack
-if test -f ~/.orbstack/shell/init.fish
-    source ~/.orbstack/shell/init.fish 2>/dev/null
-end
-
-# Conda
-if test -f "$CONDA_ROOT/bin/conda"
-    eval "$CONDA_ROOT/bin/conda" "shell.fish" "hook" $argv | source
-else
-    if test -f "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
-        source "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
-    else
-        fish_add_path -g "$CONDA_ROOT/bin"
-    end
+# PATH Configuration
+if not contains "/opt/homebrew/opt/make/libexec/gnubin" $fish_user_paths
+    fish_add_path "/opt/homebrew/opt/make/libexec/gnubin"
+    fish_add_path "/usr/local/share/dotnet"
+    fish_add_path "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+    fish_add_path "$HOME/.lmstudio/bin"
+    fish_add_path "/opt/homebrew/opt/openjdk/bin"
+    fish_add_path "/opt/homebrew/opt/llvm/bin"
+    fish_add_path "$HOME/.antigravity/antigravity/bin"
+    fish_add_path "$CONDA_ROOT/bin"
 end
 
 # Interactive Configuration
 if status is-interactive
+    # Homebrew
+    if test -x /opt/homebrew/bin/brew
+        /opt/homebrew/bin/brew shellenv | source
+    end
+
+    # OrbStack
+    if test -f ~/.orbstack/shell/init.fish
+        source ~/.orbstack/shell/init.fish 2>/dev/null
+    end
+
+    # Conda
+    if test -f "$CONDA_ROOT/bin/conda"
+        eval "$CONDA_ROOT/bin/conda" "shell.fish" "hook" $argv | source
+    else
+        if test -f "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
+            source "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
+        else
+            fish_add_path -g "$CONDA_ROOT/bin"
+        end
+    end
+
     # zoxide
     if type -q zoxide
         zoxide init fish --cmd cd | source
@@ -62,7 +62,7 @@ if status is-interactive
         starship init fish | source
     end
 
-    # Abbreviations (Preferred over aliases for expansion)
+    # Abbreviations
     # General
     abbr -a c 'clear'
     abbr -a s 'exec fish'
@@ -160,15 +160,25 @@ if status is-interactive
     end
 
     # FZF
-    set -gx FZF_DEFAULT_COMMAND 'rg --files --hidden --follow --glob "!.git/*"'
-    set -gx FZF_DEFAULT_OPTS '--height 75% --layout=reverse --border --info=inline --preview "bat --style=numbers --color=always --theme=rose-pine {}" --preview-window right:60%:wrap'
+    set -Ux FZF_DEFAULT_OPTS "\
+    --color=bg+:#313244,bg:#1E1E2E,spinner:#F5E0DC,hl:#F38BA8 \
+    --color=fg:#CDD6F4,header:#F38BA8,info:#CBA6F7,pointer:#F5E0DC \
+    --color=marker:#B4BEFE,fg+:#CDD6F4,prompt:#CBA6F7,hl+:#F38BA8 \
+    --color=selected-bg:#45475A \
+    --color=border:#6C7086,label:#CDD6F4 \
+    --height 75% \
+    --layout=reverse \
+    --border \
+    --info=inline"
     
     set -g fzf_fd_opts --hidden --follow --exclude .git
     fzf_configure_bindings --directory=\ct --history=\cr
     set -g fzf_preview_dir_cmd eza --all --color=always --icons --git --tree --level=2
-    set -g fzf_preview_file_cmd bat --style=numbers --color=always --theme=rose-pine
+    set -g fzf_preview_file_cmd bat --style=numbers --color=always --line-range :500
     set -g fzf_diff_highlighter delta --paging=never --features="mellow-barbet" --syntax-theme="rose-pine"
     set -g fzf_history_time_format %d-%m-%y
+
+    bind \cg ripgrep_search
 
     # Bat
     if not test -d ~/.cache/bat

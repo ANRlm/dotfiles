@@ -3,6 +3,8 @@ tmux/plugins/
 fish/fish_variables
 fish/completions/
 fish/conf.d/
-fish/functions/
 fish/themes/
+fish/functions/_fzf_*.fish
+fish/functions/fisher.fish
+fish/functions/fzf_configure_bindings.fish
 mole/mole.log
