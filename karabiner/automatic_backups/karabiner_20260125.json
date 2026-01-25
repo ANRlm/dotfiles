@@ -31,8 +31,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -55,8 +54,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -79,8 +77,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -103,8 +100,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -127,8 +123,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -151,8 +146,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -175,8 +169,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -199,8 +192,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -228,8 +220,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -252,8 +243,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -276,8 +266,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
@@ -300,8 +289,7 @@
                                         "bundle_identifiers": [
                                             "^com\\.mitchellh\\.ghostty",
                                             "^com\\.googlecode\\.iterm2",
-                                            "^com\\.neovide\\.neovide",
-                                            "^org\\.alacritty"
+                                            "^com\\.neovide\\.neovide"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
