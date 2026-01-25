@@ -16,7 +16,7 @@ if [[ "$OS" == "Darwin" ]]; then
     echo "Configuring for macOS..."
     MACOS_APP_SUPPORT="$HOME/Library/Application Support"
 
-    for dir in aerospace bat btop fish ghostty nvim yazi tmux karabiner neovide mole git lazygit fastfetch go-musicfox; do
+    for dir in aerospace bat btop fish ghostty nvim yazi tmux karabiner neovide mole git lazygit fastfetch go-musicfox alacritty; do
         ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
     done
 
@@ -31,7 +31,7 @@ if [[ "$OS" == "Darwin" ]]; then
 elif [[ "$OS" == "Linux" ]]; then
     echo "Configuring for Linux..."
 
-    for dir in bat btop lazygit eza yazi helix nvim fish tmux git; do
+    for dir in bat btop lazygit eza yazi helix nvim fish tmux git alacritty; do
         ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
     done
 
