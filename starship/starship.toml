@@ -75,7 +75,7 @@ pink = '#ebbcba'
 purple = '#c4a7e7'
 red = '#eb6f92'
 yellow = '#f6c177'
-status = '#eb6f92'
+status = '#b4637a'
 
 [os]
 format = '(fg:current_line)[](fg:red)[](fg:primary bg:red)[](fg:red)'
