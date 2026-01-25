@@ -62,20 +62,20 @@ yellow = '#E5C07B'
 status = "#e23140"
 
 [palettes.rose_pine]
-foreground = '#e0def4'
-background = '#191724'
-current_line = '#21202e'
-primary = '#1f1d2e'
-box = '#26233a'
-blue = '#31748f'
-cyan = '#9ccfd8'
-green = '#56949f'
-orange = '#f6c177'
-pink = '#ebbcba'
-purple = '#c4a7e7'
-red = '#eb6f92'
-yellow = '#f6c177'
-status = '#eb6f92'
+foreground = '#e0def4'    # Text (224, 222, 244)
+background = '#191724'    # Base (25, 23, 36)
+current_line = '#21202e'  # Highlight Low (33, 32, 46)
+primary = '#1f1d2e'       # Surface (31, 29, 46)
+box = '#26233a'           # Overlay (38, 35, 58)
+blue = '#31748f'          # Pine (49, 116, 143)
+cyan = '#9ccfd8'          # Foam (156, 207, 216)
+green = '#31748f'         # Pine (49, 116, 143)
+orange = '#f6c177'        # Gold (246, 193, 119)
+pink = '#ebbcba'          # Rose (235, 188, 186)
+purple = '#c4a7e7'        # Iris (196, 167, 231)
+red = '#eb6f92'           # Love (235, 111, 146)
+yellow = '#f6c177'        # Gold (246, 193, 119)
+status = '#eb6f92'        # Love (235, 111, 146)
 
 [os]
 format = '(fg:current_line)[](fg:red)[](fg:primary bg:red)[](fg:red)'
