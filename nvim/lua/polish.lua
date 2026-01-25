@@ -6,10 +6,10 @@ vim.opt.sidescrolloff = 999
 
 if vim.g.neovide then
   -- vim.opt.guifont = "JetBrainsMono Nerd Font:h14"
-  vim.opt.guifont = "FiraCode Nerd Font Mono:h14"
+  -- vim.opt.guifont = "FiraCode Nerd Font Mono:h14"
+  vim.opt.guifont = "MesloLGS Nerd Font Mono:h14"
 
   vim.g.neovide_opacity = 1
-  -- vim.g.neovide_normal_opacity = 0.7
   vim.g.neovide_window_blurred = true
   vim.g.neovide_floating_blur_amount_x = 4.0
   vim.g.neovide_floating_blur_amount_y = 4.0
@@ -53,4 +53,8 @@ if vim.g.neovide then
   })
 
   vim.cmd.cd(vim.fn.expand "~/dotfiles")
+
+  vim.g.neovide_theme = "dark"
+  vim.opt.background = "dark"
+  vim.cmd "colorscheme rose-pine"
 end
