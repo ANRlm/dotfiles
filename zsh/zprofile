@@ -8,7 +8,7 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 export HOMEBREW_NO_INSTALL_CLEANUP=0
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_ENV_HINTS=0
-export HOMEBREW_MAKE_JOBS=logical_cpu
+export HOMEBREW_MAKE_JOBS=$(sysctl -n hw.logicalcpu)
 
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -16,6 +16,9 @@ fi
 
 # Environment Variables
 export EDITOR=nvim
+
+# Conda
+export CONDA_ROOT="/opt/homebrew/Caskroom/miniforge/base"
 
 # PATH Configuration
 typeset -U path
@@ -33,6 +36,3 @@ path=(
 
 # OrbStack
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
-
-# Conda
-export CONDA_ROOT="/opt/homebrew/Caskroom/miniforge/base"

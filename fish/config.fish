@@ -75,7 +75,7 @@ if status is-interactive
     abbr -a mf 'musicfox'
     abbr -a py 'python'
     abbr -a v 'nvim'
-    
+
     abbr -a u \
     'brew update; and \
      brew upgrade; and \
@@ -146,9 +146,6 @@ if status is-interactive
     abbr -a el 'eza --long --header --icons --git --all'
     abbr -a et 'eza --tree --level=2 --long --header --icons --git'
 
-    # Aliases
-    # Use alias for things where you want to shadow a command or it's not just a shortcut
-    
     # Yazi 
     function y
         set tmp (mktemp -t "yazi-cwd.XXXXXX")
@@ -170,7 +167,7 @@ if status is-interactive
     --layout=reverse \
     --border \
     --info=inline"
-    
+
     set -g fzf_fd_opts --hidden --follow --exclude .git
     fzf_configure_bindings --directory=\ct --history=\cr
     set -g fzf_preview_dir_cmd eza --all --color=always --icons --git --tree --level=2
