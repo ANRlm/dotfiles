@@ -1,5 +1,2 @@
 [flavor]
-dark = "rose-pine"    
-# dark = "rose-pine-moon"
-# light = "rose-pine-dawn"
-light = "rose-pine"
+dark = "catppuccin-mocha"
