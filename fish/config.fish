@@ -64,13 +64,18 @@ if status is-interactive
 
     # Abbreviations (Preferred over aliases for expansion)
     # General
-    abbr -a c clear
+    abbr -a c 'clear'
     abbr -a s 'exec fish'
-    abbr -a py python
-    abbr -a v nvim
     abbr -a ip 'ipconfig getifaddr en0'
     abbr -a ports 'lsof -i -P | grep -i "listen"'
+    abbr -a df 'df -h'
+
     abbr -a disk 'smartctl -a disk3'
+    abbr -a f 'fastfetch'
+    abbr -a mf 'musicfox'
+    abbr -a py 'python'
+    abbr -a v 'nvim'
+    
     abbr -a u \
     'brew update; and \
      brew upgrade; and \
@@ -111,7 +116,7 @@ if status is-interactive
     abbr -a gpl 'git pull'
     abbr -a gd 'git diff'
     abbr -a glg 'git log --oneline --graph --all'
-    abbr -a lg lazygit
+    abbr -a lg 'lazygit'
 
     # Tmux
     abbr -a ts 'tmux source-file ~/.config/tmux/tmux.conf'
@@ -124,7 +129,7 @@ if status is-interactive
     abbr -a cel 'conda env list'
     abbr -a ci 'conda install'
     abbr -a cui 'conda remove'
-    abbr -a cu 'conda update conda -y; and conda update -all -y'
+    abbr -a cu 'conda update conda -y; and conda update --all -y'
     abbr -a cs 'conda search'
     abbr -a cl 'conda list'
     abbr -a cc 'conda clean --all -y'
@@ -137,15 +142,13 @@ if status is-interactive
     abbr -a yad 'ya pkg delete'
     abbr -a yal 'ya pkg list'
 
-    # Tools
-    abbr -a mf musicfox
+    # Eza
+    abbr -a el 'eza --long --header --icons --git --all'
+    abbr -a et 'eza --tree --level=2 --long --header --icons --git'
 
     # Aliases
     # Use alias for things where you want to shadow a command or it's not just a shortcut
-    alias el 'eza --long --header --icons --git --all'
-    alias et 'eza --tree --level=2 --long --header --icons --git'
-    alias df 'df -h'
-
+    
     # Yazi 
     function y
         set tmp (mktemp -t "yazi-cwd.XXXXXX")

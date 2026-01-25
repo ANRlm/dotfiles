@@ -24,8 +24,9 @@ $line_break\
 $character\
 """
 
-palette = 'catppuccin_mocha'
+# palette = 'catppuccin_mocha'
 # palette = 'tokyo_night'
+palette = 'rose_pine'
 add_newline = true
 
 [palettes.catppuccin_mocha]
@@ -59,6 +60,22 @@ purple = '#BB80B3'
 red = '#F7768E'
 yellow = '#E5C07B'
 status = "#e23140"
+
+[palettes.rose_pine]
+foreground = '#e0def4'
+background = '#191724'
+current_line = '#21202e'
+primary = '#1f1d2e'
+box = '#26233a'
+blue = '#31748f'
+cyan = '#9ccfd8'
+green = '#56949f'
+orange = '#f6c177'
+pink = '#ebbcba'
+purple = '#c4a7e7'
+red = '#eb6f92'
+yellow = '#f6c177'
+status = '#eb6f92'
 
 [os]
 format = '(fg:current_line)[](fg:red)[](fg:primary bg:red)[](fg:red)'
