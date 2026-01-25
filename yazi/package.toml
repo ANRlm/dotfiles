@@ -29,16 +29,6 @@ rev = "de33976"
 hash = "3e023d31f29201efdac2a6ae35fedb78"
 
 [[flavor.deps]]
-use = "Mintass/rose-pine"
-rev = "d91f8f2"
-hash = "87da3630653b6d272e43658418599188"
-
-[[flavor.deps]]
-use = "Mintass/rose-pine-dawn"
-rev = "d82f54f"
-hash = "15ae5f83d3770b9ffc276af77f642e2b"
-
-[[flavor.deps]]
-use = "Mintass/rose-pine-moon"
-rev = "94385fe"
-hash = "edbe0dfb5db8ff37281dba62adc7e750"
+use = "yazi-rs/flavors:catppuccin-mocha"
+rev = "ca61658"
+hash = "8eabb4e88096f10905a6df62cfaadbf4"

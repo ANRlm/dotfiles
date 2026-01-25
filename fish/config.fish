@@ -56,7 +56,7 @@ if status is-interactive
     end
     
     # Theme
-    fish_config theme choose "Rosé Pine"
+    fish_config theme choose "Catppuccin Mocha"
 
     # Starship
     if command -q starship
