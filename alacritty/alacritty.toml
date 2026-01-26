@@ -1,5 +1,5 @@
 [window]
-padding = { x = 10, y = 10 }
+padding = { x = 2, y = 2 }
 dynamic_padding = true
 decorations = "Buttonless"
 opacity = 1.0
