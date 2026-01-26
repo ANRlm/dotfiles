@@ -12,11 +12,16 @@ echo "Detected Dotfiles Dir: $DOTFILES_DIR"
 
 mkdir -p "$CONFIG_DIR"
 
+git clone https://github.com/gpakosz/.tmux.git "$DOTFILES_DIR/oh-my-tmux"
+ln -sf "$DOTFILES_DIR/oh-my-tmux/.tmux.conf" "$DOTFILES_DIR/tmux/tmux.conf"
+
 if [[ "$OS" == "Darwin" ]]; then
     MACOS_APP_SUPPORT="$HOME/Library/Application Support"
 
     for dir in aerospace bat btop fish ghostty nvim yazi tmux karabiner neovide mole git lazygit fastfetch go-musicfox alacritty; do
-        ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
+        rm -rf "$CONFIG_DIR/$dir"
+        ln -s "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
+
     done
 
     ln -sfn "$DOTFILES_DIR/eza" "$MACOS_APP_SUPPORT/eza"
@@ -29,7 +34,8 @@ if [[ "$OS" == "Darwin" ]]; then
 
 elif [[ "$OS" == "Linux" ]]; then
     for dir in bat btop lazygit eza yazi helix nvim fish tmux git alacritty; do
-        ln -sfn "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
+        rm -rf "$CONFIG_DIR/$dir"
+        ln -s "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
     done
 fi
 

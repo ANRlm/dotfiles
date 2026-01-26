@@ -1,7 +1,7 @@
 git:
   pagers:
     - colorArg: always
-      pager: delta --paging=never --features="mellow-barbet" --syntax-theme="rose-pine"
+      pager: delta --paging=never --features="mellow-barbet" --syntax-theme="Catppuccin Mocha"
       useConfig: false
       
 gui:

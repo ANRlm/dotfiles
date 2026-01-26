@@ -1,5 +1,10 @@
 .DS_Store
+
 tmux/plugins/
+tmux.bak/plugins/
+oh-my-tmux/
+tmux/tmux.conf
+
 fish/fish_variables
 fish/completions/
 fish/conf.d/
@@ -7,4 +12,5 @@ fish/themes/
 fish/functions/_fzf_*.fish
 fish/functions/fisher.fish
 fish/functions/fzf_configure_bindings.fish
+
 mole/mole.log
