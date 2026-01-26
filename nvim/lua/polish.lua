@@ -5,9 +5,9 @@ vim.opt.scrolloff = 999
 vim.opt.sidescrolloff = 999
 
 if vim.g.neovide then
-  -- vim.opt.guifont = "JetBrainsMono Nerd Font:h14"
+  vim.opt.guifont = "JetBrainsMono Nerd Font:h14"
   -- vim.opt.guifont = "FiraCode Nerd Font Mono:h14"
-  vim.opt.guifont = "MesloLGS Nerd Font Mono:h14"
+  -- vim.opt.guifont = "MesloLGS Nerd Font Mono:h14"
 
   vim.g.neovide_opacity = 1
   vim.g.neovide_window_blurred = true
