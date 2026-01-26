@@ -16,7 +16,7 @@
     side-by-side = true
     line-numbers = true
     dark = true      # or light = true, or omit for auto-detection
-    syntax-theme = rose-pine
+    syntax-theme = Catppuccin Mocha
     features = mellow-barbet
 
 [merge]
