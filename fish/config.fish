@@ -90,6 +90,7 @@ if status is-interactive
      npm update -g; and \
      npm cache clean --force; and \
      mas update; and \
+     fish -c "cd ~/dotfiles/oh-my-tmux/ && git pull"; and \
      mo clean; and \
      mo purge'
 
