@@ -125,6 +125,8 @@ if status is-interactive
     abbr -a tn 'tmux new -s'
     abbr -a tk 'tmux kill-session -t'
     abbr -a ta 'tmux attach'
+    abbr -a trw 'tmux rename-window'
+    abbr -a trs 'tmux rename-session'
 
     # Conda
     abbr -a cel 'conda env list'
