@@ -438,18 +438,18 @@ set -ga update-environment TERM_PROGRAM
 # by default, launching tmux will update tpm and all plugins
 #   - true (default)
 #   - false
-tmux_conf_update_plugins_on_launch=true
+tmux_conf_update_plugins_on_launch=false
 
 # by default, reloading the configuration will update tpm and all plugins
 #   - true (default)
 #   - false
-tmux_conf_update_plugins_on_reload=true
+tmux_conf_update_plugins_on_reload=false
 
 # by default, reloading the configuration will uninstall tpm and plugins when no
 # plugins are enabled
 #   - true (default)
 #   - false
-tmux_conf_uninstall_plugins_on_reload=true
+tmux_conf_uninstall_plugins_on_reload=false
 
 # /!\ the tpm bindings differ slightly from upstream:
 #   - installing plugins: <prefix> + I
@@ -476,59 +476,137 @@ set -g @vim_navigator_mapping_down "C-j"
 set -g @vim_navigator_mapping_prev ""  # removes the C-\ binding
 set -g @vim_navigator_prefix_mapping_clear_screen ""
 
-set -g @plugin 'dracula/tmux'
+# set -g @plugin 'dracula/tmux'
+#
+# set -g @dracula-colors "
+# # simple tomorrow night color palette
+# pink='#cc6666'
+# orange='#de935f'
+# yellow='#f0c574'
+# green='#b5bd68'
+# cyan='#8abdb6'
+# blue='#81a2be'
+# light_purple='#b294ba'
+# white='#c4c8c5'
+# dark_gray='#363a41'
+# red='#cc6666'
+# gray='#1d1f21'
+# dark_purple='#373b41'
+# "
+#
+# set -g @dracula-show-flags true
+# set -g @dracula-refresh-rate 5
+# set -g @dracula-show-empty-plugins false
+#
+# set -g @dracula-left-pad ' '
+# set -g @dracula-right-pad ' '
+#
+# set -g @dracula-show-powerline true
+# set -g @dracula-transparent-powerline-bg true
+#
+# set -g @dracula-show-left-icon "#h / #S"
+# set -g @dracula-left-icon-padding 1
+#
+# # plugins
+# set -g @dracula-plugins "battery network-bandwidth cpu-usage tmux-ram-usage ram-usage git ssh-session time"
+# set -g @dracula-battery-colors "pink dark_gray"
+# set -g @dracula-network-bandwidth-colors "orange dark_gray"
+# set -g @dracula-cpu-usage-colors "yellow dark_gray"
+# set -g @dracula-tmux-ram-usage-colors "cyan dark_gray"
+# set -g @dracula-ram-usage-colors "blue dark_gray"
+# set -g @dracula-git-colors "light_purple dark_gray"
+# set -g @dracula-ssh-session-colors "red dark_gray"
+# set -g @dracula-time-colors "green dark_gray"
+# # battery
+# set -g @dracula-battery-label "Battery"
+# # cpu-usage
+# set -g @dracula-cpu-usage-label "CPU"
+# # network-bandwidth
+# set -g @dracula-network-bandwidth "utun6"
+# set -g @dracula-network-bandwidth-show-interface true
+# set -g @dracula-network-bandwidth-interval 5
+# # git
+# set -g @dracula-git-disable-status true
+# set -g @dracula-git-show-current-symbol ✓
+# set -g @dracula-git-show-diff-symbol !
+# set -g @dracula-git-no-repo-message ""
+# set -g @dracula-git-no-untracked-files true
+# set -g @dracula-git-show-remote-status false
+# set -g @dracula-git-show-repo-name false
+# # ram-usage
+# set -g @dracula-ram-usage-label "RAM"
+# # ssh-session
+# set -g @dracula-show-ssh-only-when-connected true
+# set -g @dracula-show-ssh-session-port true
+# # time
+# set -g @dracula-show-timezone false
+# set -g @dracula-day-month true
+# set -g @dracula-military-time true
+# set -g @dracula-time-format "%F %R"
+# # tmux-ram-usage
+# set -g @dracula-tmux-ram-usage-label "TRAM"
 
-set -g @dracula-colors "
-# simple tomorrow night color palette
-pink='#cc6666'
-orange='#de935f'
-yellow='#f0c574'
-green='#b5bd68'
-cyan='#8abdb6'
-blue='#81a2be'
-light_purple='#b294ba'
-white='#c4c8c5'
-dark_gray='#363a41'
-red='#cc6666'
-gray='#1d1f21'
-dark_purple='#373b41'
-"
+set -g @plugin 'tmux-plugins/tmux-online-status'
+set -g @plugin 'tmux-plugins/tmux-battery'
 
-set -g @dracula-show-flags true
-set -g @dracula-refresh-rate 5
-set -g @dracula-show-empty-plugins false
+# Configure Catppuccin
+set -g @catppuccin_flavor "mocha"
+set -g @catppuccin_status_background "none"
+set -g @catppuccin_window_status_style "none"
+set -g @catppuccin_pane_status_enabled "off"
+set -g @catppuccin_pane_border_status "off"
 
-set -g @dracula-left-pad ' '
-set -g @dracula-right-pad ' '
+# Configure Online
+set -g @online_icon "ok"
+set -g @offline_icon "nok"
 
-set -g @dracula-show-powerline true
-set -g @dracula-transparent-powerline-bg true
+# status left look and feel
+set -g status-left-length 100
+set -g status-left ""
+set -ga status-left "#{?client_prefix,#{#[bg=#{@thm_red},fg=#{@thm_bg},bold]  #S },#{#[bg=#{@thm_bg},fg=#{@thm_green}]  #S }}"
+set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_overlay_0},none]│"
+set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_maroon}]  #{pane_current_command} "
+set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_overlay_0},none]│"
+set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_blue}]  #{=/-32/...:#{s|$USER|~|:#{b:pane_current_path}}} "
+set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_overlay_0},none]#{?window_zoomed_flag,│,}"
+set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_yellow}]#{?window_zoomed_flag,  zoom ,}"
 
-set -g @dracula-show-left-icon "#h / #S"
-set -g @dracula-left-icon-padding 1
+# status right look and feel
+set -g status-right-length 100
+set -g status-right ""
+set -ga status-right "#{?#{e|>=:10,#{battery_percentage}},#{#[bg=#{@thm_red},fg=#{@thm_bg}]},#{#[bg=#{@thm_bg},fg=#{@thm_pink}]}} #{battery_icon} #{battery_percentage} "
+set -ga status-right "#[bg=#{@thm_bg},fg=#{@thm_overlay_0}, none]│"
+set -ga status-right "#[bg=#{@thm_bg}]#{?#{==:#{online_status},ok},#[fg=#{@thm_mauve}] 󰖩 on ,#[fg=#{@thm_red},bold]#[reverse] 󰖪 off }"
+set -ga status-right "#[bg=#{@thm_bg},fg=#{@thm_overlay_0}, none]│"
+set -ga status-right "#[bg=#{@thm_bg},fg=#{@thm_blue}] 󰭦 %Y-%m-%d 󰅐 %H:%M "
 
-# plugins
-set -g @dracula-plugins "battery ram-usage git time"
-# battery
-set -g @dracula-battery-label "♥ "
-set -g @dracula-battery-label false
-set -g @dracula-show-battery-status true
-# git
-set -g @dracula-git-disable-status true
-set -g @dracula-git-show-current-symbol ✓
-set -g @dracula-git-show-diff-symbol !
-set -g @dracula-git-no-repo-message ""
-set -g @dracula-git-no-untracked-files true
-set -g @dracula-git-show-remote-status false
-set -g @dracula-git-show-repo-name false
-# ram-usage
-set -g @dracula-ram-usage-label " "
-# time
-set -g @dracula-show-timezone false
-set -g @dracula-day-month true
-set -g @dracula-military-time true
-set -g @dracula-time-format "%F %R"
+# Configure Tmux
+set -g status-position top
+set -g status-style "bg=#{@thm_bg}"
+set -g status-justify "absolute-centre"
 
+# pane border look and feel
+setw -g pane-border-status top
+setw -g pane-border-format ""
+setw -g pane-active-border-style "bg=#{@thm_bg},fg=#{@thm_overlay_0}"
+setw -g pane-border-style "bg=#{@thm_bg},fg=#{@thm_surface_0}"
+setw -g pane-border-lines single
+
+# window look and feel
+set -wg automatic-rename on
+set -g automatic-rename-format "Window"
+
+set -g window-status-format " #I#{?#{!=:#{window_name},Window},: #W,} "
+set -g window-status-style "bg=#{@thm_bg},fg=#{@thm_rosewater}"
+set -g window-status-last-style "bg=#{@thm_bg},fg=#{@thm_peach}"
+set -g window-status-activity-style "bg=#{@thm_red},fg=#{@thm_bg}"
+set -g window-status-bell-style "bg=#{@thm_red},fg=#{@thm_bg},bold"
+set -gF window-status-separator "#[bg=#{@thm_bg},fg=#{@thm_overlay_0}]│"
+
+set -g window-status-current-format " #I#{?#{!=:#{window_name},Window},: #W,} "
+set -g window-status-current-style "bg=#{@thm_peach},fg=#{@thm_bg},bold"
+
+run ~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux
 
 # -- custom variables ----------------------------------------------------------
 
