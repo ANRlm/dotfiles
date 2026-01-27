@@ -14,8 +14,12 @@ mkdir -p "$CONFIG_DIR"
 # Tmux restore
 mkdir -p "$CONFIG_DIR/tmux"
 mkdir -p "$CONFIG_DIR/tmux/plugins/catppuccin"
-git clone https://github.com/gpakosz/.tmux.git "$DOTFILES_DIR/oh-my-tmux"
-git clone -b v2.1.3 https://github.com/catppuccin/tmux.git "$CONFIG_DIR/tmux/plugins/catppuccin/tmux"
+if [ ! -d "$DOTFILES_DIR/oh-my-tmux" ]; then
+  git clone https://github.com/gpakosz/.tmux.git "$DOTFILES_DIR/oh-my-tmux"
+fi
+if [ ! -d "$CONFIG_DIR/tmux/plugins/catppuccin/tmux" ]; then
+  git clone -b v2.1.3 https://github.com/catppuccin/tmux.git "$CONFIG_DIR/tmux/plugins/catppuccin/tmux"
+fi
 ln -sf "$DOTFILES_DIR/oh-my-tmux/.tmux.conf" "$CONFIG_DIR/tmux/tmux.conf"
 ln -sf "$DOTFILES_DIR/tmux/tmux.conf.local" "$CONFIG_DIR/tmux/tmux.conf.local"
 
