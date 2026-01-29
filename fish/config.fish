@@ -83,6 +83,7 @@ if status is-interactive
      npm cache clean --force; and \
      mas update; and \
      fish -c "cd ~/dotfiles/oh-my-tmux/ && git pull"; and \
+     rustup update; and \
      mo clean; and \
      mo purge'
 
