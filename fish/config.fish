@@ -12,19 +12,12 @@ set -gx HOMEBREW_NO_ANALYTICS 1
 set -gx HOMEBREW_NO_ENV_HINTS 0
 set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 set -gx CONDA_ROOT "/opt/homebrew/Caskroom/miniforge/base"
-set -Ux XDG_CONFIG_HOME ~/.config
 
 # PATH Configuration
-if not contains "/opt/homebrew/opt/make/libexec/gnubin" $fish_user_paths
-    fish_add_path "/opt/homebrew/opt/make/libexec/gnubin"
-    fish_add_path "/usr/local/share/dotnet"
-    fish_add_path "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
-    fish_add_path "$HOME/.lmstudio/bin"
-    fish_add_path "/opt/homebrew/opt/openjdk/bin"
-    fish_add_path "/opt/homebrew/opt/llvm/bin"
-    fish_add_path "$HOME/.antigravity/antigravity/bin"
-    fish_add_path "$CONDA_ROOT/bin"
-end
+fish_add_path "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+fish_add_path "/opt/homebrew/opt/openjdk/bin"
+fish_add_path "$HOME/.antigravity/antigravity/bin"
+fish_add_path "/opt/homebrew/opt/rustup/bin"
 
 # Interactive Configuration
 if status is-interactive
@@ -71,7 +64,6 @@ if status is-interactive
     abbr -a df 'df -h'
 
     abbr -a disk 'smartctl -a disk3'
-    abbr -a f 'fastfetch'
     abbr -a mf 'musicfox'
     abbr -a py 'python'
     abbr -a v 'nvim'
@@ -183,10 +175,6 @@ if status is-interactive
     # Bat
     if not test -d ~/.cache/bat
         bat cache --build 2>/dev/null
-    end
-
-    function copy
-        bat -p $argv | pbcopy
     end
 
     # Mole
