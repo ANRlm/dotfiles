@@ -78,6 +78,7 @@ mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
 mas "Picview", id: 6452016140
 mas "QQ", id: 451108668
+mas "TencentMeeting", id: 1484048379
 mas "uBlock Origin Lite", id: 6745342698
 mas "UPDF", id: 1619925971
 mas "WeChat", id: 836500024
