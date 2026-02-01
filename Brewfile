@@ -69,6 +69,7 @@ cask "unity-hub"
 cask "visual-studio-code"
 cask "wetype"
 cask "zed"
+cask "zen"
 mas "BaiduNetdisk", id: 547166701
 mas "Canva", id: 897446215
 mas "Keynote", id: 409183694
