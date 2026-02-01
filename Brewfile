@@ -12,7 +12,6 @@ brew "fzf"
 brew "gdu"
 brew "git"
 brew "git-delta"
-brew "glow"
 brew "go"
 brew "handbrake"
 brew "jq"
@@ -73,7 +72,6 @@ cask "zen"
 mas "BaiduNetdisk", id: 547166701
 mas "Canva", id: 897446215
 mas "Keynote", id: 409183694
-mas "Live Wallpaper", id: 1456235760
 mas "NetEaseMusic", id: 944848654
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
