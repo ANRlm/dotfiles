@@ -41,7 +41,7 @@ window-padding-balance  = true
 window-decoration       = auto
 window-theme            = auto
 window-colorspace       = display-p3
-window-step-resize      = true
+window-step-resize      = false
 window-width            = 150
 window-height           = 50
 window-new-tab-position = current
@@ -104,6 +104,3 @@ keybind = cmd+shift+l=resize_split:right,10
 keybind = cmd+shift+k=resize_split:up,10
 keybind = cmd+shift+h=resize_split:left,10
 keybind = cmd+shift+j=resize_split:down,10
-
-# for tmux
-# keybind = super+ctrl+alt+shift+a=text:\x01
