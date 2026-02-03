@@ -1,4 +1,4 @@
-theme = "rose_pine"
+theme = "mellow"
 
 [editor]
 line-number = "relative"
@@ -16,7 +16,14 @@ select = "block"
 [editor.statusline]
 left = ["mode", "spinner"]
 center = ["file-name"]
-right = ["diagnostics", "selections", "position", "file-encoding", "file-line-ending", "file-type"]
+right = [
+  "diagnostics",
+  "selections",
+  "position",
+  "file-encoding",
+  "file-line-ending",
+  "file-type",
+]
 separator = "│"
 mode.normal = "NORMAL"
 mode.insert = "INSERT"

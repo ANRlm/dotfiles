@@ -84,6 +84,7 @@ if status is-interactive
      mas update; and \
      fish -c "cd ~/dotfiles/oh-my-tmux/ && git pull"; and \
      rustup update; and \
+     pnpm store prune; and \
      mo clean; and \
      mo purge'
 
