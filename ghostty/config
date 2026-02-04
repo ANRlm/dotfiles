@@ -62,7 +62,7 @@ clipboard-trim-trailing-spaces = true
 # -------------------------------------------------- #
 # Quick-terminal
 # -------------------------------------------------- #
-keybind                           = global:cmd+control+shift+opt+t=toggle_quick_terminal
+keybind                           = global:control+shift+opt+t=toggle_quick_terminal
 quick-terminal-position           = center
 quick-terminal-size               = 60%,70%
 quick-terminal-animation-duration = 0.1
@@ -76,31 +76,17 @@ quick-terminal-animation-duration = 0.1
 # keybind = =new_split:right
 
 # fullscreen
-# keybind = cmd+control+shift+opt+f=toggle_split_zoom
-# keybind = control+f=toggle_split_zoom
-keybind = control+cmd+f=toggle_split_zoom
+# keybind = f=toggle_split_zoom
 
 # focus
-# keybind = cmd+control+shift+opt+h=goto_split:left
-# keybind = cmd+control+shift+opt+j=goto_split:down
-# keybind = cmd+control+shift+opt+k=goto_split:up
-# keybind = cmd+control+shift+opt+l=goto_split:right
-# keybind = cmd+control+shift+opt+bracket_left=goto_split:previous
-# keybind = cmd+control+shift+opt+bracket_right=goto_split:next
-# keybind = control+h=goto_split:left 
-# keybind = control+j=goto_split:down 
-# keybind = control+k=goto_split:up 
-# keybind = control+l=goto_split:right 
-# keybind = control+bracket_left=goto_split:previous 
-# keybind = control+bracket_right=goto_split:next 
-keybind = control+cmd+h=goto_split:left
-keybind = control+cmd+j=goto_split:down
-keybind = control+cmd+k=goto_split:up
-keybind = control+cmd+l=goto_split:right
+# keybind = h=goto_split:left
+# keybind = j=goto_split:down
+# keybind = k=goto_split:up
+# keybind = l=goto_split:right
 
 # resize
-keybind = cmd+shift+equal=equalize_splits
-keybind = cmd+shift+l=resize_split:right,10
-keybind = cmd+shift+k=resize_split:up,10
-keybind = cmd+shift+h=resize_split:left,10
-keybind = cmd+shift+j=resize_split:down,10
+# keybind = equal=equalize_splits
+# keybind = l=resize_split:right,10
+# keybind = k=resize_split:up,10
+# keybind = h=resize_split:left,10
+# keybind = j=resize_split:down,10
