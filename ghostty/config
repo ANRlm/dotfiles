@@ -51,7 +51,7 @@ focus-follows-mouse     = false
 # -------------------------------------------------- #
 custom-shader = "shaders/cursor_warp.glsl"
 custom-shader = "shaders/ripple_cursor.glsl"
-custom-shader = "shaders/ghostty-shaders/bloom.glsl"
+# custom-shader = "shaders/ghostty-shaders/bloom.glsl"
 # -------------------------------------------------- #
 # Clipboard 
 # -------------------------------------------------- #
