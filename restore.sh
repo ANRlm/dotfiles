@@ -26,7 +26,7 @@ ln -sf "$DOTFILES_DIR/tmux/tmux.conf.local" "$CONFIG_DIR/tmux/tmux.conf.local"
 # --------------------------------------------------
 # dotfiles
 # --------------------------------------------------
-for dir in aerospace alacritty bat btop eza fish ghostty git go-musicfox helix karabiner lazygit mole neovide nvim yazi; do
+for dir in aerospace alacritty bat btop eza fish ghostty git go-musicfox karabiner lazygit mole neovide nvim yazi; do
 	rm -rf "$CONFIG_DIR/$dir"
 	ln -s "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
 done

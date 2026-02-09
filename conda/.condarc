@@ -1,8 +1,13 @@
 channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/pro
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
   - conda-forge
 mirrored_channels:
   conda-forge:
     - https://conda.anaconda.org/conda-forge
     - https://prefix.dev/conda-forge
-
 auto_activate: false
+show_channel_urls: true

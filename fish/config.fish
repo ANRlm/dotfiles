@@ -81,6 +81,8 @@ if status is-interactive
      fisher update; and \
      npm update -g; and \
      npm cache clean --force; and \
+     pnpm update -g; and \
+     pnpm store prune; and \
      mas update; and \
      fish -c "cd ~/dotfiles/oh-my-tmux/ && git pull"; and \
      rustup update; and \
