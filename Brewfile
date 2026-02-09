@@ -71,13 +71,8 @@ cask "unity-hub"
 cask "visual-studio-code"
 cask "wetype"
 cask "zed"
-mas "Canva", id: 897446215
-mas "Keynote讲演", id: 409183694
-mas "Numbers表格", id: 409203825
-mas "Pages文稿", id: 409201541
 mas "Picview", id: 6452016140
 mas "QQ", id: 451108668
-mas "uBlock Origin Lite", id: 6745342698
 mas "UPDF", id: 1619925971
 mas "WPS Office", id: 1443749478
 mas "Xcode", id: 497799835

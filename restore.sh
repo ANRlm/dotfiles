@@ -46,10 +46,8 @@ fi
 # --------------------------------------------------
 # others
 # --------------------------------------------------
-# zsh
-ln -sf "$DOTFILES_DIR/zsh/.hushlogin" "$HOME/.hushlogin"
-ln -sf "$DOTFILES_DIR/zsh/zprofile" "$HOME/.zprofile"
-ln -sf "$DOTFILES_DIR/zsh/zshrc" "$HOME/.zshrc"
+# shell
+ln -sf "$DOTFILES_DIR/.hushlogin" "$HOME/.hushlogin"
 # starship
 ln -sf "$DOTFILES_DIR/starship/starship.toml" "$CONFIG_DIR/starship.toml"
 # conda
