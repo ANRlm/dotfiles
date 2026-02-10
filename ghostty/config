@@ -15,8 +15,6 @@ macos-secure-input-indication = true
 # -------------------------------------------------- #
 # Font
 # -------------------------------------------------- #
-# font-family = FiraCode Nerd Font Mono
-# font-family = JetBrainsMono Nerd Font Mono
 font-family = MesloLGS Nerd Font Mono
 font-family = Sarasa Mono SC
 font-thicken = true
@@ -25,12 +23,7 @@ font-size = 14
 # -------------------------------------------------- #
 # Custom 
 # -------------------------------------------------- #
-# theme = Cursor Dark
-# theme = Rose Pine
 theme = Mellow
-# theme = Vesper
-# theme = Catppuccin Mocha
-# theme = dark:,light:
 background-opacity      = 1
 background-blur         = 85
 mouse-hide-while-typing = true
@@ -51,7 +44,6 @@ focus-follows-mouse     = false
 # -------------------------------------------------- #
 custom-shader = "shaders/cursor_warp.glsl"
 custom-shader = "shaders/ripple_cursor.glsl"
-# custom-shader = "shaders/ghostty-shaders/bloom.glsl"
 # -------------------------------------------------- #
 # Clipboard 
 # -------------------------------------------------- #
