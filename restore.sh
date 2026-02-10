@@ -47,7 +47,7 @@ fi
 # others
 # --------------------------------------------------
 # shell
-ln -sf "$DOTFILES_DIR/.hushlogin" "$HOME/.hushlogin"
+touch "$HOME/.hushlogin"
 # starship
 ln -sf "$DOTFILES_DIR/starship/starship.toml" "$CONFIG_DIR/starship.toml"
 # conda
