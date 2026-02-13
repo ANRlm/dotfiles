@@ -54,10 +54,10 @@ clipboard-trim-trailing-spaces = true
 # -------------------------------------------------- #
 # Quick-terminal
 # -------------------------------------------------- #
-keybind                           = global:control+shift+opt+t=toggle_quick_terminal
-quick-terminal-position           = center
-quick-terminal-size               = 60%,70%
-quick-terminal-animation-duration = 0.1
+# keybind                           = global:control+shift+opt+t=toggle_quick_terminal
+# quick-terminal-position           = center
+# quick-terminal-size               = 60%,70%
+# quick-terminal-animation-duration = 0.1
 # -------------------------------------------------- #
 # Keybinding
 # -------------------------------------------------- #
