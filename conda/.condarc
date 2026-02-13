@@ -9,5 +9,5 @@ mirrored_channels:
   conda-forge:
     - https://conda.anaconda.org/conda-forge
     - https://prefix.dev/conda-forge
-auto_activate: false
+auto_activate: true
 show_channel_urls: true
