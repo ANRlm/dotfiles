@@ -48,7 +48,7 @@ if status is-interactive
     end
     
     # Theme
-    fish_config theme choose "Rosé Pine"
+    fish_config theme choose "ayu"
 
     # Starship
     if command -q starship
@@ -163,7 +163,7 @@ if status is-interactive
     --info=inline"
 
     set -g fzf_fd_opts --hidden --follow --exclude .git
-    fzf_configure_bindings --directory=\ct --history=\cr
+    # fzf_configure_bindings --directory=\ct --history=\cr
     set -g fzf_preview_dir_cmd eza --all --color=always --icons --git --tree --level=2
     set -g fzf_preview_file_cmd bat --style=numbers --color=always --line-range :500
     set -g fzf_diff_highlighter delta --paging=never --features="mellow-barbet" --syntax-theme="Catppuccin Mocha"

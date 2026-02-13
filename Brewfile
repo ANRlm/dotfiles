@@ -36,10 +36,6 @@ brew "tw93/tap/mole"
 cask "nikitabobko/tap/aerospace"
 cask "alacritty"
 cask "aldente"
-cask "antigravity"
-cask "betterdisplay"
-cask "blender"
-cask "cleanshot"
 cask "cursor"
 cask "easydict"
 cask "flowvision"
@@ -55,35 +51,18 @@ cask "karabiner-elements"
 cask "keka"
 cask "loop"
 cask "lulu"
-cask "lunarbar"
 cask "microsoft-edge"
 cask "miniforge"
 cask "navicat-premium-lite"
 cask "neovide-app"
-cask "notion"
-cask "obs"
 cask "obsidian"
 cask "orbstack"
-cask "pearcleaner"
 cask "raycast"
 cask "sf-symbols"
-cask "spotify"
 cask "trae-cn"
-cask "typora"
-cask "ungoogled-chromium"
-cask "unity-hub"
 cask "visual-studio-code"
 cask "wetype"
 cask "zed"
-mas "QQ", id: 451108668
-mas "UPDF", id: 1619925971
-mas "WPS Office", id: 1443749478
-mas "Xcode", id: 497799835
-mas "剪映专业版", id: 1529999940
-mas "微信", id: 836500024
-mas "百度网盘", id: 547166701
-mas "网易云音乐", id: 944848654
-mas "腾讯会议", id: 1484048379
 vscode "be5invis.vscode-custom-css"
 vscode "brandonkirbyson.vscode-animations"
 vscode "christian-kohler.path-intellisense"
