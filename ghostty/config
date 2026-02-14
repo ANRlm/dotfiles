@@ -51,34 +51,3 @@ clipboard-read                 = allow
 clipboard-write                = allow
 clipboard-paste-protection     = true
 clipboard-trim-trailing-spaces = true
-# -------------------------------------------------- #
-# Quick-terminal
-# -------------------------------------------------- #
-# keybind                           = global:control+shift+opt+t=toggle_quick_terminal
-# quick-terminal-position           = center
-# quick-terminal-size               = 60%,70%
-# quick-terminal-animation-duration = 0.1
-# -------------------------------------------------- #
-# Keybinding
-# -------------------------------------------------- #
-# new window
-# keybind = =new_split:left
-# keybind = =new_split:down
-# keybind = =new_split:up
-# keybind = =new_split:right
-
-# fullscreen
-# keybind = f=toggle_split_zoom
-
-# focus
-# keybind = h=goto_split:left
-# keybind = j=goto_split:down
-# keybind = k=goto_split:up
-# keybind = l=goto_split:right
-
-# resize
-# keybind = equal=equalize_splits
-# keybind = l=resize_split:right,10
-# keybind = k=resize_split:up,10
-# keybind = h=resize_split:left,10
-# keybind = j=resize_split:down,10
