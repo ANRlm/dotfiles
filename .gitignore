@@ -13,5 +13,5 @@ fish/functions/fzf_configure_bindings.fish
 mole/mole.log
 mole/operations.log
 
-karabiner/automatic_backups/
-karabiner/assets/
+karabiner/config/automatic_backups/
+karabiner/config/assets/

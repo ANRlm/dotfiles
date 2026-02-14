@@ -10,6 +10,7 @@ set -gx HOMEBREW_NO_AUTO_UPDATE 1
 set -gx HOMEBREW_NO_ANALYTICS 1
 set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 set -gx CONDA_ROOT "/opt/homebrew/Caskroom/miniforge/base"
+set -gx STARSHIP_CONFIG "$HOME/.config/starship/starship.toml"
 
 # PATH Configuration
 fish_add_path "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
