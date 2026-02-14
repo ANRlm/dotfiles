@@ -41,7 +41,7 @@ if [[ "$OS" == "Darwin" ]]; then
 	sudo spctl --master-disable || true
 
 	# homebrew
-	brew bundle
+	brew bundle --file="$DOTFILES_DIR/Brewfile"
 fi
 # --------------------------------------------------
 # others
@@ -56,5 +56,7 @@ ln -sf "$DOTFILES_DIR/conda/.condarc" "$HOME/.condarc"
 ln -sf "$DOTFILES_DIR/idea/.ideavimrc" "$HOME/.ideavimrc"
 # git
 ln -sf "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
+# goku
+ln -sf "$DOTFILES_DIR/goku/karabiner.edn" "$CONFIG_DIR/karabiner.edn"
 
 echo "Dotfiles restored successfully!"
