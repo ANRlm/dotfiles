@@ -36,7 +36,6 @@ function u --description "Update everything"
     ~/.config/tmux/plugins/tpm/bin/update_plugins all
     # ── Tools
     ya pkg upgrade
-    bat cache --build
     # ── macOS
     mas update
     printf '\n' | mo clean

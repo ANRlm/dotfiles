@@ -10,7 +10,9 @@ set -gx HOMEBREW_NO_AUTO_UPDATE 1
 set -gx HOMEBREW_NO_ANALYTICS 1
 set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 set -gx CONDA_ROOT "/opt/homebrew/Caskroom/miniforge/base"
+set -gx XDG_CACHE_HOME ~/Library/Caches
 set -gx STARSHIP_CONFIG "$HOME/.config/starship/starship.toml"
+set -gx NPM_CONFIG_USERCONFIG ~/.config/npm/npmrc
 
 # PATH Configuration
 fish_add_path "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
@@ -127,11 +129,6 @@ if status is-interactive
     set -g fzf_history_time_format %d-%m-%y
 
     bind \cg ripgrep_search
-
-    # Bat
-    if not test -d ~/.cache/bat
-        bat cache --build 2>/dev/null
-    end
 
     # Mole
     set -l output (mole completion fish 2>/dev/null); and echo "$output" | source
