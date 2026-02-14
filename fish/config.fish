@@ -50,18 +50,21 @@ if status is-interactive
         starship init fish | source
     end
 
+    # Theme
+    fish_config theme choose "Rosé Pine"
+
     # Abbreviations
     # General
     abbr -a c 'clear'
     abbr -a s 'exec fish'
     abbr -a ip 'ipconfig getifaddr en0'
     abbr -a ports 'lsof -i -P | grep -i "listen"'
-    abbr -a df 'df -h'
 
     abbr -a disk 'smartctl -a disk3'
     abbr -a mf 'musicfox'
     abbr -a py 'python'
     abbr -a v 'nvim'
+    abbr -a lg 'lazygit'
 
     abbr -a u \
     'brew update; and \
@@ -97,16 +100,6 @@ if status is-interactive
     abbr -a bc 'brew autoremove; and brew cleanup --prune=all'
     abbr -a bl 'brew leaves; and brew list --cask'
     abbr -a bd 'brew deps --installed --tree'
-
-    # Git
-    abbr -a gs 'git status'
-    abbr -a ga 'git add'
-    abbr -a gc 'git commit -m'
-    abbr -a gp 'git push'
-    abbr -a gpl 'git pull'
-    abbr -a gd 'git diff'
-    abbr -a glg 'git log --oneline --graph --all'
-    abbr -a lg 'lazygit'
 
     # Tmux
     abbr -a ts 'tmux source-file ~/.config/tmux/tmux.conf'
