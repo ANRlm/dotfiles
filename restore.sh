@@ -48,42 +48,12 @@ link_file() {
 	info "Linked file $dst → $src"
 }
 
-# clone 仓库（已存在则跳过）
-clone_if_missing() {
-	local repo="$1" dst="$2" flags="${3:-}"
-	if [ ! -d "$dst" ]; then
-		# shellcheck disable=SC2086
-		git clone $flags "$repo" "$dst"
-		info "Cloned $repo"
-	else
-		warn "Already exists, skipping clone: $dst"
-	fi
-}
-
-# --------------------------------------------------
-# tmux
-# --------------------------------------------------
-section "tmux"
-
-clone_if_missing \
-	"https://github.com/gpakosz/.tmux.git" \
-	"$DOTFILES_DIR/oh-my-tmux"
-
-clone_if_missing \
-	"https://github.com/catppuccin/tmux.git" \
-	"$CONFIG_DIR/tmux/plugins/catppuccin/tmux" \
-	"-b v2.1.3"
-
-mkdir -p "$CONFIG_DIR/tmux/plugins/catppuccin"
-link_file "$DOTFILES_DIR/oh-my-tmux/.tmux.conf" "$CONFIG_DIR/tmux/tmux.conf"
-link_file "$DOTFILES_DIR/tmux/tmux.conf.local" "$CONFIG_DIR/tmux/tmux.conf.local"
-
 # --------------------------------------------------
 # Config dirs
 # --------------------------------------------------
 section "Config dirs"
 
-for dir in aerospace alacritty bat btop eza fish ghostty git go-musicfox karabiner lazygit mole neovide nvim yazi; do
+for dir in aerospace alacritty bat btop eza fish ghostty git go-musicfox karabiner lazygit mole neovide nvim tmux yazi; do
 	link_dir "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
 done
 

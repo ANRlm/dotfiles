@@ -7,9 +7,7 @@ set -gx HOMEBREW_BOTTLE_DOMAIN "https://mirrors.tuna.tsinghua.edu.cn/homebrew-bo
 set -gx HOMEBREW_BREW_GIT_REMOTE "https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
 set -gx HOMEBREW_CORE_GIT_REMOTE "https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
 set -gx HOMEBREW_NO_AUTO_UPDATE 1
-set -gx HOMEBREW_NO_INSTALL_CLEANUP 0
 set -gx HOMEBREW_NO_ANALYTICS 1
-set -gx HOMEBREW_NO_ENV_HINTS 0
 set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 set -gx CONDA_ROOT "/opt/homebrew/Caskroom/miniforge/base"
 
@@ -19,13 +17,13 @@ fish_add_path "/opt/homebrew/opt/openjdk/bin"
 fish_add_path "$HOME/.antigravity/antigravity/bin"
 fish_add_path "/opt/homebrew/opt/rustup/bin"
 
+# Homebrew
+if test -x /opt/homebrew/bin/brew
+    /opt/homebrew/bin/brew shellenv | source
+end
+
 # Interactive Configuration
 if status is-interactive
-    # Homebrew
-    if test -x /opt/homebrew/bin/brew
-        /opt/homebrew/bin/brew shellenv | source
-    end
-
     # OrbStack
     if test -f ~/.orbstack/shell/init.fish
         source ~/.orbstack/shell/init.fish 2>/dev/null
@@ -47,9 +45,6 @@ if status is-interactive
         zoxide init fish --cmd cd | source
     end
     
-    # Theme
-    fish_config theme choose "Rosé Pine"
-
     # Starship
     if command -q starship
         starship init fish | source
@@ -84,9 +79,7 @@ if status is-interactive
      pnpm update -g; and \
      pnpm store prune; and \
      mas update; and \
-     fish -c "cd ~/dotfiles/oh-my-tmux/ && git pull"; and \
      rustup update; and \
-     pnpm store prune; and \
      mo clean; and \
      mo purge'
 
@@ -144,19 +137,9 @@ if status is-interactive
     # Eza
     abbr -a el 'eza --long --header --icons --git --all'
     abbr -a et 'eza --tree --level=2 --long --header --icons --git'
-
-    # Yazi 
-    function y
-        set tmp (mktemp -t "yazi-cwd.XXXXXX")
-        command yazi $argv --cwd-file="$tmp"
-        if read -z cwd < "$tmp"; and [ "$cwd" != "$PWD" ]; and test -d "$cwd"
-            builtin cd -- "$cwd"
-        end
-        rm -f -- "$tmp"
-    end
-
+    
     # FZF
-    set -Ux FZF_DEFAULT_OPTS "\
+    set -gx FZF_DEFAULT_OPTS "\
     --height 75% \
     --layout=reverse \
     --border \
