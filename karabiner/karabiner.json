@@ -5,9 +5,10 @@
             "complex_modifications": {
                 "rules": [
                     {
+                        "description": "Caps Lock → Hyper (Ctrl + Option + Shift)",
                         "manipulators": [
                             {
-                                "description": "caps_lock to control+option+shift.",
+                                "description": "Caps Lock → Ctrl + Option + Shift",
                                 "from": {
                                     "key_code": "caps_lock",
                                     "modifiers": { "optional": ["any"] }
@@ -23,7 +24,7 @@
                         ]
                     },
                     {
-                        "description": "Ctrl+Option+Shift+R/A/V/C/T/D/U/G to Ctrl+R/A/V/C/T/D/U/G in specific apps",
+                        "description": "Hyper + R/A/V/C/T/D/U/G → Ctrl + Key (Terminal apps)",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -36,6 +37,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + R → Ctrl + R (Terminal)",
                                 "from": {
                                     "key_code": "r",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -59,6 +61,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + A → Ctrl + A (Terminal)",
                                 "from": {
                                     "key_code": "a",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -82,6 +85,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + V → Ctrl + V (Terminal)",
                                 "from": {
                                     "key_code": "v",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -105,6 +109,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + C → Ctrl + C (Terminal)",
                                 "from": {
                                     "key_code": "c",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -128,6 +133,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + T → Ctrl + T (Terminal)",
                                 "from": {
                                     "key_code": "t",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -151,6 +157,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + D → Ctrl + D (Terminal)",
                                 "from": {
                                     "key_code": "d",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -174,6 +181,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + U → Ctrl + U (Terminal)",
                                 "from": {
                                     "key_code": "u",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -197,6 +205,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + G → Ctrl + G (Terminal)",
                                 "from": {
                                     "key_code": "g",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -212,7 +221,7 @@
                         ]
                     },
                     {
-                        "description": "Ctrl+Option+Shift+H/J/K/L to Ctrl+H/J/K/L in specific apps, Arrow keys elsewhere",
+                        "description": "Hyper + H/J/K/L → Ctrl + Key (Terminal) / Arrow Keys (global)",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -225,6 +234,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + H → Ctrl + H (Terminal)",
                                 "from": {
                                     "key_code": "h",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -248,6 +258,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + J → Ctrl + J (Terminal)",
                                 "from": {
                                     "key_code": "j",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -271,6 +282,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + K → Ctrl + K (Terminal)",
                                 "from": {
                                     "key_code": "k",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -294,6 +306,7 @@
                                         "type": "frontmost_application_if"
                                     }
                                 ],
+                                "description": "Hyper + L → Ctrl + L (Terminal)",
                                 "from": {
                                     "key_code": "l",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -307,6 +320,7 @@
                                 "type": "basic"
                             },
                             {
+                                "description": "Hyper + H → Left Arrow (global)",
                                 "from": {
                                     "key_code": "h",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -315,6 +329,7 @@
                                 "type": "basic"
                             },
                             {
+                                "description": "Hyper + J → Down Arrow (global)",
                                 "from": {
                                     "key_code": "j",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -323,6 +338,7 @@
                                 "type": "basic"
                             },
                             {
+                                "description": "Hyper + K → Up Arrow (global)",
                                 "from": {
                                     "key_code": "k",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -331,6 +347,7 @@
                                 "type": "basic"
                             },
                             {
+                                "description": "Hyper + L → Right Arrow (global)",
                                 "from": {
                                     "key_code": "l",
                                     "modifiers": { "mandatory": ["control", "option", "shift"] }
@@ -355,19 +372,26 @@
                     "identifiers": {
                         "is_keyboard": true,
                         "is_pointing_device": true,
-                        "product_id": 12292,
+                        "product_id": 12325,
                         "vendor_id": 14000
                     },
-                    "ignore": false
+                    "ignore_vendor_events": true
                 },
                 {
                     "identifiers": {
                         "is_keyboard": true,
-                        "is_pointing_device": true,
+                        "product_id": 12290,
+                        "vendor_id": 14000
+                    },
+                    "ignore_vendor_events": true
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
                         "product_id": 12325,
                         "vendor_id": 14000
                     },
-                    "ignore": false
+                    "ignore_vendor_events": true
                 }
             ],
             "name": "Default profile",
