@@ -66,26 +66,6 @@ if status is-interactive
     abbr -a v 'nvim'
     abbr -a lg 'lazygit'
 
-    abbr -a u \
-    'brew update; and \
-     brew upgrade; and \
-     brew upgrade --cask --greedy; and \
-     brew autoremove; and brew cleanup --prune=all; and \
-     brew bundle dump --force --file ~/dotfiles/Brewfile; and \
-     conda update conda -y; and \
-     conda update --all -y; and \
-     conda clean --all -y; and \
-     ya pkg upgrade; and \
-     fisher update; and \
-     npm update -g; and \
-     npm cache clean --force; and \
-     pnpm update -g; and \
-     pnpm store prune; and \
-     mas update; and \
-     rustup update; and \
-     mo clean; and \
-     mo purge'
-
     # Xcode
     abbr -a xcode-clt 'sudo xcode-select -s /Library/Developer/CommandLineTools'
     abbr -a xcode-app 'sudo xcode-select -s /Applications/Xcode.app/Contents/Developer'
