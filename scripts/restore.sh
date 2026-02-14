@@ -68,7 +68,6 @@ info "Touched ~/.hushlogin"
 link_file "$DOTFILES_DIR/starship/starship.toml" "$CONFIG_DIR/starship.toml"
 link_file "$DOTFILES_DIR/conda/.condarc" "$HOME/.condarc"
 link_file "$DOTFILES_DIR/idea/.ideavimrc" "$HOME/.ideavimrc"
-link_file "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
 link_file "$DOTFILES_DIR/goku/karabiner.edn" "$CONFIG_DIR/karabiner.edn"
 
 # --------------------------------------------------
