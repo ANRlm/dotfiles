@@ -17,17 +17,19 @@ welcome = "cnhyk"
 # 启动时是否自动签到 (网易云有风控，建议关闭)
 signIn = false
 # 启动时是否检查应用更新
-checkUpdate = true
+checkUpdate = false
 
 
 # 主界面与核心功能配置
 [main]
 # altScreen 显示模式
-altScreen=true
+altScreen = true
 # 是否在界面中启用鼠标事件
 enableMouseEvent = true
 # 是否开启 Debug 模式
 debug = false
+# 播放时 UI 刷新帧率（更高帧率可使动画更平滑，但消耗更多cpu）
+frameRate = 15
 
 
 # 桌面通知相关设置
@@ -49,6 +51,26 @@ showTranslation = true
 offset = 0
 # 忽略歌词解析错误
 skipParseErr = false
+# YRC 歌词渲染模式（仅对逐字歌词有效）
+# 可选: "simple"(简单，默认), "smooth"(平滑), "wave"(波浪), "glow"(发光)
+renderMode = "smooth"
+
+# 封面图显示设置（需要支持Kitty图形协议的终端，如Kitty、WezTerm、Ghostty等）
+[main.lyric.cover]
+# 是否显示封面图
+show = true
+# 封面图宽度占窗口宽度的比例（取值范围 0.1-0.8，默认 0.3）
+widthRatio = 0.3
+# 封面图圆角半径百分比（取值范围 0-100，默认 8 即 8%，0 则关闭，越大越圆）
+cornerRadius = 8
+# 是否启用旋转封面（需要更高的帧率支持平滑效果）
+spin = false
+# Kitty图形协议不支持角度变化目前只能以动画呈现，合成动画需要更高的CPU性能
+# 旋转封面帧率（取值范围 1-60，默认 30，更高帧率更流畅但消耗更多CPU）
+spinFPS = 30
+# 旋转一圈的时长（秒，取值范围 1-30，默认 6）
+# 时长和帧率挂钩：60fps*6s=360帧，30fps*6s=180帧，30fps*12s=360帧
+spinDuration = 6
 
 # Go性能分析工具pprof的相关设置
 [main.pprof]
@@ -66,7 +88,7 @@ neteaseCookie = ""
 # 是否在界面顶部显示标题
 showTitle = true
 # 菜单加载时显示的提示文字
-loadingText = "[Loading...]"
+loadingText = "[加载中...]"
 # 是否使用双列布局（需要等宽字体以获得最佳体验）
 doubleColumn = true
 # 菜单行数是否根据终端高度动态变化
@@ -80,6 +102,9 @@ primaryColor = "#908caa"
 
 # 进度条字符样式配置
 [theme.progress]
+# 进度条渲染模式
+# 可选: "smooth"(平滑，默认), "wave"(波浪), "glow"(发光)
+renderMode = "smooth"
 # 进度条已加载字符
 fullChar = "#"
 fullCharWhenFirst = "#"
@@ -241,8 +266,8 @@ useDefaultKeyBindings = true
 help = ["?", "？"]
 pageUp = ["ctrl+u", "pgup"]
 pageDown = ["ctrl+d", "pgdown"]
-playOrToggle = ["space"] # 空格
-toggle = [] # 空数组表示取消此功能的快捷键
+playOrToggle = ["space"]        # 空格
+toggle = []                     # 空数组表示取消此功能的快捷键
 previous = ["[", "【"]
 next = ["]", "】"]
 backwardFiveSec = ["X"]
