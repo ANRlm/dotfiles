@@ -1,6 +1,6 @@
 [user]
-	name = cnhyk
-	email = nai.ying.cnhyk@gmail.com
+	name = Yichao.Deng
+	email = yichao.deng@icloud.com
 
 [include]
     path = ~/.config/git/themes.gitconfig
@@ -24,3 +24,5 @@
 
 [diff]
     colorMoved = default
+[safe]
+	directory = *

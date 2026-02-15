@@ -62,23 +62,23 @@ quick-terminal-animation-duration = 0.1
 # Keybinding
 # -------------------------------------------------- #
 # new window
-# keybind = =new_split:left
-# keybind = =new_split:down
-# keybind = =new_split:up
-# keybind = =new_split:right
+keybind = ctrl+shift+h=new_split:left
+keybind = ctrl+shift+j=new_split:down
+keybind = ctrl+shift+k=new_split:up
+keybind = ctrl+shift+l=new_split:right
 
 # fullscreen
-# keybind = f=toggle_split_zoom
+keybind = ctrl+f=toggle_split_zoom
 
 # focus
-# keybind = h=goto_split:left
-# keybind = j=goto_split:down
-# keybind = k=goto_split:up
-# keybind = l=goto_split:right
+keybind = ctrl+h=goto_split:left
+keybind = ctrl+j=goto_split:down
+keybind = ctrl+k=goto_split:up
+keybind = ctrl+l=goto_split:right
 
 # resize
-# keybind = equal=equalize_splits
-# keybind = l=resize_split:right,10
-# keybind = k=resize_split:up,10
-# keybind = h=resize_split:left,10
-# keybind = j=resize_split:down,10
+keybind = ctrl+shift+equal=equalize_splits
+keybind = ctrl+alt+h=resize_split:left,10
+keybind = ctrl+alt+j=resize_split:down,10
+keybind = ctrl+alt+k=resize_split:up,10
+keybind = ctrl+alt+l=resize_split:right,10
