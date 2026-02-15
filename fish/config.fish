@@ -4,7 +4,6 @@ set -g fish_greeting ""
 set -gx EDITOR nvim
 set -gx CONDA_ROOT "/opt/homebrew/Caskroom/miniforge/base"
 set -gx STARSHIP_CONFIG "$HOME/.config/starship/starship.toml"
-set -gx XDG_CACHE_HOME ~/Library/Caches
 set -gx NPM_CONFIG_USERCONFIG ~/.config/npm/npmrc
 
 # ── Homebrew
@@ -73,6 +72,7 @@ if status is-interactive
     abbr -a py  'python'
     abbr -a ip  'ipconfig getifaddr en0'
     abbr -a disk 'smartctl -a disk3'
+    abbr -a copy 'pbcopy'
     abbr -a ports 'lsof -i -P | grep -i "listen"'
 
     # Xcode
