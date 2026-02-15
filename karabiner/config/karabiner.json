@@ -26,7 +26,7 @@
           "type" : "basic"
         } ]
       }, {
-        "description" : "Hyper + R/A/V/C/T/D/U/G → Ctrl + Key (Terminal)",
+        "description" : "Hyper + R/A/V/C/T/D/U/G/O → Ctrl + Key (Terminal)",
         "manipulators" : [ {
           "from" : {
             "key_code" : "r",
@@ -148,6 +148,22 @@
           },
           "to" : [ {
             "key_code" : "g",
+            "modifiers" : [ "left_control" ]
+          } ],
+          "conditions" : [ {
+            "type" : "frontmost_application_if",
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide", "^org\\.alacritty" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "o",
+            "modifiers" : {
+              "mandatory" : [ "left_control", "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "o",
             "modifiers" : [ "left_control" ]
           } ],
           "conditions" : [ {

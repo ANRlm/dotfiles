@@ -15,3 +15,5 @@ mole/operations.log
 
 karabiner/config/automatic_backups/
 karabiner/config/assets/
+
+scripts/license.sh

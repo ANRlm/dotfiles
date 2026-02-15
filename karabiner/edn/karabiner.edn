@@ -30,7 +30,7 @@
     [:##caps_lock :!TOleft_shift]
    ]}
 
-  {:des "Hyper + R/A/V/C/T/D/U/G → Ctrl + Key (Terminal)"
+  {:des "Hyper + R/A/V/C/T/D/U/G/O → Ctrl + Key (Terminal)"
    :rules [
     [:!TOSr :!Tr :terminal]
     [:!TOSa :!Ta :terminal]
@@ -40,6 +40,7 @@
     [:!TOSd :!Td :terminal]
     [:!TOSu :!Tu :terminal]
     [:!TOSg :!Tg :terminal]
+    [:!TOSo :!To :terminal]
    ]}
 
   {:des "Hyper + H/J/K/L → Ctrl + Key (Terminal) / Arrow Keys (global)"

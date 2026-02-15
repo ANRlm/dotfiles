@@ -1,48 +1,81 @@
 function u --description "Update everything"
-    # ── Sudo
+    # ── Sudo keepalive
     sudo -v
-    fish -c 'while true; sudo -n -v 2>/dev/null; sleep 50; end' &
+    fish -c 'while true; sudo -n true 2>/dev/null; sleep 55; end' &
     set sudo_pid $last_pid
+
     # ── Homebrew
     brew update
-    and brew upgrade
-    and brew upgrade --cask --greedy
+    brew upgrade
+    brew upgrade --cask --greedy
     brew autoremove
-    and brew cleanup --prune=all
+    brew cleanup --prune=all
     brew bundle dump --force --file ~/dotfiles/Brewfile
+
     # ── Neovim
-    nvim --headless "+AstroUpdate"      +qa
-    nvim --headless "+Lazy! sync"       +qa
-    nvim --headless "+MasonToolsUpdate" +qa
-    nvim --headless "+TSUpdateSync"     +qa
+    if command -q nvim
+        nvim --headless "+AstroUpdate"      +qa
+        nvim --headless "+Lazy! sync"       +qa
+        nvim --headless "+MasonToolsUpdate" +qa
+        nvim --headless "+TSUpdateSync"     +qa
+    end
+
     # ── Conda
-    conda update conda -y
-    and conda update --all -y
-    and conda clean --all -y
+    if command -q conda
+        conda update conda -y
+        conda update --all -y
+        conda clean --all -y
+    end
+
     # ── Rust
-    rustup update
-    and cargo install-update -a
-    cargo cache --autoclean
-    and cargo cache --remove-dir all
+    if command -q rustup
+        rustup update
+        cargo install-update -a
+        cargo cache --autoclean
+        cargo cache --remove-dir all
+    end
+
     # ── Node
-    npm update -g
-    and npm cache clean --force
-    pnpm update -g
-    and pnpm store prune
+    if command -q npm
+        npm update -g
+        npm cache clean --force
+    end
+    if command -q pnpm
+        pnpm update -g
+        pnpm store prune
+    end
+
     # ── Python
-    uv tool upgrade --all
+    if command -q uv
+        uv tool upgrade --all
+    end
+
     # ── Shell
-    fisher update
+    if command -q fisher
+        fisher update
+    end
     ~/.config/tmux/plugins/tpm/bin/update_plugins all
+
     # ── Tools
-    ya pkg upgrade
+    if command -q ya
+        ya pkg upgrade
+    end
+
     # ── macOS
-    mas update
+    if command -q mas
+        mas update
+    end
     printf '\n' | mo clean
-    and mo purge
+    mo purge
+
     # ── Rime
-    printf '\n' | bash ~/dotfiles/scripts/rime-wanxiang-update-macos.sh \
-        --schema base --fuzhu base --dict --gram
-    # ── Kill sudo 
-    kill $sudo_pid 2>/dev/null
+    if test -f ~/dotfiles/scripts/rime-wanxiang-update-macos.sh
+        printf '\n' | bash ~/dotfiles/scripts/rime-wanxiang-update-macos.sh \
+            --schema base --fuzhu base --dict --gram
+    end
+
+    # ── Kill sudo keepalive
+    kill $sudo_pid 2>/dev/null; or true
+
+    echo "✓ All updated"
 end
