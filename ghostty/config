@@ -62,10 +62,10 @@ quick-terminal-animation-duration = 0.1
 # Keybinding
 # -------------------------------------------------- #
 # new window
-keybind = ctrl+shift+h=new_split:left
-keybind = ctrl+shift+j=new_split:down
-keybind = ctrl+shift+k=new_split:up
-keybind = ctrl+shift+l=new_split:right
+keybind = super+shift+h=new_split:left
+keybind = super+shift+j=new_split:down
+keybind = super+shift+k=new_split:up
+keybind = super+shift+l=new_split:right
 
 # fullscreen
 keybind = ctrl+f=toggle_split_zoom
