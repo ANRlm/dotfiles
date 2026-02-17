@@ -1,9 +1,4 @@
 function u --description "Update everything"
-    # ── Sudo keepalive
-    sudo -v
-    fish -c 'while true; sudo -n true 2>/dev/null; sleep 55; end' &
-    set sudo_pid $last_pid
-
     # ── Homebrew
     brew update
     brew upgrade
@@ -11,6 +6,25 @@ function u --description "Update everything"
     brew autoremove
     brew cleanup --prune=all
     brew bundle dump --force --file ~/dotfiles/Brewfile
+
+    # ── Chrome: block auto-update & AI model download
+    if test -d "/Applications/Google Chrome.app"
+        # 1. block GoogleUpdater from reinstalling itself
+        set _updater_dir "$HOME/Library/Application Support/Google/GoogleUpdater"
+        sudo rm -rf $_updater_dir
+        mkdir -p $_updater_dir
+        sudo chown root $_updater_dir
+        sudo chmod 000 $_updater_dir
+
+        # 2. block OptGuideOnDeviceModel (Gemini Nano) from redownloading
+        set _model_dir "$HOME/Library/Application Support/Google/Chrome/OptGuideOnDeviceModel"
+        sudo rm -rf $_model_dir
+        mkdir -p $_model_dir
+        sudo chown root $_model_dir
+        sudo chmod 000 $_model_dir
+
+        echo "✓ Chrome: GoogleUpdater and OptGuideOnDeviceModel locked"
+    end
 
     # ── Neovim
     if command -q nvim
@@ -73,9 +87,6 @@ function u --description "Update everything"
         printf '\n' | bash ~/dotfiles/scripts/rime-wanxiang-update-macos.sh \
             --schema base --fuzhu base --dict --gram
     end
-
-    # ── Kill sudo keepalive
-    kill $sudo_pid 2>/dev/null; or true
 
     echo "✓ All updated"
 end
