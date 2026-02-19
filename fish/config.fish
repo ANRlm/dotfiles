@@ -7,10 +7,7 @@ set -gx STARSHIP_CONFIG "$HOME/.config/starship/starship.toml"
 set -gx NPM_CONFIG_USERCONFIG ~/.config/npm/npmrc
 
 # ── Homebrew
-set -gx HOMEBREW_API_DOMAIN    "https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
-set -gx HOMEBREW_BOTTLE_DOMAIN "https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
-set -gx HOMEBREW_BREW_GIT_REMOTE "https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
-set -gx HOMEBREW_CORE_GIT_REMOTE "https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
+set -gx HOMEBREW_NO_INSTALL_FROM_API 0
 set -gx HOMEBREW_NO_AUTO_UPDATE 1
 set -gx HOMEBREW_NO_ANALYTICS   1
 set -gx HOMEBREW_MAKE_JOBS      (sysctl -n hw.logicalcpu)
@@ -87,7 +84,7 @@ if status is-interactive
     abbr -a bif 'brew info'
     abbr -a bl  'brew leaves; and brew list --cask'
     abbr -a bd  'brew deps --installed --tree'
-    abbr -a bu  'brew update; and brew upgrade; and brew upgrade --cask --greedy'
+    abbr -a bu  'brew update; and brew upgrade; and brew upgrade --cask'
     abbr -a bc  'brew autoremove; and brew cleanup --prune=all'
 
     # Tmux
