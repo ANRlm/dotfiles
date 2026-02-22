@@ -76,7 +76,7 @@ brew bundle --file="$DOTFILES_DIR/Brewfile"
 # ──────────────────────────────────────────────────
 section "TPM"
 
-TPM_DIR="$HOME/.config/tmux/plugins/tpm"
+TPM_DIR="$CONFIG_DIR/tmux/plugins/tpm"
 
 if [[ -d "$TPM_DIR" ]]; then
 	info "TPM already installed, skipping"

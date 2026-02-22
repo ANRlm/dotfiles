@@ -1,5 +1,5 @@
 function u --description "Update everything"
-    # ── helpers ──────────────────────────────────────────────────────────────
+    # ── helpers
     function _section
         set_color --bold cyan
         echo ""
@@ -15,7 +15,7 @@ function u --description "Update everything"
         set_color yellow; echo "  - $argv (not found, skipped)"; set_color normal
     end
 
-    # ── Homebrew ──────────────────────────────────────────────────────────────
+    # ── Homebrew
     _section "Homebrew"
     brew update
     brew upgrade
@@ -25,11 +25,10 @@ function u --description "Update everything"
     brew bundle dump --force --file ~/dotfiles/Brewfile
     _ok "Homebrew done"
 
-    # ── Google Chrome — block auto-update & AI model download ─────────────
-    _section "Chrome (lock updater & AI models)"
+    # ── Google Chrome — block AI model download
+    _section "Chrome"
     if test -d "/Applications/Google Chrome.app"
         for _dir in \
-            "$HOME/Library/Application Support/Google/GoogleUpdater" \
             "$HOME/Library/Application Support/Google/Chrome/OptGuideOnDeviceModel" \
             "$HOME/Library/Application Support/Google/Chrome/optimization_guide_model_store"
             sudo rm -rf $_dir
@@ -42,7 +41,7 @@ function u --description "Update everything"
         _skip "Google Chrome"
     end
 
-    # ── Neovim (AstroNvim) ────────────────────────────────────────────────────
+    # ── Neovim (AstroNvim)
     _section "Neovim"
     if command -q nvim
         # sync plugin manager first, then update everything else
@@ -55,7 +54,7 @@ function u --description "Update everything"
         _skip "nvim"
     end
 
-    # ── Go toolchain ──────────────────────────────────────────────────────────
+    # ── Go toolchain
     _section "Go"
     if command -q go
         # update all non-stdlib binaries installed via `go install`
@@ -73,7 +72,7 @@ function u --description "Update everything"
         _skip "go"
     end
 
-    # ── Conda / Miniforge ────────────────────────────────────────────────────
+    # ── Conda / Miniforge
     _section "Conda"
     if command -q conda
         conda update conda -y
@@ -84,7 +83,7 @@ function u --description "Update everything"
         _skip "conda"
     end
 
-    # ── Rust ──────────────────────────────────────────────────────────────────
+    # ── Rust
     _section "Rust"
     if command -q rustup
         rustup update
@@ -106,7 +105,7 @@ function u --description "Update everything"
         _skip "rustup"
     end
 
-    # ── Node ──────────────────────────────────────────────────────────────────
+    # ── Node
     _section "Node"
     if command -q npm
         npm update -g
@@ -123,7 +122,7 @@ function u --description "Update everything"
         _skip "pnpm"
     end
 
-    # ── Python (uv) ───────────────────────────────────────────────────────────
+    # ── Python (uv)
     _section "Python / uv"
     if command -q uv
         uv tool upgrade --all
@@ -132,7 +131,7 @@ function u --description "Update everything"
         _skip "uv"
     end
 
-    # ── Shell ─────────────────────────────────────────────────────────────────
+    # ── Shell
     _section "Fish / Fisher"
     if functions -q fisher
         fisher update
@@ -150,7 +149,7 @@ function u --description "Update everything"
         _skip "TPM (~/.config/tmux/plugins/tpm not found)"
     end
 
-    # ── Tools ─────────────────────────────────────────────────────────────────
+    # ── Tools
     _section "Yazi plugins"
     if command -q ya
         ya pkg upgrade
@@ -159,7 +158,7 @@ function u --description "Update everything"
         _skip "ya"
     end
 
-    # ── macOS App Store ───────────────────────────────────────────────────────
+    # ── macOS App Store
     _section "Mac App Store"
     if command -q mas
         mas update
@@ -168,7 +167,7 @@ function u --description "Update everything"
         _skip "mas"
     end
 
-    # ── Mole ──────────────────────────────────────────────────────────────────
+    # ── Mole
     _section "Mole"
     if command -q mo
         printf '\n' | mo clean
@@ -178,12 +177,12 @@ function u --description "Update everything"
         _skip "mo (mole)"
     end
 
-    # ── App caches ────────────────────────────────────────────────────────────
+    # ── App caches
     _section "App Caches"
     rm -rf ~/Library/Application\ Support/CleanShot/media
     _ok "CleanShot media cleared"
 
-    # ── Done ──────────────────────────────────────────────────────────────────
+    # ── Done
     echo ""
     set_color --bold green
     echo "✓ All updated"
