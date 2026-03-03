@@ -29,10 +29,9 @@
     [:##caps_lock :!TOleft_shift]
    ]}
 
-  {:des "Hyper + R/A/V/C/T/D/U/G/O → Ctrl + Key (Terminal)"
+  {:des "Hyper + R/V/C/T/D/U/G/O → Ctrl + Key (Terminal)"
    :rules [
     [:!TOSr :!Tr :terminal]
-    [:!TOSa :!Ta :terminal]
     [:!TOSv :!Tv :terminal]
     [:!TOSc :!Tc :terminal]
     [:!TOSt :!Tt :terminal]

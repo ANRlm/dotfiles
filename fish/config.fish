@@ -13,11 +13,9 @@ set -gx HOMEBREW_NO_ANALYTICS   1
 set -gx HOMEBREW_MAKE_JOBS      (sysctl -n hw.logicalcpu)
 
 # ── PATH
-fish_add_path "$HOME/.local/bin"
 fish_add_path "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fish_add_path "/opt/homebrew/opt/openjdk/bin"
 fish_add_path "/opt/homebrew/opt/rustup/bin"
-fish_add_path "$HOME/.antigravity/antigravity/bin"
 
 # ── Homebrew Shell Environment
 if test -x /opt/homebrew/bin/brew
