@@ -7,15 +7,15 @@ set -gx STARSHIP_CONFIG "$HOME/.config/starship/starship.toml"
 set -gx NPM_CONFIG_USERCONFIG ~/.config/npm/npmrc
 
 # ── Homebrew
-set -gx HOMEBREW_NO_INSTALL_FROM_API 0
 set -gx HOMEBREW_NO_AUTO_UPDATE 1
-set -gx HOMEBREW_NO_ANALYTICS   1
-set -gx HOMEBREW_MAKE_JOBS      (sysctl -n hw.logicalcpu)
+set -gx HOMEBREW_NO_ANALYTICS 1
+set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 
 # ── PATH
-fish_add_path "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
-fish_add_path "/opt/homebrew/opt/openjdk/bin"
-fish_add_path "/opt/homebrew/opt/rustup/bin"
+fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+fish_add_path -g "/opt/homebrew/opt/openjdk/bin"
+fish_add_path -g "/opt/homebrew/opt/rustup/bin"
+fish_add_path -g "$HOME/.lmstudio/bin"
 
 # ── Homebrew Shell Environment
 if test -x /opt/homebrew/bin/brew
@@ -24,14 +24,22 @@ end
 
 # ── Conda
 function conda
-    functions --erase conda
+    if not set -q CONDA_ROOT
+        echo "lazyconda: \$CONDA_ROOT is not set" >&2
+        return 1
+    end
+
     if test -f "$CONDA_ROOT/bin/conda"
         eval "$CONDA_ROOT/bin/conda" "shell.fish" "hook" | source
+        or return $status
     else if test -f "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
         source "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
+        or return $status
     else
         fish_add_path -g "$CONDA_ROOT/bin"
+        functions --erase conda
     end
+
     conda $argv
 end
 
@@ -122,10 +130,10 @@ if status is-interactive
     --border \
     --info=inline"
 
-    set -g fzf_fd_opts           --hidden --follow --exclude .git
-    set -g fzf_preview_dir_cmd   eza --all --color=always --icons --git --tree --level=2
-    set -g fzf_preview_file_cmd  bat --style=numbers --color=always --line-range :500
-    set -g fzf_diff_highlighter  delta --paging=never --features="mellow-barbet" --syntax-theme="Catppuccin Mocha"
+    set -g fzf_fd_opts "--hidden --follow --exclude .git"
+    set -g fzf_preview_dir_cmd eza --all --color=always --icons --git --tree --level=2
+    set -g fzf_preview_file_cmd bat --style=numbers --color=always --line-range :500
+    set -g fzf_diff_highlighter "delta --paging=never --features='mellow-barbet' --syntax-theme='Catppuccin Mocha'"
     set -g fzf_history_time_format %d-%m-%y
 
     fzf_configure_bindings --directory=\ct --history=\cr
