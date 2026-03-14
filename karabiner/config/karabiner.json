@@ -40,7 +40,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
@@ -56,7 +56,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
@@ -72,7 +72,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
@@ -88,7 +88,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
@@ -104,7 +104,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
@@ -120,7 +120,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
@@ -136,7 +136,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
@@ -152,7 +152,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
@@ -168,7 +168,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         } ]
@@ -187,7 +187,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
@@ -203,7 +203,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
@@ -219,7 +219,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
@@ -235,7 +235,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty", "^com\\.neovide\\.neovide" ]
+            "bundle_identifiers" : [ "^com\\.mitchellh\\.ghostty" ]
           } ],
           "type" : "basic"
         }, {
