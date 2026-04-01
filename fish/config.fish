@@ -15,7 +15,6 @@ set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fish_add_path -g "/opt/homebrew/opt/openjdk/bin"
 fish_add_path -g "/opt/homebrew/opt/rustup/bin"
-fish_add_path -g "$HOME/.lmstudio/bin"
 
 # ── Homebrew Shell Environment
 if test -x /opt/homebrew/bin/brew
