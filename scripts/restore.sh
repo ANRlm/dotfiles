@@ -39,7 +39,9 @@ touch "$HOME/.hushlogin"
 # ──────────────────────────────────────────────────
 link_dir() {
 	local src="$1" dst="$2"
-	rm -rf "$dst"
+	if [[ -L "$dst" || -e "$dst" ]]; then
+		rm -rf "$dst"
+	fi
 	ln -s "$src" "$dst"
 	info "Linked dir  $dst → $src"
 }

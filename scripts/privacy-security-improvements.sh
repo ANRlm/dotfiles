@@ -2,12 +2,17 @@
 # https://privacy.sexy — v0.13.8 — Wed, 18 Feb 2026 17:58:55 GMT
 if [ "$EUID" -ne 0 ]; then
     script_path=$([[ "$0" = /* ]] && echo "$0" || echo "$PWD/${0#./}")
-    sudo "$script_path" || (
+    sudo TARGET_USER="$USER" TARGET_HOME="$HOME" "$script_path" || (
         echo 'Administrator privileges are required.'
         exit 1
     )
     exit 0
 fi
+
+TARGET_USER="${TARGET_USER:-${SUDO_USER:-$(id -un)}}"
+TARGET_HOME="${TARGET_HOME:-$(dscl . -read "/Users/$TARGET_USER" NFSHomeDirectory 2>/dev/null | awk '{print $2}')}"
+TARGET_HOME="${TARGET_HOME:-$HOME}"
+export HOME="$TARGET_HOME"
 
 
 # ----------------------------------------------------------

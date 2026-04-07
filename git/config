@@ -25,7 +25,7 @@
 [diff]
     colorMoved = default
 [safe]
-	directory = *
+	directory = /Users/cnhyk/dotfiles
 [lfs "customtransfer.xet"]
 	path = git-xet
 	args = transfer

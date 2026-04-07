@@ -8,9 +8,9 @@ let mapleader=" "
 set easymotion
 set highlightedyank
 set commentary
-set ReplaceWithRegister;
+set ReplaceWithRegister
 set surround
-set NERDTree;
+set NERDTree
 " ================================================================================================
 " Basic settings
 " ================================================================================================
@@ -93,7 +93,7 @@ let g:WhichKeyDesc_Show_FileStructure = "<leader>ss ShowFileStructure"
 nmap <leader>ss <action>(FileStructurePopup)
 let g:WhichKeyDesc_Show_Bookmarks = "<leader>sb ShowBookmarks"
 nmap <leader>sb <action>(ShowBookmarks)
-let g:WhichKeyDesc_Show_ParameterInfo = "<leader>sb ShowParameterInfo"
+let g:WhichKeyDesc_Show_ParameterInfo = "<leader>sp ShowParameterInfo"
 nmap <leader>sp <action>(ParameterInfo)
 
 " r: Run/Re

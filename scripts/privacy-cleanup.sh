@@ -2,12 +2,21 @@
 # https://privacy.sexy — v0.13.8 — Wed, 18 Feb 2026 17:58:55 GMT
 if [ "$EUID" -ne 0 ]; then
     script_path=$([[ "$0" = /* ]] && echo "$0" || echo "$PWD/${0#./}")
-    sudo "$script_path" || (
+    sudo TARGET_USER="$USER" TARGET_HOME="$HOME" "$script_path" || (
         echo 'Administrator privileges are required.'
         exit 1
     )
     exit 0
 fi
+
+TARGET_USER="${TARGET_USER:-${SUDO_USER:-$(id -un)}}"
+TARGET_HOME="${TARGET_HOME:-$(dscl . -read "/Users/$TARGET_USER" NFSHomeDirectory 2>/dev/null | awk '{print $2}')}"
+TARGET_HOME="${TARGET_HOME:-$HOME}"
+export HOME="$TARGET_HOME"
+
+user_defaults() {
+    sudo -u "$TARGET_USER" HOME="$TARGET_HOME" defaults "$@"
+}
 
 
 # ----------------------------------------------------------
@@ -153,7 +162,7 @@ glob_pattern="/Library/Receipts/InstallHistory.plist"
 # --------------------Clear Chrome cache--------------------
 # ----------------------------------------------------------
 echo '--- Clear Chrome cache'
-sudo rm -rfv ~/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/* &>/dev/null
+sudo rm -rfv "$HOME/Library/Application Support/Google/Chrome/Default/Application Cache/"* &>/dev/null
 # ----------------------------------------------------------
 
 
@@ -231,7 +240,7 @@ rm -rfv ~/Library/Caches/Metadata/Safari/History
 # -Clear search term history embedded in Safari preferences-
 # ----------------------------------------------------------
 echo '--- Clear search term history embedded in Safari preferences'
-defaults write ~/Library/Preferences/com.apple.Safari RecentSearchStrings '( )'
+user_defaults write com.apple.Safari RecentSearchStrings '( )'
 # ----------------------------------------------------------
 
 
@@ -272,8 +281,7 @@ rm -f ~/Library/Safari/PerSitePreferences.db
 # ----------------------------------------------------------
 echo '--- Clear privacy.sexy script history'
 # Clear directory contents: "$HOME/Library/Application Support/privacy.sexy/runs"
-glob_pattern="$HOME/Library/Application Support/privacy.sexy/runs/*"
- rm -rfv $glob_pattern
+rm -rfv "$HOME/Library/Application Support/privacy.sexy/runs/"*
 # ----------------------------------------------------------
 
 
@@ -291,7 +299,7 @@ glob_pattern="$HOME/Library/Logs/privacy.sexy/*"
 # --------------------Clear Adobe cache---------------------
 # ----------------------------------------------------------
 echo '--- Clear Adobe cache'
-sudo rm -rfv ~/Library/Application\ Support/Adobe/Common/Media\ Cache\ Files/* &>/dev/null
+sudo rm -rfv "$HOME/Library/Application Support/Adobe/Common/Media Cache Files/"* &>/dev/null
 # ----------------------------------------------------------
 
 
@@ -299,8 +307,8 @@ sudo rm -rfv ~/Library/Application\ Support/Adobe/Common/Media\ Cache\ Files/* &
 # --------------------Clear Gradle cache--------------------
 # ----------------------------------------------------------
 echo '--- Clear Gradle cache'
-if [ -d "~/.gradle/caches" ]; then
-    rm -rfv ~/.gradle/caches/ &> /dev/null
+if [ -d "$HOME/.gradle/caches" ]; then
+    rm -rfv "$HOME/.gradle/caches/" &> /dev/null
 fi
 # ----------------------------------------------------------
 
@@ -309,8 +317,8 @@ fi
 # -------------------Clear Dropbox cache--------------------
 # ----------------------------------------------------------
 echo '--- Clear Dropbox cache'
-if [ -d "~/Dropbox/.dropbox.cache" ]; then
-    sudo rm -rfv ~/Dropbox/.dropbox.cache/* &>/dev/null
+if [ -d "$HOME/Dropbox/.dropbox.cache" ]; then
+    sudo rm -rfv "$HOME/Dropbox/.dropbox.cache/"* &>/dev/null
 fi
 # ----------------------------------------------------------
 
@@ -320,7 +328,7 @@ fi
 # ----------------------------------------------------------
 echo '--- Clear Google Drive File Stream cache'
 killall "Google Drive File Stream"
-rm -rfv ~/Library/Application\ Support/Google/DriveFS/[0-9a-zA-Z]*/content_cache &>/dev/null
+rm -rfv "$HOME"/Library/Application\ Support/Google/DriveFS/[0-9a-zA-Z]*/content_cache &>/dev/null
 # ----------------------------------------------------------
 
 
@@ -340,7 +348,8 @@ fi
 echo '--- Clear Homebrew cache'
 if type "brew" &>/dev/null; then
     brew cleanup -s &>/dev/null
-    rm -rfv $(brew --cache) &>/dev/null
+    brew_cache="$(brew --cache)"
+    rm -rfv "$brew_cache" &>/dev/null
     brew tap --repair &>/dev/null
 fi
 # ----------------------------------------------------------
@@ -370,8 +379,8 @@ fi
 # ---------------Clear Pyenv-Virtualenv cache---------------
 # ----------------------------------------------------------
 echo '--- Clear Pyenv-Virtualenv cache'
-if [ "$PYENV_VIRTUALENV_CACHE_PATH" ]; then
-    rm -rfv $PYENV_VIRTUALENV_CACHE_PATH &>/dev/null
+if [ -n "${PYENV_VIRTUALENV_CACHE_PATH:-}" ]; then
+    rm -rfv "$PYENV_VIRTUALENV_CACHE_PATH" &>/dev/null
 fi
 # ----------------------------------------------------------
 
@@ -439,8 +448,8 @@ fi
 # -----------Clear list of connected iOS devices------------
 # ----------------------------------------------------------
 echo '--- Clear list of connected iOS devices'
-sudo defaults delete /Users/$USER/Library/Preferences/com.apple.iPod.plist "conn:128:Last Connect"
-sudo defaults delete /Users/$USER/Library/Preferences/com.apple.iPod.plist Devices
+sudo defaults delete "$HOME/Library/Preferences/com.apple.iPod.plist" "conn:128:Last Connect"
+sudo defaults delete "$HOME/Library/Preferences/com.apple.iPod.plist" Devices
 sudo defaults delete /Library/Preferences/com.apple.iPod.plist "conn:128:Last Connect"
 sudo defaults delete /Library/Preferences/com.apple.iPod.plist Devices
 sudo rm -rfv /var/db/lockdown/*
