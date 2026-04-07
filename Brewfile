@@ -14,7 +14,6 @@ brew "fzf"
 brew "git"
 brew "git-delta"
 brew "go"
-brew "handbrake"
 brew "jq"
 brew "lazygit"
 brew "mas"
@@ -52,6 +51,7 @@ cask "font-meslo-lg-nerd-font"
 cask "font-sarasa-gothic"
 cask "ghostty"
 cask "google-chrome"
+cask "handbrake-app"
 cask "iina"
 cask "jetbrains-toolbox"
 cask "karabiner-elements"
@@ -81,6 +81,7 @@ mas "剪映专业版", id: 1529999940
 mas "微信", id: 836500024
 mas "百度网盘", id: 547166701
 mas "网易云音乐", id: 944848654
+mas "腾讯会议", id: 1484048379
 mas "飞书", id: 1551632588
 vscode "christian-kohler.path-intellisense"
 vscode "eamodio.gitlens"
