@@ -1,10 +1,14 @@
 -- Customize Treesitter
+-- In AstroNvim v6, treesitter is configured through AstroCore
 
 ---@type LazySpec
 return {
-  "nvim-treesitter/nvim-treesitter",
+  "AstroNvim/astrocore",
+  ---@type AstroCoreOpts
   opts = {
-    ensure_installed = "all",
-    ignore_install = { "ipkg" },
+    treesitter = {
+      ensure_installed = "all",
+      ignore_install = { "ipkg" },
+    },
   },
 }
