@@ -6,11 +6,11 @@ return {
       n = {
         H = {
           function() require("astrocore.buffer").nav(-1) end,
-          desc = "next buffer",
+          desc = "Previous buffer",
         },
         L = {
           function() require("astrocore.buffer").nav(1) end,
-          desc = "prev buffer",
+          desc = "Next buffer",
         },
       },
     },

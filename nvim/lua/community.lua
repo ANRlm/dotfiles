@@ -6,7 +6,7 @@
 return {
   "AstroNvim/astrocommunity",
   { import = "astrocommunity.pack.lua" },
-  { import = "astrocommunity/colorscheme/rose-pine" },
+  { import = "astrocommunity.colorscheme.rose-pine" },
   {
     "rose-pine/neovim",
     name = "rose-pine",

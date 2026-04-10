@@ -103,7 +103,7 @@ nmap <leader>rr <action>(Rerun)
 let g:WhichKeyDesc_RunOrRe_ReRunTests = "<leader>rt ReRunTests"
 nmap <leader>rt <action>(RerunTests)
 let g:WhichKeyDesc_RunOrRe_Rename = "<leader>rn Rename"
-map <leader>rn <action>(RenameElement)
+nmap <leader>rn <action>(RenameElement)
 
 " w: Window
 let g:WhichKeyDesc_Windows = "<leader>w Windows"

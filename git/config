@@ -19,17 +19,21 @@
     syntax-theme = Catppuccin Mocha
     features = mellow-barbet
 
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    autoSetupRemote = true
+
 [merge]
     conflictStyle = zdiff3
 
 [diff]
     colorMoved = default
-[safe]
-	directory = /Users/cnhyk/dotfiles
-[lfs "customtransfer.xet"]
-	path = git-xet
-	args = transfer
-	concurrent = true
+
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
