@@ -1,20 +1,20 @@
 # dotfiles
 
-Personal macOS dotfiles for terminal, editor, shell, and development tooling.
+个人 macOS dotfiles，包含终端、编辑器、Shell 与开发工具配置。
 
-## What's included
+## 包含内容
 
-- Shell: `fish`, `starship`
-- Editor: `nvim`, `ideavim`
-- Terminal + multiplexer: `ghostty`, `tmux`
-- Git tools: `git`, `lazygit`, `delta`
-- File tools: `yazi`, `bat`, `btop`
-- Automation scripts: `scripts/setup.sh`, `scripts/restore.sh`
-- Package bootstrap: `Brewfile` (Homebrew, Casks, MAS, VS Code extensions, Cargo)
+- Shell：`fish`、`starship`
+- 编辑器：`nvim`、`ideavim`
+- 终端与复用器：`ghostty`、`tmux`
+- Git 工具：`git`、`lazygit`、`delta`
+- 文件工具：`yazi`、`bat`、`btop`
+- 自动化脚本：`scripts/setup.sh`、`scripts/restore.sh`
+- 软件安装清单：`Brewfile`（Homebrew、Casks、MAS、VS Code 扩展、Cargo）
 
-## Repository layout
+## 仓库结构
 
-Most top-level folders map to `~/.config/<name>` through symlinks created by the restore script.
+大部分顶层目录会通过恢复脚本创建软链接到 `~/.config/<name>`。
 
 ```text
 .
@@ -32,50 +32,50 @@ Most top-level folders map to `~/.config/<name>` through symlinks created by the
 `- scripts/
 ```
 
-## Quick start
+## 快速开始
 
-### 1) First-time machine bootstrap
+### 1) 新机器初始化
 
-Use this if GitHub SSH or Homebrew are not fully set up yet:
+如果 GitHub SSH 或 Homebrew 还未完成配置，可执行：
 
 ```bash
 bash scripts/setup.sh
 ```
 
-This script will:
+该脚本会：
 
-1. Check/configure GitHub SSH
-2. Install Homebrew (if missing)
-3. Ensure Git is installed
-4. Clone this repository to `~/dotfiles` (if needed)
-5. Run restore
+1. 检查并配置 GitHub SSH
+2. 安装 Homebrew（如未安装）
+3. 确保 Git 可用
+4. 将仓库克隆到 `~/dotfiles`（如不存在）
+5. 执行恢复流程
 
-### 2) Restore on an existing clone
+### 2) 已有仓库直接恢复
 
-If you already cloned this repo:
+如果你已经克隆了本仓库，可执行：
 
 ```bash
 bash scripts/restore.sh
 ```
 
-This script will:
+该脚本会：
 
-1. Symlink config directories into `~/.config`
-2. Apply Karabiner links
-3. Run `brew bundle --file=./Brewfile`
-4. Install TPM and tmux plugins
-5. Set default shell to fish (when available)
+1. 将配置目录软链接到 `~/.config`
+2. 处理 Karabiner 链接
+3. 执行 `brew bundle --file=./Brewfile`
+4. 安装 TPM 与 tmux 插件
+5. 在可用时将默认 shell 设置为 fish
 
-## Notes
+## 注意事项
 
-- `restore.sh` replaces existing target config paths before linking. Back up local config files you want to keep.
-- `Brewfile` includes a large desktop app/tooling set; edit it before restore if you want a lighter install.
-- Fish config sets aliases/abbreviations and startup integrations (zoxide, starship, OrbStack).
+- `restore.sh` 在创建链接前会替换目标路径中的现有内容，重要配置请先备份。
+- `Brewfile` 包含较多桌面应用与工具，如需精简请先编辑后再执行恢复。
+- Fish 配置包含常用缩写与启动集成（zoxide、starship、OrbStack）。
 
-## Maintenance
+## 维护
 
-- Update brew bundle entries by editing `Brewfile`.
-- Re-run restore after changing configs:
+- 通过编辑 `Brewfile` 维护软件清单。
+- 配置变更后可重新执行：
 
 ```bash
 bash scripts/restore.sh
