@@ -124,12 +124,9 @@ bash scripts/restore.sh
 | `aerial.nvim` | 代码大纲 |
 | `nvim-dap` / `nvim-dap-ui` | 调试器 |
 | `mason.nvim` | LSP/Formatter/Linter 管理 |
-| `snacks.nvim` | 工具集（缩进线、作用域等） |
+| `snacks.nvim` | 工具集（缩进线、作用域、模糊查找等） |
 | `which-key.nvim` | 按键提示 |
-| `telescope.nvim` | 模糊查找器 |
 | `todo-comments.nvim` | TODO 注释高亮 |
-| `yazi.nvim` | Yazi 集成 |
-| `presence.nvim` | Discord Rich Presence |
 
 ### Tmux
 
@@ -312,8 +309,7 @@ bash scripts/restore.sh
 │   ├── setup.sh
 │   ├── restore.sh
 │   ├── license.sh
-│   ├── privacy-*.sh
-│   └── ...
+│   └── privacy-*.sh
 ├── starship/           # Starship 提示符
 │   └── starship.toml
 ├── tmux/               # Tmux 终端复用器
@@ -340,7 +336,7 @@ bash scripts/restore.sh
 
 | 工具 | 主题 |
 |------|------|
-| Neovim | rose-pine |
+| Neovim | astrodark（AstroNvim 默认主题） |
 | Tmux | Catppuccin Mocha |
 | Starship | 默认（与终端主题配合） |
 | bat | Catppuccin Mocha |
@@ -399,7 +395,6 @@ bash scripts/restore.sh
 | `restore.sh` | 恢复配置（软链接 + brew bundle + 插件安装 + Shell 切换） |
 | `privacy-cleanup.sh` | 清理系统日志、缓存、浏览记录、iOS 备份等隐私数据 |
 | `privacy-configure-os.sh` | 禁用 Siri、远程管理、个性化广告、iCloud 自动存储等 |
-| `privacy-parallels.sh` | Parallels 虚拟机隐私配置 |
 | `privacy-security-improvements.sh` | 系统安全加固 |
 | `license.sh` | 软件许可证记录 |
 
@@ -407,14 +402,25 @@ bash scripts/restore.sh
 
 ## 维护与更新
 
-### 更新软件
+### 一键更新所有工具
+
+```bash
+u
+```
+
+执行 `u` 函数会依次更新：Homebrew、Rust、Go、Conda、Node、Python(uv)、Fisher、TPM、Neovim 插件、Mason 包、Yazi 插件、Mac App Store、Mole，并清理 CleanShot 缓存。
+
+### 手动更新各组件
 
 ```bash
 # 更新 Homebrew 及所有 Cask
 brew update && brew upgrade && brew upgrade --cask
 
 # 更新 Neovim 插件
-:Lazy update
+:Lazy sync
+
+# 更新 Mason 包（LSP/Formatter/Linter）
+:MasonUpdate
 
 # 更新 Treesitter 解析器
 :TSUpdate
