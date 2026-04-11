@@ -11,10 +11,6 @@ function u --description "Update everything"
         set_color green; echo "  ✓ $argv"; set_color normal
     end
 
-    function _skip
-        set_color yellow; echo "  - $argv (not found, skipped)"; set_color normal
-    end
-
     # ── Homebrew
     _section "Homebrew"
     brew update
@@ -37,145 +33,82 @@ function u --description "Update everything"
             sudo chmod 000 $_dir
         end
         _ok "Chrome locked"
-    else
-        _skip "Google Chrome"
-    end
-
-    # ── Neovim (AstroNvim)
-    _section "Neovim"
-    if command -q nvim
-        # sync plugin manager first, then update everything else
-        nvim --headless "+Lazy! sync"       +qa
-        nvim --headless "+AstroUpdate"      +qa
-        nvim --headless "+MasonToolsUpdate" +qa
-        nvim --headless "+TSUpdateSync"     +qa
-        _ok "Neovim plugins updated"
-    else
-        _skip "nvim"
-    end
-
-    # ── Go toolchain
-    _section "Go"
-    if command -q go
-        # update all non-stdlib binaries installed via `go install`
-        set _gobin (go env GOPATH)/bin
-        if test -d $_gobin
-            for _bin in $_gobin/*
-                set _pkg (go version -m $_bin 2>/dev/null | awk '$1=="path"{print $2; exit}')
-                if test -n "$_pkg"
-                    go install "$_pkg@latest" 2>/dev/null
-                end
-            end
-            _ok "Go binaries updated"
-        end
-    else
-        _skip "go"
-    end
-
-    # ── Conda / Miniforge
-    _section "Conda"
-    if command -q conda
-        conda update conda -y
-        conda update --all -y
-        conda clean --all -y
-        _ok "Conda updated"
-    else
-        _skip "conda"
     end
 
     # ── Rust
     _section "Rust"
-    if command -q rustup
-        rustup update
-        if command -q cargo
-            # cargo-update: `cargo install cargo-update` to enable
-            if test -x ~/.cargo/bin/cargo-install-update
-                cargo install-update -a
-            else
-                _skip "cargo-update (run: cargo install cargo-update)"
-            end
-            if test -x ~/.cargo/bin/cargo-cache
-                cargo cache --autoclean
-            else
-                _skip "cargo-cache (run: cargo install cargo-cache)"
+    rustup update
+    cargo install-update -a
+    cargo cache --autoclean
+    _ok "Rust updated"
+
+    # ── Go
+    _section "Go"
+    set _gobin (go env GOPATH)/bin
+    if test -n "$(ls -A $_gobin 2>/dev/null)"
+        for _bin in $_gobin/*
+            set _pkg (go version -m $_bin 2>/dev/null | awk '$1=="path"{print $2; exit}')
+            if test -n "$_pkg"
+                go install "$_pkg@latest" 2>/dev/null
             end
         end
-        _ok "Rust updated"
+        _ok "Go binaries updated"
     else
-        _skip "rustup"
+        _ok "Go binaries (none installed)"
     end
+
+    # ── Conda
+    _section "Conda"
+    conda update conda -y
+    conda update --all -y
+    conda clean --all -y
+    _ok "Conda updated"
 
     # ── Node
     _section "Node"
-    if command -q npm
-        npm update -g
-        npm cache clean --force
-        _ok "npm updated"
-    else
-        _skip "npm"
-    end
-    if command -q pnpm
-        pnpm update -g
-        pnpm store prune
-        _ok "pnpm updated"
-    else
-        _skip "pnpm"
-    end
+    npm update -g
+    _ok "npm updated"
+    pnpm update -g
+    pnpm store prune
+    _ok "pnpm updated"
 
     # ── Python (uv)
     _section "Python / uv"
-    if command -q uv
-        uv tool upgrade --all
-        _ok "uv tools upgraded"
-    else
-        _skip "uv"
-    end
+    uv tool upgrade --all
+    _ok "uv tools upgraded"
 
-    # ── Shell
+    # ── Fish / Fisher
     _section "Fish / Fisher"
-    if functions -q fisher
-        fisher update
-        _ok "Fisher plugins updated"
-    else
-        _skip "fisher"
-    end
+    fisher update
+    _ok "Fisher plugins updated"
 
+    # ── Tmux / TPM
     _section "Tmux / TPM"
-    set _tpm "$HOME/.config/tmux/plugins/tpm/bin/update_plugins"
-    if test -x $_tpm
-        $_tpm all
-        _ok "TPM plugins updated"
-    else
-        _skip "TPM (~/.config/tmux/plugins/tpm not found)"
-    end
+    ~/.config/tmux/plugins/tpm/bin/update_plugins all
+    _ok "TPM plugins updated"
 
-    # ── Tools
-    _section "Yazi plugins"
-    if command -q ya
-        ya pkg upgrade
-        _ok "Yazi plugins updated"
-    else
-        _skip "ya"
-    end
+    # ── Neovim / AstroNvim
+    _section "Neovim / AstroNvim"
+    nvim --headless "+Lazy! sync" +qa 2>/dev/null
+    _ok "Plugins synced"
+    nvim --headless -c "MasonUpdate" -c "qa" 2>/dev/null
+    _ok "Mason packages updated"
 
-    # ── macOS App Store
+    # ── Yazi
+    _section "Yazi"
+    ya pkg upgrade
+    _ok "Yazi plugins updated"
+
+    # ── Mac App Store
     _section "Mac App Store"
-    if command -q mas
-        mas update
-        _ok "MAS updated"
-    else
-        _skip "mas"
-    end
+    mas upgrade
+    _ok "MAS updated"
 
     # ── Mole
     _section "Mole"
-    if command -q mo
-        printf '\n' | mo clean
-        mo purge
-        _ok "Mole cleaned"
-    else
-        _skip "mo (mole)"
-    end
+    printf '\n' | mo clean
+    mo purge
+    _ok "Mole cleaned"
 
     # ── App caches
     _section "App Caches"
@@ -188,5 +121,5 @@ function u --description "Update everything"
     echo "✓ All updated"
     set_color normal
 
-    functions --erase _section _ok _skip
+    functions --erase _section _ok
 end
