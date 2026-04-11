@@ -17,7 +17,7 @@
 - **Java** — OpenJDK via Homebrew, JetBrains Toolbox for IDEs
 
 **Editors** (from nvim/, ideavim/, Brewfile):
-- **Neovim** (primary) — AstroNvim v5 + lazy.nvim, Rose Pine colorscheme
+- **Neovim** (primary) — AstroNvim v6 + lazy.nvim, Rose Pine colorscheme, yazi integration
 - **JetBrains IDEs** — with IdeaVim (Space leader, EasyMotion, Surround, NERDTree)
 - **VS Code / Cursor / Zed / Trae** — installed as secondary editors
 - **VSCode extensions**: Python, Prettier, GitLens, Copilot, Code Runner, Chinese lang pack
@@ -93,7 +93,6 @@
 **Theme philosophy** (from all configs):
 - Unified dark theme: Rose Pine (Neovim, Fish, Lazygit) + Catppuccin Mocha (tmux, bat, delta syntax, Yazi) + Mellow (Ghostty, delta feature)
 - Consistent Nerd Font icons across all tools
-- Transparent/disabled backgrounds in Neovim (`disable_background = true`)
 
 **Navigation patterns** (from abbreviations, keybindings):
 - `v` = nvim, `lg` = lazygit, `y` = yazi (with cwd sync)
