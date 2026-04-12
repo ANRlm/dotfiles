@@ -24,13 +24,12 @@
 | **窗口管理** | AeroSpace（平铺窗口管理器） |
 | **终端** | Ghostty（带自定义 Shader 效果） |
 | **Shell** | Fish + Starship 提示符 + zoxide |
-| **编辑器** | Neovim（基于 AstroNvim）+ IdeaVim |
+| **编辑器** | Neovim（基于 AstroNvim v6）+ IdeaVim |
 | **复用器** | Tmux（Catppuccin 主题 + TPM 插件） |
 | **文件管理** | Yazi（终端文件管理器） |
 | **版本控制** | Git + Lazygit + Delta（diff 查看器） |
 | **系统监控** | btop |
 | **键盘映射** | Karabiner-Elements + Goku (EDN) |
-| **音乐** | go-musicfox（网易云音乐终端播放器） |
 | **启动器** | Raycast |
 | **包管理** | Homebrew（Brewfile 一键安装） |
 
@@ -207,16 +206,6 @@ bash scripts/restore.sh
 
 - **主题**: Catppuccin Mocha
 
-### go-musicfox
-
-- **引擎**: auto（macOS 使用原生）
-- **音质**: lossless（无损）
-- **歌词**: 显示翻译歌词，平滑渲染模式
-- **封面**: 启用 Kitty 图形协议显示专辑封面
-- **主题色**: `#908caa`（Rosé Pine 色调）
-- **双列布局**: 启用
-- **自动播放**: 关闭
-
 ### Conda
 
 - **渠道**: conda-forge > defaults
@@ -336,7 +325,7 @@ bash scripts/restore.sh
 
 | 工具 | 主题 |
 |------|------|
-| Neovim | astrodark（AstroNvim 默认主题） |
+| Neovim | Rose Pine |
 | Tmux | Catppuccin Mocha |
 | Starship | 默认（与终端主题配合） |
 | bat | Catppuccin Mocha |

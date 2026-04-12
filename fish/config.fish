@@ -70,7 +70,6 @@ if status is-interactive
     abbr -a s   'exec fish'
     abbr -a v   'nvim'
     abbr -a lg  'lazygit'
-    abbr -a mf  'musicfox'
     abbr -a py  'python'
     abbr -a ip  'ipconfig getifaddr en0'
     abbr -a disk 'smartctl -a disk3'
