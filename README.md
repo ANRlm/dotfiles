@@ -84,7 +84,6 @@ bash scripts/restore.sh
 |------|------|------|
 | `v` | `nvim` | 打开编辑器 |
 | `lg` | `lazygit` | Git TUI |
-| `mf` | `musicfox` | 网易云音乐 |
 | `ip` | `ipconfig getifaddr en0` | 获取本机 IP |
 | `ports` | `lsof -i -P \| grep -i "listen"` | 查看监听端口 |
 | `bi` | `brew install` | 安装软件 |
@@ -180,7 +179,7 @@ bash scripts/restore.sh
 - **用户**: cnhyk / nai.ying.cnhyk@gmail.com
 - **Diff 查看器**: Delta（mellow-barbet 主题，并排显示，带行号）
 - **Merge**: zdiff3 冲突样式
-- **LFS**: 启用 Xet 自定义传输
+- **LFS**: 启用 Git LFS
 
 ### Lazygit
 
@@ -271,8 +270,6 @@ bash scripts/restore.sh
 ├── git/                # Git 配置
 │   ├── config
 │   └── themes.gitconfig
-├── go-musicfox/        # 网易云音乐终端播放器
-│   └── config.toml
 ├── ideavim/            # JetBrains IdeaVim 配置
 │   └── ideavimrc
 ├── karabiner/          # Karabiner-Elements 键盘映射
@@ -335,7 +332,6 @@ bash scripts/restore.sh
 | Ghostty | Mellow |
 | btop | greyscale |
 | Fish | Rosé Pine |
-| go-musicfox | `#908caa`（Rosé Pine 色调） |
 
 ### 字体
 

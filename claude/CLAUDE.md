@@ -62,7 +62,7 @@
 **Git** (from `git/config`, lazygit config):
 - Diff viewer: `delta` with side-by-side, line numbers, mellow-barbet theme, Catppuccin Mocha syntax
 - Merge conflict style: zdiff3
-- Git LFS enabled with Xet custom transfer
+- Git LFS enabled
 - Primary Git TUI: `lazygit` (abbreviation `lg`)
 - No custom git aliases detected — relies on lazygit for complex operations
 
