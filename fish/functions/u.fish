@@ -72,6 +72,11 @@ function u --description "Update everything"
     pnpm store prune
     _ok "pnpm updated"
 
+    # ── Bun
+    _section "Bun"
+    bun upgrade
+    _ok "Bun updated"
+
     # ── Python (uv)
     _section "Python / uv"
     uv tool upgrade --all

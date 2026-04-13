@@ -1,1 +1,2 @@
-cache=/Users/cnhyk/.cache/npm
+cache=/Users/cnhyk/.bun/install/cache/npm-cache
+strict-ssl=false
