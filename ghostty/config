@@ -5,7 +5,7 @@ shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 # -------------------------------------------------- #
 # Macos
 # -------------------------------------------------- #
-macos-titlebar-style          = hidden
+macos-titlebar-style          = tabs
 macos-titlebar-proxy-icon     = visible
 macos-window-buttons          = hidden
 macos-window-shadow           = true

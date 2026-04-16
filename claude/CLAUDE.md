@@ -12,7 +12,7 @@
 - **Go** — installed via Homebrew, Go binaries auto-updated in `u` function
 - **Rust** — managed via `rustup` (Homebrew), with `cargo-cache` and `cargo-update`
 - **Python** — managed via Conda/Miniforge + `uv` for tooling
-- **Node.js** — installed via Homebrew, with `pnpm` as preferred package manager
+- **Node.js** — installed via Homebrew, with `pnpm` as preferred package manager; `bun` also installed as secondary runtime/package manager
 - **Lua** — AstroNvim config language, StyLua for formatting
 - **Java** — OpenJDK via Homebrew, JetBrains Toolbox for IDEs
 
@@ -24,12 +24,14 @@
 
 **Key Tools** (from Brewfile, fish abbreviations):
 - `lazygit` for Git TUI, `delta` for diffs (mellow-barbet theme)
+- `gh` (GitHub CLI) for GitHub operations in terminal
 - `fzf` + `ripgrep` + `fd` for search; `bat` + `eza` for file viewing
 - `yazi` for terminal file management
 - `tmux` for terminal multiplexing
 - `zoxide` for smart directory navigation
 - `OrbStack` for containers (not Docker Desktop)
 - `Raycast` as app launcher (replacing Spotlight)
+- `opencode` — AI coding tool (terminal-based)
 
 **Version Management**:
 - No asdf/mise/nvm/fnm detected — Node, Go, Java managed directly via Homebrew
@@ -67,7 +69,7 @@
 - No custom git aliases detected — relies on lazygit for complex operations
 
 **Update routine** (from `fish/functions/u.fish`):
-- Single `u` command updates everything: Homebrew, Neovim plugins, Go binaries, Conda, Rust, npm, pnpm, uv tools, Fisher, TPM, Yazi plugins, Mac App Store, Mole cleanup
+- Single `u` command updates everything: Homebrew, Neovim plugins, Go binaries, Conda, Rust, npm, pnpm, Bun, uv tools, Fisher, TPM, Yazi plugins, Mac App Store, Mole cleanup
 - Auto-dumps Brewfile after Homebrew update (`brew bundle dump --force`)
 - Blocks Chrome AI model downloads during update
 
@@ -82,11 +84,11 @@
 - **OS**: macOS (Apple Silicon — `/opt/homebrew`)
 - **Shell**: Fish (default shell, set via `chsh`)
 - **Prompt**: Starship (text-only symbols, no Nerd Font icons in prompt)
-- **Terminal**: Ghostty (MesloLGS Nerd Font Mono 14pt + Sarasa Mono SC, Mellow theme, custom cursor shaders)
+- **Terminal**: Ghostty (MesloLGS Nerd Font Mono 14pt + Sarasa Mono SC, Mellow theme, custom cursor shaders); Warp also installed as secondary terminal
 - **Multiplexer**: tmux (prefix `Ctrl-a`, Catppuccin Mocha, status bar top, vi copy mode)
 - **Window Manager**: AeroSpace (tiling, `Cmd+hjkl` focus, `Ctrl+Alt+Shift+N` workspaces)
 - **Keyboard**: Karabiner-Elements + Goku (EDN config)
-- **Fonts**: MesloLGS Nerd Font Mono, Sarasa Mono SC, Fira Code NF, JetBrains Mono NF, LXGW WenKai
+- **Fonts**: MesloLGS Nerd Font Mono, Sarasa Mono SC, Fira Code NF, JetBrains Mono NF, LXGW WenKai, Geist, Geist Mono
 
 # Preferences
 
