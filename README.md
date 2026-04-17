@@ -399,7 +399,7 @@ u
 
 ```bash
 # 更新 Homebrew 及所有 Cask
-brew update && brew upgrade && brew upgrade --cask
+brew update && brew upgrade
 
 # 更新 Neovim 插件
 :Lazy sync
