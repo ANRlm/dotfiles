@@ -8,42 +8,43 @@ function u --description "Update everything"
     end
 
     function _ok
-        set_color green; echo "  ✓ $argv"; set_color normal
+        set_color green
+        echo "  ✓ $argv"
+        set_color normal
     end
 
     # ── Homebrew
-    _section "Homebrew"
+    _section Homebrew
     brew update
     brew upgrade
-    brew upgrade --cask
     brew autoremove
     brew cleanup --prune=all
     brew bundle dump --force --file ~/dotfiles/Brewfile
     _ok "Homebrew done"
 
-    # ── Google Chrome — block AI model download
-    _section "Chrome"
+    # ── Google Chrome — block AI model download via enterprise policy
+    _section Chrome
     if test -d "/Applications/Google Chrome.app"
-        for _dir in \
-            "$HOME/Library/Application Support/Google/Chrome/OptGuideOnDeviceModel" \
-            "$HOME/Library/Application Support/Google/Chrome/optimization_guide_model_store"
-            sudo rm -rf $_dir
-            mkdir -p $_dir
-            sudo chown root $_dir
-            sudo chmod 000 $_dir
+        set _pref ~/Library/Preferences/com.google.Chrome
+        set _cur (defaults read $_pref GenAILocalFoundationalModelSettings 2>/dev/null)
+        if test "$_cur" != 1
+            defaults write $_pref GenAILocalFoundationalModelSettings -int 1
+            _ok "Chrome AI model policy set"
+        else
+            _ok "Chrome AI model policy already set"
         end
-        _ok "Chrome locked"
     end
 
     # ── Rust
-    _section "Rust"
+    _section Rust
+    rustup self update
     rustup update
     cargo install-update -a
     cargo cache --autoclean
     _ok "Rust updated"
 
     # ── Go
-    _section "Go"
+    _section Go
     set _gobin (go env GOPATH)/bin
     if test -n "$(ls -A $_gobin 2>/dev/null)"
         for _bin in $_gobin/*
@@ -58,14 +59,14 @@ function u --description "Update everything"
     end
 
     # ── Conda
-    _section "Conda"
+    _section Conda
     conda update conda -y
     conda update --all -y
     conda clean --all -y
     _ok "Conda updated"
 
     # ── Node
-    _section "Node"
+    _section Node
     npm update -g
     _ok "npm updated"
     pnpm update -g
@@ -73,7 +74,7 @@ function u --description "Update everything"
     _ok "pnpm updated"
 
     # ── Bun
-    _section "Bun"
+    _section Bun
     bun upgrade
     _ok "Bun updated"
 
@@ -96,11 +97,11 @@ function u --description "Update everything"
     _section "Neovim / AstroNvim"
     nvim --headless "+Lazy! sync" +qa 2>/dev/null
     _ok "Plugins synced"
-    nvim --headless -c "MasonUpdate" -c "qa" 2>/dev/null
+    nvim --headless -c MasonUpdate -c qa 2>/dev/null
     _ok "Mason packages updated"
 
     # ── Yazi
-    _section "Yazi"
+    _section Yazi
     ya pkg upgrade
     _ok "Yazi plugins updated"
 
@@ -110,7 +111,7 @@ function u --description "Update everything"
     _ok "MAS updated"
 
     # ── Mole
-    _section "Mole"
+    _section Mole
     printf '\n' | mo clean
     mo purge
     _ok "Mole cleaned"
