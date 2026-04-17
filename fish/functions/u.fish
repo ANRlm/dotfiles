@@ -76,6 +76,8 @@ function u --description "Update everything"
     # ── Bun
     _section Bun
     bun upgrade
+    bun update -g opencode-ai
+    cd ~/.config/opencode && bun update oh-my-openagent && cd -
     _ok "Bun updated"
 
     # ── Python (uv)
