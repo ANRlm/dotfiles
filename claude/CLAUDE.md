@@ -71,7 +71,7 @@
 **Update routine** (from `fish/functions/u.fish`):
 - Single `u` command updates everything: Homebrew, Neovim plugins, Go binaries, Conda, Rust, npm, pnpm, Bun, uv tools, Fisher, TPM, Yazi plugins, Mac App Store, Mole cleanup
 - Auto-dumps Brewfile after Homebrew update (`brew bundle dump --force`)
-- Blocks Chrome AI model downloads during update
+- Blocks Chrome AI model downloads via `GenAILocalFoundationalModelSettings` enterprise policy (set once, persists across Chrome updates)
 
 **Dotfiles management** (from `scripts/`):
 - Symlink-based: all configs live in `~/dotfiles/`, symlinked to `~/.config/`
