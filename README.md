@@ -1,38 +1,38 @@
 # dotfiles
 
-macOS dotfiles managed via symlinks.
+基于软链接管理的 macOS 个人配置。
 
-## Stack
+## 工具栈
 
-| Category | Tools |
-|----------|-------|
+| 类别 | 工具 |
+|------|------|
 | Shell | Fish + Starship |
-| Terminal | Ghostty + tmux |
-| Editor | Neovim (AstroNvim) |
+| 终端 | Ghostty + tmux |
+| 编辑器 | Neovim (AstroNvim) |
 | Git | lazygit + delta |
-| Files | yazi + eza + fd |
-| Search | fzf + ripgrep |
-| Window manager | AeroSpace |
-| Packages | Homebrew + pnpm + bun + uv |
+| 文件管理 | yazi + eza + fd |
+| 搜索 | fzf + ripgrep |
+| 窗口管理 | AeroSpace |
+| 包管理 | Homebrew + pnpm + bun + uv |
 
-## Setup
+## 使用
 
-Fresh machine:
+新机器初始化：
 
 ```sh
 bash scripts/setup.sh
 ```
 
-Existing machine (restore symlinks + packages):
+已有机器恢复软链接和包：
 
 ```sh
 bash scripts/restore.sh
 ```
 
-## Update
+## 更新
 
 ```fish
 u
 ```
 
-Runs a single command that updates Homebrew, Neovim plugins, language toolchains, shell plugins, and more.
+一条命令更新所有内容：Homebrew、Neovim 插件、各语言工具链、Shell 插件等。
