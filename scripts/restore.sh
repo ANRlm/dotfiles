@@ -57,7 +57,7 @@ link_file() {
 # ──────────────────────────────────────────────────
 section "Config dirs"
 
-for dir in aerospace bat btop conda fish ghostty git ideavim lazygit mole npm nvim starship tmux yazi; do
+for dir in aerospace bat btop conda fish ghostty git lazygit mole npm nvim starship tmux yazi; do
 	link_dir "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
 done
 # ──────────────────────────────────────────────────

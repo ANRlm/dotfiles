@@ -76,7 +76,7 @@ if status is-interactive
     abbr -a lg lazygit
     abbr -a py python
     abbr -a ip 'ipconfig getifaddr en0'
-    abbr -a disk 'smartctl -a disk3'
+    abbr -a disk 'smartctl -a (diskutil list | awk \'/internal\)/{print $1; exit}\' | sed \'s|/dev/||\')'
     abbr -a copy pbcopy
     abbr -a ports 'lsof -i -P | grep -i "listen"'
 
