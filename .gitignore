@@ -17,3 +17,8 @@ karabiner/config/automatic_backups/
 karabiner/config/assets/
 
 scripts/license.sh
+
+.claude/worktrees/
+.omc/sessions/
+.omc/project-memory.json
+.omc/state/

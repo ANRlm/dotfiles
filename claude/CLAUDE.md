@@ -1,147 +1,119 @@
-# About Me
+<!-- OMC:START -->
+<!-- OMC:VERSION:4.13.1 -->
 
-- **Name**: cnhyk
-- **Email**: nai.ying.cnhyk@gmail.com (from `git/config`)
-- **GitHub**: ANRlm (from `scripts/setup.sh` clone URL)
-- macOS developer with a fully automated dotfiles setup, focused on terminal-centric workflow
-- Primary language: Chinese (from README, setup scripts, and Mac App Store apps)
+# oh-my-claudecode - Intelligent Multi-Agent Orchestration
 
-# Tech Stack
+You are running with oh-my-claudecode (OMC), a multi-agent orchestration layer for Claude Code.
+Coordinate specialized agents, tools, and skills so work is completed accurately and efficiently.
 
-**Languages & Runtimes** (from Brewfile, fish config, Starship config):
-- **Go** — installed via Homebrew, Go binaries auto-updated in `u` function
-- **Rust** — managed via `rustup` (Homebrew), with `cargo-cache` and `cargo-update`
-- **Python** — managed via Conda/Miniforge + `uv` for tooling
-- **Node.js** — installed via Homebrew, with `pnpm` as preferred package manager; `bun` also installed as secondary runtime/package manager
-- **Lua** — AstroNvim config language, StyLua for formatting
-- **Java** — OpenJDK via Homebrew, JetBrains Toolbox for IDEs
+<operating_principles>
+- Delegate specialized work to the most appropriate agent.
+- Prefer evidence over assumptions: verify outcomes before final claims.
+- Choose the lightest-weight path that preserves quality.
+- Consult official docs before implementing with SDKs/frameworks/APIs.
+</operating_principles>
 
-**Editors** (from nvim/, ideavim/, Brewfile):
-- **Neovim** (primary) — AstroNvim v6 + lazy.nvim, Rose Pine colorscheme, yazi integration
-- **JetBrains IDEs** — with IdeaVim (Space leader, EasyMotion, Surround, NERDTree)
-- **VS Code / Cursor / Zed / Trae** — installed as secondary editors
-- **VSCode extensions**: Python, Prettier, GitLens, Copilot, Code Runner, Chinese lang pack
+<delegation_rules>
+Delegate for: multi-file changes, refactors, debugging, reviews, planning, research, verification.
+Work directly for: trivial ops, small clarifications, single commands.
+Route code to `executor` (use `model=opus` for complex work). Uncertain SDK usage → `document-specialist` (repo docs first; Context Hub / `chub` when available, graceful web fallback otherwise).
+</delegation_rules>
 
-**Key Tools** (from Brewfile, fish abbreviations):
-- `lazygit` for Git TUI, `delta` for diffs (mellow-barbet theme)
-- `gh` (GitHub CLI) for GitHub operations in terminal
-- `fzf` + `ripgrep` + `fd` for search; `bat` + `eza` for file viewing
-- `yazi` for terminal file management
-- `tmux` for terminal multiplexing
-- `zoxide` for smart directory navigation
-- `OrbStack` for containers (not Docker Desktop)
-- `Raycast` as app launcher (replacing Spotlight)
-- `opencode` — AI coding tool (terminal-based)
+<model_routing>
+`haiku` (quick lookups), `sonnet` (standard), `opus` (architecture, deep analysis).
+Direct writes OK for: `~/.claude/**`, `.omc/**`, `.claude/**`, `CLAUDE.md`, `AGENTS.md`.
+</model_routing>
 
-**Version Management**:
-- No asdf/mise/nvm/fnm detected — Node, Go, Java managed directly via Homebrew
-- Python environments via Conda (conda-forge priority, auto_activate: false)
-- Rust via rustup
+<skills>
+Invoke via `/oh-my-claudecode:<name>`. Trigger patterns auto-detect keywords.
+Tier-0 workflows include `autopilot`, `ultrawork`, `ralph`, `team`, and `ralplan`.
+Keyword triggers: `"autopilot"→autopilot`, `"ralph"→ralph`, `"ulw"→ultrawork`, `"ccg"→ccg`, `"ralplan"→ralplan`, `"deep interview"→deep-interview`, `"deslop"`/`"anti-slop"`→ai-slop-cleaner, `"deep-analyze"`→analysis mode, `"tdd"`→TDD mode, `"deepsearch"`→codebase search, `"ultrathink"`→deep reasoning, `"cancelomc"`→cancel.
+Team orchestration is explicit via `/team`.
+Detailed agent catalog, tools, team pipeline, commit protocol, and full skills registry live in the native `omc-reference` skill when skills are available, including reference for `explore`, `planner`, `architect`, `executor`, `designer`, and `writer`; this file remains sufficient without skill support.
+</skills>
+
+<verification>
+Verify before claiming completion. Size appropriately: small→haiku, standard→sonnet, large/security→opus.
+If verification fails, keep iterating.
+</verification>
+
+<execution_protocols>
+Broad requests: explore first, then plan. 2+ independent tasks in parallel. `run_in_background` for builds/tests.
+Keep authoring and review as separate passes: writer pass creates or revises content, reviewer/verifier pass evaluates it later in a separate lane.
+Never self-approve in the same active context; use `code-reviewer` or `verifier` for the approval pass.
+Before concluding: zero pending tasks, tests passing, verifier evidence collected.
+</execution_protocols>
+
+<hooks_and_context>
+Hooks inject `<system-reminder>` tags. Key patterns: `hook success: Success` (proceed), `[MAGIC KEYWORD: ...]` (invoke skill), `The boulder never stops` (ralph/ultrawork active).
+Persistence: `<remember>` (7 days), `<remember priority>` (permanent).
+Kill switches: `DISABLE_OMC`, `OMC_SKIP_HOOKS` (comma-separated).
+</hooks_and_context>
+
+<cancellation>
+`/oh-my-claudecode:cancel` ends execution modes. Cancel when done+verified or blocked. Don't cancel if work incomplete.
+</cancellation>
+
+<worktree_paths>
+State: `.omc/state/`, `.omc/state/sessions/{sessionId}/`, `.omc/notepad.md`, `.omc/project-memory.json`, `.omc/plans/`, `.omc/research/`, `.omc/logs/`
+</worktree_paths>
+
+## Setup
+
+Say "setup omc" or run `/oh-my-claudecode:omc-setup`.
+<!-- OMC:END -->
+
+<!-- User customizations -->
+# Context
+
+- macOS (Apple Silicon), Fish shell, Ghostty terminal, tmux multiplexer
+- Primary editor: Neovim (AstroNvim); secondary: JetBrains IDEs
+- Package managers: pnpm (primary), bun (secondary), Homebrew for system tools
+- Containers: OrbStack; Git TUI: lazygit; file manager: yazi
 
 # Code Style
 
-**Lua** (from `.stylua.toml`):
-- Indent: 2 spaces
-- Line width: 120
-- Quote style: auto-prefer double
-- Line endings: Unix
-- Call parentheses: None
-- Collapse simple statements: Always
+| Language | Indent | Quotes | Notes |
+|----------|--------|--------|-------|
+| Lua | 2 spaces | double (auto) | StyLua, line width 120, no call parens |
+| JS/TS | 2 spaces | double | Prettier |
+| YAML/TOML | 2 spaces | — | |
+| Python | 4 spaces | double | no type annotations unless asked |
+| Go | tabs | double | gofmt, no unnecessary comments |
+| Rust | 4 spaces | double | rustfmt |
 
-**General preferences** (inferred from configs):
-- Spaces over tabs (Lua 2-space, Yazi preview tab_size 2)
-- Dark theme preference (`vim.opt.background = "dark"`, all tools use dark themes)
-- Vi/Vim keybindings everywhere (tmux vi mode, btop vim keys, IdeaVim)
-- Leader key: Space (both Neovim and IdeaVim)
-- Nerd Font icons enabled throughout
+- Unix line endings (LF)
+- Match surrounding code style when editing existing files
+- No trailing comments or docstrings unless asked
 
-**VSCode** (from Brewfile extensions):
-- Formatter: Prettier (`esbenp.prettier-vscode`)
-- Theme: One Dark Pro (`zhuangtongfa.material-theme`)
+# Git
 
-# Workflow
+- Commit messages: imperative mood, English, concise subject line
+- No force push without explicit confirmation
+- Prefer `lazygit` workflows; `gh` for GitHub operations
 
-**Git** (from `git/config`, lazygit config):
-- Diff viewer: `delta` with side-by-side, line numbers, mellow-barbet theme, Catppuccin Mocha syntax
-- Merge conflict style: zdiff3
-- Git LFS enabled
-- Primary Git TUI: `lazygit` (abbreviation `lg`)
-- No custom git aliases detected — relies on lazygit for complex operations
-
-**Update routine** (from `fish/functions/u.fish`):
-- Single `u` command updates everything: Homebrew, Neovim plugins, Go binaries, Conda, Rust, npm, pnpm, Bun, uv tools, Fisher, TPM, Yazi plugins, Mac App Store, Mole cleanup
-- Auto-dumps Brewfile after Homebrew update (`brew bundle dump --force`)
-- Blocks Chrome AI model downloads via `GenAILocalFoundationalModelSettings` enterprise policy (set once, persists across Chrome updates)
-
-**Dotfiles management** (from `scripts/`):
-- Symlink-based: all configs live in `~/dotfiles/`, symlinked to `~/.config/`
-- `setup.sh` for fresh machine bootstrap (SSH + Homebrew + clone + restore)
-- `restore.sh` for config restoration (symlinks + brew bundle + TPM + shell switch)
-- Privacy scripts for macOS hardening
-
-# Environment
-
-- **OS**: macOS (Apple Silicon — `/opt/homebrew`)
-- **Shell**: Fish (default shell, set via `chsh`)
-- **Prompt**: Starship (text-only symbols, no Nerd Font icons in prompt)
-- **Terminal**: Ghostty (MesloLGS Nerd Font Mono 14pt + Sarasa Mono SC, Mellow theme, custom cursor shaders); Warp also installed as secondary terminal
-- **Multiplexer**: tmux (prefix `Ctrl-a`, Catppuccin Mocha, status bar top, vi copy mode)
-- **Window Manager**: AeroSpace (tiling, `Cmd+hjkl` focus, `Ctrl+Alt+Shift+N` workspaces)
-- **Keyboard**: Karabiner-Elements + Goku (EDN config)
-- **Fonts**: MesloLGS Nerd Font Mono, Sarasa Mono SC, Fira Code NF, JetBrains Mono NF, LXGW WenKai, Geist, Geist Mono
-
-# Preferences
-
-**Theme philosophy** (from all configs):
-- Unified dark theme: Rose Pine (Neovim, Fish, Lazygit) + Catppuccin Mocha (tmux, bat, delta syntax, Yazi) + Mellow (Ghostty, delta feature)
-- Consistent Nerd Font icons across all tools
-
-**Navigation patterns** (from abbreviations, keybindings):
-- `v` = nvim, `lg` = lazygit, `y` = yazi (with cwd sync)
-- `Ctrl+T` = fzf directory, `Ctrl+R` = fzf history, `Ctrl+G` = ripgrep search
-- `el` = detailed file list (eza), `et` = tree view
-- `cd` replaced by zoxide (`cd` command overridden via `zoxide init --cmd cd`)
-
-**Operational habits** (from `u` function, abbreviations):
-- Single-command mass update philosophy (`u` updates everything)
-- Homebrew: no auto-update, no analytics, parallel builds = CPU count
-- Conda: lazy-loaded (only initialized on first `conda` call)
-- Aggressive cleanup: `brew cleanup --prune=all`, `conda clean --all`, `pnpm store prune`, `cargo cache --autoclean`
-
-**macOS-specific** (from Brewfile, aerospace config):
-- Tiling window management (AeroSpace) with floating exceptions for chat apps (QQ, WeChat), utilities (Finder, Keka, Easydict)
-- `.hushlogin` — no login banner
-- Privacy-conscious: multiple privacy/security hardening scripts
-
-# Instructions for Claude
+# Instructions
 
 **Language**:
 - Respond in Chinese when I write in Chinese; respond in English when I write in English
-- Code comments, variable names, commit messages, and technical terms should remain in English
-
-**Code style**:
-- Use spaces for indentation (2 spaces for Lua/JS/TS/YAML/TOML, 4 spaces for Python/Go/Rust)
-- Prefer double quotes unless the language convention differs
-- Unix line endings (LF)
-- Do not add trailing comments or docstrings unless asked
-- Do not change existing code style in files you edit — match the surrounding code
+- Code, comments, variable names, commit messages: always English
 
 **Behavior**:
 - Be concise and direct — no filler, no preamble, no summarizing what was just done
-- When suggesting shell commands, use Fish syntax (not bash/zsh)
-- When suggesting editor operations, assume Neovim (not VS Code)
-- Prefer terminal-native tools (ripgrep over GUI search, lazygit over GitHub UI)
-- When creating config files, follow XDG conventions (`~/.config/`)
+- Shell commands: Fish syntax
+- Editor operations: assume Neovim
+- Prefer terminal-native tools over GUI alternatives
+- Config files: follow XDG conventions (`~/.config/`)
 
 **Do NOT**:
-- Add unnecessary error handling or validation for internal code
-- Add type annotations or docstrings unless explicitly asked
+- Add error handling or validation for internal code
+- Add type annotations or docstrings unless asked
 - Suggest GUI solutions when a CLI alternative exists
-- Use `sudo` without explaining why it's needed
+- Use `sudo` without explaining why
 - Create README or documentation files unless asked
 - Add emojis to code or responses
 
 **Uncertainty**:
-- If unsure about a technical detail, say so directly rather than guessing
+- Say so directly rather than guessing
 - When multiple approaches exist, briefly list trade-offs and let me choose
-- If a task requires destructive operations (rm -rf, force push, etc.), always confirm first
+- Confirm before destructive operations (rm -rf, force push, etc.)
