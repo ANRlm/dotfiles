@@ -16,7 +16,6 @@ set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 
 # ── PATH
 fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
-fish_add_path -g /opt/homebrew/opt/openjdk/bin
 fish_add_path -g /opt/homebrew/opt/rustup/bin
 fish_add_path -g "$BUN_INSTALL/bin"
 

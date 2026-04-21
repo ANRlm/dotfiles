@@ -10,10 +10,6 @@ fish/functions/_fzf_*.fish
 fish/functions/fisher.fish
 fish/functions/fzf_configure_bindings.fish
 
-mole/mole.log
-mole/operations.log
-mole/purge_paths
-
 karabiner/config/automatic_backups/
 karabiner/config/assets/
 
