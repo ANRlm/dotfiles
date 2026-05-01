@@ -12,6 +12,10 @@ fish/functions/fzf_configure_bindings.fish
 
 karabiner/config/automatic_backups/
 karabiner/config/assets/
+karabiner/config/karabiner.json
+
+yazi/plugins/
+yazi/flavors/
 
 scripts/license.sh
 

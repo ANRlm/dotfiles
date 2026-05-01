@@ -7,7 +7,7 @@ set -gx STARSHIP_CONFIG "$HOME/.config/starship/starship.toml"
 set -gx NPM_CONFIG_USERCONFIG ~/.config/npm/npmrc
 set -gx OMO_SEND_ANONYMOUS_TELEMETRY 0
 set -gx CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS 1
-set -gx BUN_INSTALL "$HOME/.bun"
+set -gx CLAUDE_CODE_NO_FLICKER 1
 
 # ── Homebrew
 set -gx HOMEBREW_NO_AUTO_UPDATE 1
@@ -17,7 +17,6 @@ set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 # ── PATH
 fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fish_add_path -g /opt/homebrew/opt/rustup/bin
-fish_add_path -g "$BUN_INSTALL/bin"
 
 # ── Homebrew Shell Environment
 if test -x /opt/homebrew/bin/brew
@@ -75,9 +74,9 @@ if status is-interactive
     abbr -a lg lazygit
     abbr -a py python
     abbr -a ip 'ipconfig getifaddr en0'
-    abbr -a disk 'smartctl -a (diskutil list | awk \'/internal\)/{print $1; exit}\' | sed \'s|/dev/||\')'
     abbr -a copy pbcopy
     abbr -a ports 'lsof -i -P | grep -i "listen"'
+    abbr -a claude 'claude --dangerously-skip-permissions'
 
     # Xcode
     abbr -a xcode-clt 'sudo xcode-select -s /Library/Developer/CommandLineTools'
@@ -137,7 +136,9 @@ if status is-interactive
     set -g fzf_diff_highlighter "delta --paging=never --features='mellow-barbet' --syntax-theme='Catppuccin Mocha'"
     set -g fzf_history_time_format %d-%m-%y
 
-    fzf_configure_bindings --directory=\ct --history=\cr
-    bind \cg ripgrep_search
+    function fish_user_key_bindings
+        fzf_configure_bindings --directory=\ct --history=\cr
+        bind \cg ripgrep_search
+    end
 
 end

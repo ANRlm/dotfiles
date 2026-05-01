@@ -57,9 +57,15 @@ link_file() {
 # ──────────────────────────────────────────────────
 section "Config dirs"
 
-for dir in aerospace bat btop conda fish ghostty git lazygit nvim starship tmux yazi; do
+for dir in aerospace bat btop claude conda fish ghostty git lazygit nvim starship tmux yazi; do
 	link_dir "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
 done
+# ──────────────────────────────────────────────────
+# Claude
+# ──────────────────────────────────────────────────
+section "Claude"
+
+link_file "$DOTFILES_DIR/droid/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 # ──────────────────────────────────────────────────
 # Karabiner
 # ──────────────────────────────────────────────────

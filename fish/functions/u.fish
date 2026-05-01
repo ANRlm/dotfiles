@@ -37,7 +37,6 @@ function u --description "Update everything"
 
     # ── Rust
     _section Rust
-    rustup self update
     rustup update
     cargo install-update -a
     cargo cache --autoclean
@@ -72,17 +71,6 @@ function u --description "Update everything"
     pnpm update -g
     pnpm store prune
     _ok "pnpm updated"
-
-    # ── Bun
-    _section Bun
-    bun upgrade
-    if bun pm ls -g 2>/dev/null | grep -q opencode-ai
-        bun update -g opencode-ai
-    end
-    if test -d ~/.config/opencode
-        cd ~/.config/opencode && bun update oh-my-openagent; and cd -
-    end
-    _ok "Bun updated"
 
     # ── Python (uv)
     _section "Python / uv"
