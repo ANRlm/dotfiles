@@ -1,4 +1,6 @@
 function u --description "Update everything"
+    set -g __u_failures 0
+
     # ── helpers
     function _section
         set_color --bold cyan
@@ -13,14 +15,28 @@ function u --description "Update everything"
         set_color normal
     end
 
+    function _fail
+        set_color red
+        echo "  ✗ $argv"
+        set_color normal
+    end
+
+    function _run --argument-names label
+        set -e argv[1]
+        $argv
+        set -l status_code $status
+        if test $status_code -eq 0
+            _ok "$label"
+        else
+            _fail "$label (exit $status_code)"
+            set -g __u_failures (math $__u_failures + 1)
+        end
+        return $status_code
+    end
+
     # ── Homebrew
     _section Homebrew
-    brew update
-    brew upgrade
-    brew autoremove
-    brew cleanup --prune=all
-    brew bundle dump --force --file ~/dotfiles/Brewfile
-    _ok "Homebrew done"
+    _run "Homebrew done" bash -lc "brew update && brew upgrade && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile"
 
     # ── Google Chrome — block AI model download via enterprise policy
     _section Chrome
@@ -28,19 +44,17 @@ function u --description "Update everything"
         set _pref ~/Library/Preferences/com.google.Chrome
         set _cur (defaults read $_pref GenAILocalFoundationalModelSettings 2>/dev/null)
         if test "$_cur" != 1
-            defaults write $_pref GenAILocalFoundationalModelSettings -int 1
-            _ok "Chrome AI model policy set"
+            _run "Chrome AI model policy set" defaults write $_pref GenAILocalFoundationalModelSettings -int 1
         else
             _ok "Chrome AI model policy already set"
         end
+    else
+        _ok "Chrome not installed"
     end
 
     # ── Rust
     _section Rust
-    rustup update
-    cargo install-update -a
-    cargo cache --autoclean
-    _ok "Rust updated"
+    _run "Rust updated" bash -lc "rustup update && cargo install-update -a && cargo cache --autoclean"
 
     # ── Go
     _section Go
@@ -52,74 +66,69 @@ function u --description "Update everything"
                 go install "$_pkg@latest" 2>/dev/null
             end
         end
-        _ok "Go binaries updated"
+        if test $status -eq 0
+            _ok "Go binaries updated"
+        else
+            _fail "Go binaries updated"
+            set -g __u_failures (math $__u_failures + 1)
+        end
     else
         _ok "Go binaries (none installed)"
     end
 
     # ── Conda
     _section Conda
-    conda update conda -y
-    conda update --all -y
-    conda clean --all -y
-    _ok "Conda updated"
+    _run "Conda updated" bash -lc "conda update conda -y && conda update --all -y && conda clean --all -y"
 
     # ── Node
     _section Node
-    npm update -g
-    _ok "npm updated"
-    pnpm update -g
-    pnpm store prune
-    _ok "pnpm updated"
+    _run "npm updated" npm update -g
+    _run "pnpm updated" bash -lc "pnpm update -g && pnpm store prune"
 
     # ── Python (uv)
     _section "Python / uv"
-    uv tool upgrade --all
-    _ok "uv tools upgraded"
+    _run "uv tools upgraded" uv tool upgrade --all
 
     # ── Fish / Fisher
     _section "Fish / Fisher"
-    fisher update
-    _ok "Fisher plugins updated"
+    _run "Fisher plugins updated" fisher update
 
     # ── Tmux / TPM
     _section "Tmux / TPM"
-    ~/.config/tmux/plugins/tpm/bin/update_plugins all
-    _ok "TPM plugins updated"
+    _run "TPM plugins updated" ~/.config/tmux/plugins/tpm/bin/update_plugins all
 
     # ── Neovim / AstroNvim
     _section "Neovim / AstroNvim"
-    nvim --headless "+Lazy! sync" +qa 2>/dev/null
-    _ok "Plugins synced"
-    nvim --headless -c MasonUpdate -c qa 2>/dev/null
-    _ok "Mason packages updated"
+    _run "Plugins synced" bash -lc "nvim --headless '+Lazy! sync' +qa 2>/dev/null"
+    _run "Mason packages updated" bash -lc "nvim --headless -c MasonUpdate -c qa 2>/dev/null"
 
     # ── Yazi
     _section Yazi
-    ya pkg upgrade
-    _ok "Yazi plugins updated"
+    _run "Yazi plugins updated" ya pkg upgrade
 
     # ── Mac App Store
     _section "Mac App Store"
-    mas upgrade
-    _ok "MAS updated"
+    _run "MAS updated" mas upgrade
 
     # ── Mole
     _section Mole
-    printf '\n' | mo clean
-    mo purge
-    _ok "Mole cleaned"
+    _run "Mole cleaned" bash -lc "printf '\\n' | mo clean"
 
     # ── App caches
     _section "App Caches"
-    rm -rf ~/Library/Application\ Support/CleanShot/media
-    _ok "CleanShot media cleared"
+    _run "CleanShot media cleared" rm -rf ~/Library/Application\ Support/CleanShot/media
 
     # ── Done
     echo ""
-    set_color --bold green
-    echo "✓ All updated"
+    if test $__u_failures -eq 0
+        set_color --bold green
+        echo "✓ All updated"
+    else
+        set_color --bold red
+        echo "✗ Update finished with $__u_failures failure(s)"
+    end
     set_color normal
 
-    functions --erase _section _ok
+    functions --erase _section _ok _fail _run
+    set -e __u_failures
 end

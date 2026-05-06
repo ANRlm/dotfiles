@@ -7,6 +7,7 @@
 
 [core]
     pager = delta
+    excludesfile = ~/.config/git/ignore
 
 [interactive]
     diffFilter = delta --color-only
@@ -16,8 +17,8 @@
     side-by-side = true
     line-numbers = true
     dark = true      # or light = true, or omit for auto-detection
-    syntax-theme = Catppuccin Mocha
-    features = mellow-barbet
+    syntax-theme = gruvbox-dark
+    features = everforest-dark
 
 [init]
     defaultBranch = main

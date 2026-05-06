@@ -17,6 +17,8 @@ set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 # ── PATH
 fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fish_add_path -g /opt/homebrew/opt/rustup/bin
+set -gx PNPM_HOME "$HOME/Library/pnpm"
+fish_add_path -g "$PNPM_HOME/bin"
 
 # ── Homebrew Shell Environment
 if test -x /opt/homebrew/bin/brew
@@ -61,9 +63,6 @@ if status is-interactive
     if command -q starship
         starship init fish | source
     end
-
-    # Theme
-    fish_config theme choose "Rosé Pine"
 
     # ── Abbreviations
 

@@ -12,7 +12,7 @@
 | Git | lazygit + delta |
 | 文件管理 | yazi + eza + fd |
 | 搜索 | fzf + ripgrep |
-| 系统监控 | btop + bat |
+| 系统工具 | btop + bat |
 | 窗口管理 | AeroSpace |
 | 键位映射 | Karabiner-Elements |
 | 包/环境管理 | Homebrew + pnpm + uv + Conda |
@@ -30,6 +30,7 @@ dotfiles/
 ├── ghostty/     # Ghostty 终端配置
 ├── git/         # Git 配置
 ├── karabiner/   # Karabiner 键位配置
+├── lazygit/     # lazygit 配置
 ├── nvim/        # Neovim 配置 (AstroNvim)
 ├── starship/    # Starship 终端提示符配置
 ├── tmux/        # tmux 配置

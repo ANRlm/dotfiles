@@ -1,46 +1,45 @@
 git:
   pagers:
     - colorArg: always
-      pager: delta --paging=never --features="mellow-barbet" --syntax-theme="Catppuccin Mocha"
+      pager: delta --dark --paging=never --features="everforest-dark" --syntax-theme="gruvbox-dark"
       useConfig: false
-      
+
 gui:
   theme:
     activeBorderColor:
-      - "#31748f"
+      - "#a7c080"
       - bold
 
     inactiveBorderColor:
-      - "#6e6a86"
+      - "#475258"
 
     searchingActiveBorderColor:
-      - "#ebbcba"
+      - "#dbbc7f"
       - bold
 
     optionsTextColor:
-      - "#9ccfd8"
+      - "#83c092"
 
     selectedLineBgColor:
-      - "#31748f"
+      - "#3a464c"
 
     inactiveViewSelectedLineBgColor:
-      - "#26233a"
-      - bold
+      - "#343f44"
 
     cherryPickedCommitFgColor:
-      - "#1f1d2e"
+      - "#2d353b"
 
     cherryPickedCommitBgColor:
-      - "#ebbcba"
+      - "#dbbc7f"
 
     markedBaseCommitFgColor:
-      - "#9ccfd8"
+      - "#2d353b"
 
     markedBaseCommitBgColor:
-      - "#f6c177"
+      - "#83c092"
 
     unstagedChangesColor:
-      - "#eb6f92"
+      - "#e67e80"
 
     defaultFgColor:
-      - "#e0def4"
+      - "#d3c6aa"
