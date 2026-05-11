@@ -1,45 +1,45 @@
 git:
   pagers:
     - colorArg: always
-      pager: delta --dark --paging=never --features="everforest-dark" --syntax-theme="gruvbox-dark"
+      pager: delta --dark --paging=never --features="nord" --syntax-theme="Nord"
       useConfig: false
 
 gui:
   theme:
     activeBorderColor:
-      - "#a7c080"
+      - "#88C0D0"
       - bold
 
     inactiveBorderColor:
-      - "#475258"
+      - "#4C566A"
 
     searchingActiveBorderColor:
-      - "#dbbc7f"
+      - "#EBCB8B"
       - bold
 
     optionsTextColor:
-      - "#83c092"
+      - "#81A1C1"
 
     selectedLineBgColor:
-      - "#3a464c"
+      - "#3B4252"
 
     inactiveViewSelectedLineBgColor:
-      - "#343f44"
+      - "#434C5E"
 
     cherryPickedCommitFgColor:
-      - "#2d353b"
+      - "#2E3440"
 
     cherryPickedCommitBgColor:
-      - "#dbbc7f"
+      - "#EBCB8B"
 
     markedBaseCommitFgColor:
-      - "#2d353b"
+      - "#2E3440"
 
     markedBaseCommitBgColor:
-      - "#83c092"
+      - "#A3BE8C"
 
     unstagedChangesColor:
-      - "#e67e80"
+      - "#BF616A"
 
     defaultFgColor:
-      - "#d3c6aa"
+      - "#D8DEE9"

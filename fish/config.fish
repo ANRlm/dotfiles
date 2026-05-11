@@ -132,7 +132,7 @@ if status is-interactive
     set -g fzf_fd_opts "--hidden --follow --exclude .git"
     set -g fzf_preview_dir_cmd eza --all --color=always --icons --git --tree --level=2
     set -g fzf_preview_file_cmd bat --style=numbers --color=always --line-range :500
-    set -g fzf_diff_highlighter "delta --paging=never --features='mellow-barbet' --syntax-theme='Catppuccin Mocha'"
+    set -g fzf_diff_highlighter "delta --paging=never --features='nord' --syntax-theme='Nord'"
     set -g fzf_history_time_format %d-%m-%y
 
     function fish_user_key_bindings
