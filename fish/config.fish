@@ -4,7 +4,8 @@ set -g fish_greeting ""
 set -gx EDITOR nvim
 set -gx CONDA_ROOT /opt/homebrew/Caskroom/miniforge/base
 set -gx STARSHIP_CONFIG "$HOME/.config/starship/starship.toml"
-set -gx NPM_CONFIG_USERCONFIG ~/.config/npm/npmrc
+set -gx NPM_CONFIG_USERCONFIG "$HOME/.config/npm/npmrc"
+set -gx PNPM_HOME "$HOME/Library/pnpm"
 set -gx OMO_SEND_ANONYMOUS_TELEMETRY 0
 set -gx CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS 1
 set -gx CLAUDE_CODE_NO_FLICKER 1
@@ -17,7 +18,6 @@ set -gx HOMEBREW_MAKE_JOBS (sysctl -n hw.logicalcpu)
 # ── PATH
 fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fish_add_path -g /opt/homebrew/opt/rustup/bin
-set -gx PNPM_HOME "$HOME/Library/pnpm"
 fish_add_path -g "$PNPM_HOME/bin"
 
 # ── Homebrew Shell Environment
