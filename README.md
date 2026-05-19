@@ -2,6 +2,23 @@
 
 基于软链接管理的 macOS 个人配置文件。
 
+## 分支说明
+
+这个仓库按使用场景拆成两个长期分支：
+
+| 分支 | 用途 | Shell | 说明 |
+|------|------|-------|------|
+| `main` | macOS 桌面环境 | Fish | 包含 Ghostty、AeroSpace、Karabiner、Homebrew cask/mas 等桌面配置 |
+| `Linux` | Linux 服务器 / TUI 环境 | zsh | 只保留 CLI/TUI 配置，使用 Homebrew/Linuxbrew 管理工具，不包含 macOS 桌面配置 |
+
+Linux 服务器使用 `Linux` 分支：
+
+```sh
+git clone --branch Linux git@github.com:ANRlm/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+bash scripts/restore.sh
+```
+
 ## 工具栈
 
 | 类别 | 工具 |
@@ -41,13 +58,13 @@ dotfiles/
 
 ## 安装
 
-**全新机器**（包含 SSH、Homebrew、克隆仓库等完整流程）：
+**全新 macOS 机器**（包含 SSH、Homebrew、克隆仓库等完整流程）：
 
 ```sh
 bash scripts/setup.sh
 ```
 
-**已有机器**（仅恢复软链接和安装软件包）：
+**已有 macOS 机器**（仅恢复软链接和安装软件包）：
 
 ```sh
 bash scripts/restore.sh
