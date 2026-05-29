@@ -39,8 +39,12 @@ touch "$HOME/.hushlogin"
 # ──────────────────────────────────────────────────
 link_dir() {
 	local src="$1" dst="$2"
-	if [[ -L "$dst" || -e "$dst" ]]; then
-		rm -rf "$dst"
+	mkdir -p "$(dirname "$dst")"
+	if [[ -L "$dst" ]]; then
+		rm "$dst"
+	elif [[ -e "$dst" ]]; then
+		warn "$dst exists and is not a symlink, refusing to replace it"
+		return 1
 	fi
 	ln -s "$src" "$dst"
 	info "Linked dir  $dst → $src"
@@ -57,7 +61,7 @@ link_file() {
 # ──────────────────────────────────────────────────
 section "Config dirs"
 
-for dir in aerospace bat btop claude conda fish ghostty git lazygit nvim starship tmux yazi; do
+for dir in bat btop claude conda fish ghostty git lazygit nvim starship tmux yazi; do
 	link_dir "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
 done
 # ──────────────────────────────────────────────────
@@ -71,6 +75,7 @@ link_file "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 # ──────────────────────────────────────────────────
 section "Karabiner"
 
+mkdir -p "$DOTFILES_DIR/karabiner/config"
 link_dir "$DOTFILES_DIR/karabiner/config" "$CONFIG_DIR/karabiner"
 link_file "$DOTFILES_DIR/karabiner/edn/karabiner.edn" "$CONFIG_DIR/karabiner.edn"
 # ──────────────────────────────────────────────────
@@ -79,6 +84,17 @@ link_file "$DOTFILES_DIR/karabiner/edn/karabiner.edn" "$CONFIG_DIR/karabiner.edn
 section "Brew bundle"
 
 brew bundle --file="$DOTFILES_DIR/Brewfile"
+# ──────────────────────────────────────────────────
+# Karabiner config
+# ──────────────────────────────────────────────────
+section "Karabiner config"
+
+if command -v goku &>/dev/null; then
+	goku
+	info "Karabiner config generated"
+else
+	warn "goku not found in PATH, skipping Karabiner config generation"
+fi
 # ──────────────────────────────────────────────────
 # TPM
 # ──────────────────────────────────────────────────

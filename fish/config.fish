@@ -19,14 +19,17 @@ set -gx OMO_SEND_ANONYMOUS_TELEMETRY         0
 # Homebrew
 set -gx HOMEBREW_NO_AUTO_UPDATE 1
 set -gx HOMEBREW_NO_ANALYTICS   1
-set -gx HOMEBREW_MAKE_JOBS      (sysctl -n hw.logicalcpu)
+if not set -q HOMEBREW_MAKE_JOBS
+    set -l logical_cpu (sysctl -n hw.logicalcpu 2>/dev/null)
+    if test -n "$logical_cpu"
+        set -gx HOMEBREW_MAKE_JOBS $logical_cpu
+    end
+end
 
 # ── PATH ──────────────────────────────────────────────────────────────
 
 fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
-fish_add_path -g /opt/homebrew/opt/rustup/bin
 fish_add_path -g "$PNPM_HOME/bin"
-fish_add_path -g "$HOME/.antigravity-ide/antigravity-ide/bin"
 
 # Homebrew Shell Environment
 if test -x /opt/homebrew/bin/brew
@@ -41,6 +44,9 @@ function conda
         return 1
     end
 
+    set -l conda_argv $argv
+    functions --erase conda
+
     if test -f $CONDA_ROOT/bin/conda
         eval $CONDA_ROOT/bin/conda shell.fish hook | source
         or return $status
@@ -49,10 +55,9 @@ function conda
         or return $status
     else
         fish_add_path -g $CONDA_ROOT/bin
-        functions --erase conda
     end
 
-    conda $argv
+    conda $conda_argv
 end
 
 # ── Interactive ───────────────────────────────────────────────────────

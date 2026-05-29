@@ -1,4 +1,12 @@
 function ripgrep_search --description "Live ripgrep search with fzf"
+    for cmd in rg fzf bat nvim
+        if not command -q $cmd
+            echo "ripgrep_search: missing dependency: $cmd" >&2
+            commandline -f repaint
+            return 1
+        end
+    end
+
     set -l RG_PREFIX 'rg --column --line-number --no-heading --color=always --smart-case'
     set -l result (
         FZF_DEFAULT_COMMAND="$RG_PREFIX ''" fzf \

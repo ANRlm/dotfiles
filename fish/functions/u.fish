@@ -52,30 +52,6 @@ function u --description "Update everything"
         _ok "Chrome not installed"
     end
 
-    # ── Rust
-    _section Rust
-    _run "Rust updated" bash -lc "rustup update && cargo install-update -a && cargo cache --autoclean"
-
-    # ── Go
-    _section Go
-    set _gobin (go env GOPATH)/bin
-    if test -n "$(ls -A $_gobin 2>/dev/null)"
-        for _bin in $_gobin/*
-            set _pkg (go version -m $_bin 2>/dev/null | awk '$1=="path"{print $2; exit}')
-            if test -n "$_pkg"
-                go install "$_pkg@latest" 2>/dev/null
-            end
-        end
-        if test $status -eq 0
-            _ok "Go binaries updated"
-        else
-            _fail "Go binaries updated"
-            set -g __u_failures (math $__u_failures + 1)
-        end
-    else
-        _ok "Go binaries (none installed)"
-    end
-
     # ── Conda
     _section Conda
     _run "Conda updated" bash -lc "conda update conda -y && conda update --all -y && conda clean --all -y"
@@ -99,8 +75,8 @@ function u --description "Update everything"
 
     # ── Neovim / AstroNvim
     _section "Neovim / AstroNvim"
-    _run "Plugins synced" bash -lc "nvim --headless '+Lazy! sync' +qa 2>/dev/null"
-    _run "Mason packages updated" bash -lc "nvim --headless -c MasonUpdate -c qa 2>/dev/null"
+    _run "Plugins synced" bash -lc "nvim --headless '+Lazy! sync' +qa"
+    _run "Mason packages updated" bash -lc "nvim --headless -c MasonUpdate -c qa"
 
     # ── Yazi
     _section Yazi
@@ -113,10 +89,6 @@ function u --description "Update everything"
     # ── Mole
     _section Mole
     _run "Mole cleaned" bash -lc "printf '\\n' | mo clean"
-
-    # ── App caches
-    _section "App Caches"
-    _run "CleanShot media cleared" rm -rf ~/Library/Application\ Support/CleanShot/media
 
     # ── Done
     echo ""

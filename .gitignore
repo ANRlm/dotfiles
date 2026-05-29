@@ -17,8 +17,6 @@ karabiner/config/karabiner.json
 yazi/plugins/
 yazi/flavors/
 
-scripts/license.sh
-
 .claude/worktrees/
 .omc/sessions/
 .omc/project-memory.json
