@@ -32,7 +32,7 @@ bash scripts/restore.sh
 | 系统工具 | btop + bat |
 | 窗口管理 | AeroSpace |
 | 键位映射 | Karabiner-Elements |
-| 包/环境管理 | Homebrew + pnpm + uv + Conda |
+| 包/环境管理 | Homebrew + pnpm + bun + uv + Conda |
 
 ## 目录结构
 
@@ -70,7 +70,7 @@ bash scripts/setup.sh
 bash scripts/restore.sh
 ```
 
-`restore.sh` 会将各配置目录软链接到 `~/.config/`，安装 Brewfile 中的所有软件包，并将默认 Shell 切换为 Fish。
+`restore.sh` 会将各配置目录软链接到 `~/.config/`，将全局 Claude 配置链接到 `~/.claude/CLAUDE.md`，安装 Brewfile 中的所有软件包，并将默认 Shell 切换为 Fish。
 
 ## 更新
 

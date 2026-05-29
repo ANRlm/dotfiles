@@ -2,7 +2,7 @@
   "AstroNvim": { "branch": "main", "commit": "c399f7f46daa010db1b70f6f7062a6a85216e1de" },
   "LuaSnip": { "branch": "master", "commit": "642b0c595e11608b4c18219e93b88d7637af27bc" },
   "aerial.nvim": { "branch": "master", "commit": "645d108a5242ec7b378cbe643eb6d04d4223f034" },
-  "astrocommunity": { "branch": "main", "commit": "b2d0afe447eb61f3d648d2c55873f93e1e0b6f4a" },
+  "astrocommunity": { "branch": "main", "commit": "50724d19d4a11f0a8c26a5eb198b1767a67b1da1" },
   "astrocore": { "branch": "main", "commit": "cfd0e9ce9362b6ef71faae0efaa17f4a8f67e036" },
   "astrolsp": { "branch": "main", "commit": "ebc1676127b3bfbd46e3e26589b104853cac3730" },
   "astrotheme": { "branch": "main", "commit": "95c046b763266a4873bdf0cbf6a1824c929dec3a" },
@@ -21,7 +21,7 @@
   "mason-null-ls.nvim": { "branch": "main", "commit": "2b8433f76598397fcc97318d410e0c4f7a4bea6a" },
   "mason-nvim-dap.nvim": { "branch": "main", "commit": "e51f9b259f066c4347f9a79ffde54c29a0619384" },
   "mason-tool-installer.nvim": { "branch": "main", "commit": "443f1ef8b5e6bf47045cb2217b6f748a223cf7dc" },
-  "mason.nvim": { "branch": "main", "commit": "44d1e90e1f66e077268191e3ee9d2ac97cc18e65" },
+  "mason.nvim": { "branch": "main", "commit": "bb639d4bf385a4d89f478b83af4d770be05ab7eb" },
   "mini.icons": { "branch": "main", "commit": "ff2e4f1d29f659cc2bad0f9256f2f6195c6b2428" },
   "neo-tree.nvim": { "branch": "main", "commit": "83e7a2982fd12b9c3d35bc39dd5877cd91a02a61" },
   "none-ls.nvim": { "branch": "main", "commit": "7f9301e416533b5d74e2fb3b1ce5059eeaed748b" },
@@ -44,5 +44,5 @@
   "todo-comments.nvim": { "branch": "main", "commit": "31e3c38ce9b29781e4422fc0322eb0a21f4e8668" },
   "toggleterm.nvim": { "branch": "main", "commit": "50ea089fc548917cc3cc16b46a8211833b9e3c7c" },
   "which-key.nvim": { "branch": "main", "commit": "fcbf4eea17cb299c02557d576f0d568878e354a4" },
-  "yazi.nvim": { "branch": "main", "commit": "172bd64a4c2d3adbe2e0ef56289f47ffe139ca55" }
+  "yazi.nvim": { "branch": "main", "commit": "81097571080ce0c5ab9e0311ed8ad03ff080ef47" }
 }

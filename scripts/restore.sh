@@ -65,7 +65,7 @@ done
 # ──────────────────────────────────────────────────
 section "Claude"
 
-link_file "$DOTFILES_DIR/droid/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+link_file "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 # ──────────────────────────────────────────────────
 # Karabiner
 # ──────────────────────────────────────────────────

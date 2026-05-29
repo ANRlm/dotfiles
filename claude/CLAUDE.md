@@ -4,9 +4,14 @@
 - Shell: Fish + Starship; Terminal: Ghostty; Multiplexer: tmux
 - Primary editor: Neovim (AstroNvim); Secondary: JetBrains IDEs
 - Core CLI tools: eza (ls), bat (cat), fd (find), btop
-- Package managers: pnpm (primary), bun (secondary), Homebrew (system)
+- Package managers: pnpm (primary), bun (secondary), Homebrew (system), uv (Python tools)
 - Python env: Conda (Miniforge)
 - Containers: OrbStack; Git TUI: lazygit; File manager: yazi
+
+# Scope
+
+- This is the global Claude Code default, managed at `~/dotfiles/claude/CLAUDE.md`
+- Project-level CLAUDE.md files override this when they are more specific
 
 # Code Style
 
