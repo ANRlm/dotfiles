@@ -44,5 +44,5 @@
   "todo-comments.nvim": { "branch": "main", "commit": "31e3c38ce9b29781e4422fc0322eb0a21f4e8668" },
   "toggleterm.nvim": { "branch": "main", "commit": "50ea089fc548917cc3cc16b46a8211833b9e3c7c" },
   "which-key.nvim": { "branch": "main", "commit": "fcbf4eea17cb299c02557d576f0d568878e354a4" },
-  "yazi.nvim": { "branch": "main", "commit": "81097571080ce0c5ab9e0311ed8ad03ff080ef47" }
+  "yazi.nvim": { "branch": "main", "commit": "8a26074568790bb5c73e56eb871a74709a13dd43" }
 }

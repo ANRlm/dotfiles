@@ -38,23 +38,9 @@ function u --description "Update everything"
     _section Homebrew
     _run "Homebrew done" bash -lc "brew update && brew upgrade && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile"
 
-    # ── Google Chrome — block AI model download via enterprise policy
-    _section Chrome
-    if test -d "/Applications/Google Chrome.app"
-        set _pref ~/Library/Preferences/com.google.Chrome
-        set _cur (defaults read $_pref GenAILocalFoundationalModelSettings 2>/dev/null)
-        if test "$_cur" != 1
-            _run "Chrome AI model policy set" defaults write $_pref GenAILocalFoundationalModelSettings -int 1
-        else
-            _ok "Chrome AI model policy already set"
-        end
-    else
-        _ok "Chrome not installed"
-    end
-
     # ── Conda
     _section Conda
-    _run "Conda updated" bash -lc "conda update conda -y && conda update --all -y && conda clean --all -y"
+    _run "Conda updated" fish -c "conda update conda -y; and conda update --all -y; and conda clean --all -y"
 
     # ── Node
     _section Node

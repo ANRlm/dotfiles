@@ -20,6 +20,31 @@ die() {
 }
 
 trap 'die "Error on line $LINENO"' ERR
+
+find_brew() {
+	local candidate
+
+	if command -v brew &>/dev/null; then
+		command -v brew
+		return 0
+	fi
+
+	for candidate in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+		if [[ -x "$candidate" ]]; then
+			echo "$candidate"
+			return 0
+		fi
+	done
+
+	return 1
+}
+
+setup_homebrew_env() {
+	local brew_path
+
+	brew_path="$(find_brew)" || return 1
+	eval "$("$brew_path" shellenv)"
+}
 # ──────────────────────────────────────────────────
 # Preparation
 # ──────────────────────────────────────────────────
@@ -39,6 +64,7 @@ touch "$HOME/.hushlogin"
 # ──────────────────────────────────────────────────
 link_dir() {
 	local src="$1" dst="$2"
+	[[ -d "$src" ]] || die "Missing source dir: $src"
 	mkdir -p "$(dirname "$dst")"
 	if [[ -L "$dst" ]]; then
 		rm "$dst"
@@ -52,8 +78,15 @@ link_dir() {
 
 link_file() {
 	local src="$1" dst="$2"
+	[[ -f "$src" ]] || die "Missing source file: $src"
 	mkdir -p "$(dirname "$dst")"
-	ln -sf "$src" "$dst"
+	if [[ -L "$dst" ]]; then
+		rm "$dst"
+	elif [[ -e "$dst" ]]; then
+		warn "$dst exists and is not a symlink, refusing to replace it"
+		return 1
+	fi
+	ln -s "$src" "$dst"
 	info "Linked file $dst → $src"
 }
 # ──────────────────────────────────────────────────
@@ -83,6 +116,7 @@ link_file "$DOTFILES_DIR/karabiner/edn/karabiner.edn" "$CONFIG_DIR/karabiner.edn
 # ──────────────────────────────────────────────────
 section "Brew bundle"
 
+setup_homebrew_env || die "Homebrew not found. Install Homebrew first or run scripts/setup.sh"
 brew bundle --file="$DOTFILES_DIR/Brewfile"
 # ──────────────────────────────────────────────────
 # Karabiner config
@@ -140,8 +174,9 @@ section "Cargo packages"
 if ! command -v cargo &>/dev/null; then
 	warn "cargo not found in PATH, skipping cargo installs"
 else
+	INSTALLED_CARGO_PACKAGES="$(cargo install --list)"
 	for pkg in cargo-cache cargo-update; do
-		if cargo install --list | grep -q "^${pkg} "; then
+		if grep -q "^${pkg} " <<<"$INSTALLED_CARGO_PACKAGES"; then
 			info "$pkg is already installed, skipping"
 		else
 			cargo install "$pkg"

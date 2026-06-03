@@ -20,6 +20,40 @@ die() {
 }
 
 trap 'die "Error on line $LINENO"' ERR
+
+DOTFILES_REPO_URL="git@github.com:ANRlm/dotfiles.git"
+
+find_brew() {
+	local candidate
+
+	if command -v brew &>/dev/null; then
+		command -v brew
+		return 0
+	fi
+
+	for candidate in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+		if [[ -x "$candidate" ]]; then
+			echo "$candidate"
+			return 0
+		fi
+	done
+
+	return 1
+}
+
+setup_homebrew_env() {
+	local brew_path
+
+	brew_path="$(find_brew)" || return 1
+	eval "$("$brew_path" shellenv)"
+}
+
+github_host_configured() {
+	local ssh_config="$1"
+
+	[[ -f "$ssh_config" ]] || return 1
+	grep -Eq '^[[:space:]]*Host[[:space:]]+github\.com([[:space:]]|$)' "$ssh_config"
+}
 # ──────────────────────────────────────────────────
 # SSH
 # ──────────────────────────────────────────────────
@@ -31,6 +65,9 @@ if echo "$SSH_OUTPUT" | grep -q "successfully authenticated"; then
 	info "GitHub SSH 连接已配置且正常，跳过 SSH 设置"
 else
 	warn "GitHub SSH 尚未配置，开始设置..."
+
+	mkdir -p "$HOME/.ssh"
+	chmod 700 "$HOME/.ssh"
 
 	# Generate key
 	if [[ -f "$HOME/.ssh/id_ed25519" ]]; then
@@ -59,7 +96,7 @@ else
 
 	touch "$SSH_CONFIG"
 
-	if grep -q "Host github.com" "$SSH_CONFIG"; then
+	if github_host_configured "$SSH_CONFIG"; then
 		info "GitHub config already exists in ~/.ssh/config, skipping"
 	else
 		echo "" >>"$SSH_CONFIG"
@@ -91,17 +128,13 @@ fi
 # ──────────────────────────────────────────────────
 section "Homebrew"
 
-if command -v brew &>/dev/null; then
+if setup_homebrew_env; then
 	info "Homebrew already installed, skipping"
 else
 	info "Installing Homebrew..."
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-	if [[ -f /opt/homebrew/bin/brew ]]; then
-		eval "$(/opt/homebrew/bin/brew shellenv)"
-	elif [[ -f /usr/local/bin/brew ]]; then
-		eval "$(/usr/local/bin/brew shellenv)"
-	fi
+	setup_homebrew_env || die "Homebrew installed, but brew could not be found in the expected locations"
 
 	info "Homebrew installed"
 fi
@@ -127,8 +160,18 @@ DOTFILES_DIR="$HOME/dotfiles"
 
 if [[ -d "$DOTFILES_DIR" ]]; then
 	info "Dotfiles already exist at $DOTFILES_DIR, skipping"
+	[[ -f "$DOTFILES_DIR/scripts/restore.sh" ]] || die "$DOTFILES_DIR exists, but scripts/restore.sh was not found"
+
+	if git -C "$DOTFILES_DIR" rev-parse --is-inside-work-tree &>/dev/null; then
+		ORIGIN_URL="$(git -C "$DOTFILES_DIR" remote get-url origin 2>/dev/null || true)"
+		if [[ -n "$ORIGIN_URL" && "$ORIGIN_URL" != "$DOTFILES_REPO_URL" && "$ORIGIN_URL" != "https://github.com/ANRlm/dotfiles.git" && "$ORIGIN_URL" != "https://github.com/ANRlm/dotfiles" ]]; then
+			warn "Existing dotfiles origin differs from expected repo: $ORIGIN_URL"
+		fi
+	else
+		warn "$DOTFILES_DIR exists, but it is not a Git repository"
+	fi
 else
-	git clone git@github.com:ANRlm/dotfiles.git "$DOTFILES_DIR"
+	git clone "$DOTFILES_REPO_URL" "$DOTFILES_DIR"
 	info "Cloned dotfiles to $DOTFILES_DIR"
 fi
 # ──────────────────────────────────────────────────

@@ -8,7 +8,7 @@
 
 | 分支 | 用途 | Shell | 说明 |
 |------|------|-------|------|
-| `main` | macOS 桌面环境 | Fish | 包含 Ghostty、AeroSpace、Karabiner、Homebrew cask/mas 等桌面配置 |
+| `main` | macOS 桌面环境 | Fish | 包含 Ghostty、Karabiner、Homebrew cask/mas 等桌面配置 |
 | `Linux` | Linux 服务器 / TUI 环境 | zsh | 只保留 CLI/TUI 配置，使用 Homebrew/Linuxbrew 管理工具，不包含 macOS 桌面配置 |
 
 Linux 服务器使用 `Linux` 分支：
@@ -30,18 +30,16 @@ bash scripts/restore.sh
 | 文件管理 | yazi + eza + fd |
 | 搜索 | fzf + ripgrep |
 | 系统工具 | btop + bat |
-| 窗口管理 | AeroSpace |
-| 键位映射 | Karabiner-Elements |
+| 键位映射 | Karabiner-Elements (Goku) |
 | 包/环境管理 | Homebrew + pnpm + bun + uv + Conda |
 
 ## 目录结构
 
 ```text
 dotfiles/
-├── aerospace/   # AeroSpace 窗口管理配置
 ├── bat/         # bat 语法高亮配置
 ├── btop/        # btop 系统监控配置
-├── claude/      # Claude Code AI 助手配置
+├── claude/      # Claude Code 全局指令
 ├── conda/       # Conda (Miniforge) 环境配置
 ├── fish/        # Fish shell 配置
 ├── ghostty/     # Ghostty 终端配置
@@ -52,7 +50,7 @@ dotfiles/
 ├── starship/    # Starship 终端提示符配置
 ├── tmux/        # tmux 配置
 ├── yazi/        # yazi 文件管理器配置
-├── scripts/     # 安装与恢复脚本
+├── scripts/     # 安装、恢复与隐私脚本
 └── Brewfile     # Homebrew 软件包列表
 ```
 
@@ -70,7 +68,7 @@ bash scripts/setup.sh
 bash scripts/restore.sh
 ```
 
-`restore.sh` 会将各配置目录软链接到 `~/.config/`，将全局 Claude 配置链接到 `~/.claude/CLAUDE.md`，安装 Brewfile 中的所有软件包，并将默认 Shell 切换为 Fish。
+`restore.sh` 会将各配置目录软链接到 `~/.config/`，将 `claude/CLAUDE.md` 链接到 `~/.claude/CLAUDE.md`，安装 Brewfile 中的所有软件包，并将默认 Shell 切换为 Fish。
 
 ## 更新
 
