@@ -36,7 +36,7 @@ function u --description "Update everything"
 
     # ── Homebrew
     _section Homebrew
-    _run "Homebrew done" bash -lc "brew update && brew upgrade && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile"
+    _run "Homebrew done" bash -lc "brew update && brew upgrade && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode"
 
     # ── Conda
     _section Conda

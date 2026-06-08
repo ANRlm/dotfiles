@@ -23,7 +23,7 @@ font-size = 14
 # -------------------------------------------------- #
 # Custom 
 # -------------------------------------------------- #
-theme = nord
+theme = Apple System Colors
 background-opacity      = 1
 background-blur         = 85
 mouse-hide-while-typing = true

@@ -71,38 +71,9 @@ cask "zed"
 mas "Amphetamine", id: 937984704
 mas "QQ", id: 451108668
 mas "WPS Office", id: 1443749478
-mas "Xcode", id: 497799835
 mas "剪映专业版", id: 1529999940
 mas "微信", id: 836500024
 mas "百度网盘", id: 547166701
 mas "网易云音乐", id: 944848654
 mas "腾讯会议", id: 1484048379
 mas "飞书", id: 1551632588
-vscode "anthropic.claude-code"
-vscode "christian-kohler.path-intellisense"
-vscode "eamodio.gitlens"
-vscode "esbenp.prettier-vscode"
-vscode "evan-buss.font-switcher"
-vscode "formulahendry.code-runner"
-vscode "mathematic.vscode-latex"
-vscode "mechatroner.rainbow-csv"
-vscode "mohsen1.prettify-json"
-vscode "ms-azuretools.vscode-containers"
-vscode "ms-ceintl.vscode-language-pack-zh-hans"
-vscode "ms-python.debugpy"
-vscode "ms-python.python"
-vscode "ms-python.vscode-pylance"
-vscode "ms-python.vscode-python-envs"
-vscode "ms-vscode-remote.remote-containers"
-vscode "ms-vscode-remote.remote-ssh"
-vscode "ms-vscode-remote.remote-ssh-edit"
-vscode "ms-vscode-remote.remote-wsl"
-vscode "ms-vscode-remote.vscode-remote-extensionpack"
-vscode "ms-vscode.live-server"
-vscode "ms-vscode.remote-explorer"
-vscode "ms-vscode.remote-server"
-vscode "openai.chatgpt"
-vscode "shd101wyy.markdown-preview-enhanced"
-vscode "sst-dev.opencode"
-vscode "zainchen.json"
-vscode "zhuangtongfa.material-theme"
