@@ -23,7 +23,7 @@ font-size = 14
 # -------------------------------------------------- #
 # Custom 
 # -------------------------------------------------- #
-theme = Apple System Colors
+theme = 0x96f
 background-opacity      = 1
 background-blur         = 85
 mouse-hide-while-typing = true
