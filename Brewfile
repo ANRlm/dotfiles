@@ -17,8 +17,6 @@ brew "dua-cli"
 brew "eza"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
-# Play, record, convert, and stream select audio and video codecs
-brew "ffmpeg"
 # User-friendly command-line shell for UNIX-like operating systems
 brew "fish"
 # Software library to render fonts
@@ -142,9 +140,15 @@ cask "zed"
 mas "Amphetamine", id: 937984704
 mas "QQ", id: 451108668
 mas "WPS Office", id: 1443749478
-mas "Xcode", id: 497799835
 mas "剪映专业版", id: 1529999940
 mas "百度网盘", id: 547166701
 mas "网易云音乐", id: 944848654
 mas "腾讯会议", id: 1484048379
 mas "飞书", id: 1551632588
+npm "@mermaid-js/mermaid-cli"
+npm "docx"
+npm "pptxgenjs"
+npm "react-dom"
+npm "react-icons"
+npm "react"
+npm "sharp"

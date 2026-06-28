@@ -44,7 +44,7 @@ function u --description "Update everything"
 
     # ── Node
     _section Node
-    _run "npm updated" npm update -g
+    _run "npm updated" env PUPPETEER_SKIP_DOWNLOAD=true npm update -g
     _run "pnpm updated" bash -lc "pnpm update -g && pnpm store prune"
 
     # ── Python (uv)

@@ -1,2 +1,5 @@
 **/.claude/settings.local.json
 .DS_Store
+# Qoder local files (private, not committed)
+AGENTS.local.md
+*.local.md
