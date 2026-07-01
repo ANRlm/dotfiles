@@ -69,8 +69,6 @@ brew "oven-sh/bun/bun"
 brew "tw93/tap/mole"
 # karabiner configurator
 brew "yqrashawn/goku/goku"
-# Agent orchestration platform
-cask "antigravity"
 # Display management tool
 cask "betterdisplay"
 # Configuration manager for AI coding agents
@@ -123,12 +121,8 @@ cask "pearcleaner"
 cask "sf-symbols"
 # Screenshot measurement and annotation tool
 cask "shottr"
-# Adaptive AI IDE
-cask "trae-cn"
 # Configurable document editor that supports Markdown
 cask "typora"
-# Management tool for Unity
-cask "unity-hub"
 # AI image upscaler
 cask "upscayl"
 # Open-source code editor
