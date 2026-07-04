@@ -75,6 +75,8 @@ cask "betterdisplay"
 cask "cc-switch"
 # OpenAI's official browser with ChatGPT built in
 cask "chatgpt-atlas"
+# Continuation of Clash Verge - A Clash Meta GUI based on Tauri
+cask "clash-verge-rev"
 # Anthropic's official Claude AI desktop app
 cask "claude"
 # Terminal-based AI coding assistant

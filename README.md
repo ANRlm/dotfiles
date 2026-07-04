@@ -50,7 +50,7 @@ dotfiles/
 ├── starship/    # Starship 终端提示符配置
 ├── tmux/        # tmux 配置
 ├── yazi/        # yazi 文件管理器配置
-├── scripts/     # 安装、恢复与隐私脚本
+├── scripts/     # 安装与恢复脚本
 └── Brewfile     # Homebrew 软件包列表
 ```
 
