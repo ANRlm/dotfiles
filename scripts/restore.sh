@@ -150,6 +150,20 @@ info "Fish plugins installed"
 section "Karabiner config"
 
 if command -v goku &>/dev/null; then
+	KARABINER_JSON="$CONFIG_DIR/karabiner/karabiner.json"
+	if [[ ! -e "$KARABINER_JSON" ]]; then
+		printf '%s\n' \
+			'{' \
+			'  "profiles": [' \
+			'    {' \
+			'      "name": "Default",' \
+			'      "selected": true' \
+			'    }' \
+			'  ]' \
+			'}' >"$KARABINER_JSON"
+		info "Karabiner Default profile initialized"
+	fi
+
 	goku
 	info "Karabiner config generated"
 else
