@@ -136,13 +136,118 @@ section "Fish plugins"
 FISH_PATH="$(command -v fish 2>/dev/null || true)"
 [[ -n "$FISH_PATH" ]] || die "fish not found after Brew bundle"
 
-"$FISH_PATH" -c '
-if not type -q fisher
-    curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
-    and fisher install jorgebucaran/fisher
+FISH_PLUGINS_FILE="$DOTFILES_DIR/fish/fish_plugins"
+[[ -f "$FISH_PLUGINS_FILE" ]] || die "Missing Fish plugin manifest: $FISH_PLUGINS_FILE"
+
+restore_fish_plugins_manifest() {
+	local snapshot="${FISH_PLUGINS_SNAPSHOT:-}"
+	local manifest="${FISH_PLUGINS_FILE:-}"
+	local snapshot_ready="${FISH_PLUGINS_SNAPSHOT_READY:-0}"
+
+	[[ -n "$snapshot" && -n "$manifest" && -f "$snapshot" ]] || return 0
+	if [[ "$snapshot_ready" == "1" ]]; then
+		cp "$snapshot" "$manifest" || return 1
+	fi
+	rm -f "$snapshot"
+}
+
+FISH_PLUGINS_SNAPSHOT="$(mktemp)"
+FISH_PLUGINS_SNAPSHOT_READY=0
+trap 'restore_fish_plugins_manifest || true' EXIT
+if ! cp "$FISH_PLUGINS_FILE" "$FISH_PLUGINS_SNAPSHOT"; then
+	die "Unable to snapshot Fish plugin manifest"
+fi
+FISH_PLUGINS_SNAPSHOT_READY=1
+
+if ! FISH_PLUGINS_SNAPSHOT="$FISH_PLUGINS_SNAPSHOT" "$FISH_PATH" -c '
+set -l desired_plugins
+while read -l plugin
+    set plugin (string trim -- "$plugin")
+    test -n "$plugin"; or continue
+    string match --quiet -- "#*" "$plugin"; and continue
+    contains -- "$plugin" $desired_plugins; or set --append desired_plugins "$plugin"
+end <"$FISH_PLUGINS_SNAPSHOT"
+
+if not set --query desired_plugins[1]
+    echo "restore: Fish plugin manifest is empty" >&2
+    exit 1
 end
-fisher update
-'
+
+if not type -q fisher
+    curl --fail --silent --show-error --location --connect-timeout 10 --max-time 60 --retry 2 \
+        https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
+    set -l bootstrap_status $pipestatus
+    for code in $bootstrap_status
+        if test "$code" -ne 0
+            echo "restore: Unable to bootstrap Fisher" >&2
+            exit 1
+        end
+    end
+end
+type -q fisher; or begin
+    echo "restore: Fisher is unavailable after bootstrap" >&2
+    exit 1
+end
+
+set -l desired_normalized
+for plugin in $desired_plugins
+    set --append desired_normalized (string lower -- "$plugin")
+    set -l synced 0
+
+    for attempt in 1 2 3
+        set -l action install
+        contains -- (string lower -- "$plugin") (fisher list); and set action update
+
+        set -l output (fisher "$action" "$plugin" 2>&1)
+        set -l command_status $status
+        test (count $output) -eq 0; or printf "%s\n" $output
+
+        if test $command_status -eq 0
+            and not string match --quiet --ignore-case --regex "fisher:" $output ""
+            and contains -- (string lower -- "$plugin") (fisher list)
+            set synced 1
+            break
+        end
+
+        if test $attempt -lt 3
+            echo "restore: Retrying Fisher $action for $plugin ($attempt/3)" >&2
+            sleep 1
+        end
+    end
+
+    if test $synced -ne 1
+        echo "restore: Failed to synchronize Fish plugin: $plugin" >&2
+        exit 1
+    end
+end
+
+for plugin in (fisher list)
+    contains -- (string lower -- "$plugin") $desired_normalized; and continue
+
+    set -l output (fisher remove "$plugin" 2>&1)
+    set -l command_status $status
+    test (count $output) -eq 0; or printf "%s\n" $output
+    if test $command_status -ne 0; or string match --quiet --ignore-case --regex "fisher:" $output ""
+        echo "restore: Failed to remove undeclared Fish plugin: $plugin" >&2
+        exit 1
+    end
+end
+
+for plugin in $desired_normalized
+    contains -- "$plugin" (fisher list); or begin
+        echo "restore: Fish plugin verification failed: $plugin" >&2
+        exit 1
+    end
+end
+'; then
+	die "Fish plugin synchronization failed"
+fi
+
+if ! restore_fish_plugins_manifest; then
+	die "Unable to restore Fish plugin manifest"
+fi
+trap - EXIT
+
 info "Fish plugins installed"
 # ──────────────────────────────────────────────────
 # Karabiner config
