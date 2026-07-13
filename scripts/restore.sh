@@ -151,16 +151,19 @@ section "Karabiner config"
 
 if command -v goku &>/dev/null; then
 	KARABINER_JSON="$CONFIG_DIR/karabiner/karabiner.json"
-	if [[ ! -e "$KARABINER_JSON" ]]; then
-		printf '%s\n' \
-			'{' \
-			'  "profiles": [' \
-			'    {' \
-			'      "name": "Default",' \
-			'      "selected": true' \
-			'    }' \
-			'  ]' \
-			'}' >"$KARABINER_JSON"
+	if [[ ! -e "$KARABINER_JSON" && ! -L "$KARABINER_JSON" ]] &&
+		(
+			set -o noclobber
+			printf '%s\n' \
+				'{' \
+				'  "profiles": [' \
+				'    {' \
+				'      "name": "Default",' \
+				'      "selected": true' \
+				'    }' \
+				'  ]' \
+				'}' 2>/dev/null >"$KARABINER_JSON"
+		); then
 		info "Karabiner Default profile initialized"
 	fi
 
