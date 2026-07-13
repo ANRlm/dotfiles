@@ -64,25 +64,23 @@ brew "yazi"
 # Shell extension to navigate your filesystem faster
 brew "zoxide"
 # Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.
-brew "oven-sh/bun/bun"
+brew "oven-sh/bun/bun", trusted: true
 # Comprehensive macOS cleanup and application uninstall tool
-brew "tw93/tap/mole"
+brew "tw93/tap/mole", trusted: true
 # karabiner configurator
-brew "yqrashawn/goku/goku"
+brew "yqrashawn/goku/goku", trusted: true
 # Display management tool
 cask "betterdisplay"
 # Configuration manager for AI coding agents
 cask "cc-switch"
+# OpenAI's official ChatGPT desktop app
+cask "chatgpt"
 # OpenAI's official browser with ChatGPT built in
 cask "chatgpt-atlas"
 # Continuation of Clash Verge - A Clash Meta GUI based on Tauri
 cask "clash-verge-rev"
-# Anthropic's official Claude AI desktop app
-cask "claude"
 # Terminal-based AI coding assistant
 cask "claude-code@latest"
-# OpenAI's Codex desktop app for managing coding agents
-cask "codex-app"
 # Write, edit, and chat about your code with AI
 cask "cursor"
 # Dictionary and translator app
@@ -137,14 +135,8 @@ mas "Amphetamine", id: 937984704
 mas "QQ", id: 451108668
 mas "WPS Office", id: 1443749478
 mas "剪映专业版", id: 1529999940
+mas "微信", id: 836500024
 mas "百度网盘", id: 547166701
 mas "网易云音乐", id: 944848654
 mas "腾讯会议", id: 1484048379
 mas "飞书", id: 1551632588
-npm "@mermaid-js/mermaid-cli"
-npm "docx"
-npm "pptxgenjs"
-npm "react-dom"
-npm "react-icons"
-npm "react"
-npm "sharp"

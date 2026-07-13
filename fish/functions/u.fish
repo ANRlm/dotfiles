@@ -59,11 +59,6 @@ function u --description "Update everything"
     _section "Tmux / TPM"
     _run "TPM plugins updated" ~/.config/tmux/plugins/tpm/bin/update_plugins all
 
-    # ── Neovim / AstroNvim
-    _section "Neovim / AstroNvim"
-    _run "Plugins synced" bash -lc "nvim --headless '+Lazy! sync' +qa"
-    _run "Mason packages updated" bash -lc "nvim --headless -c MasonUpdate -c qa"
-
     # ── Yazi
     _section Yazi
     _run "Yazi plugins updated" ya pkg upgrade
