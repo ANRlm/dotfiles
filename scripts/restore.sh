@@ -45,6 +45,16 @@ setup_homebrew_env() {
 	brew_path="$(find_brew)" || return 1
 	eval "$("$brew_path" shellenv)"
 }
+
+get_login_shell() {
+	local login_shell=""
+
+	if command -v dscl &>/dev/null; then
+		login_shell="$(dscl . -read "/Users/$USER" UserShell 2>/dev/null | awk -F ': ' '/^UserShell: / { print $2 }' || true)"
+	fi
+
+	printf '%s\n' "${login_shell:-${SHELL:-}}"
+}
 # ──────────────────────────────────────────────────
 # Preparation
 # ──────────────────────────────────────────────────
@@ -119,6 +129,22 @@ section "Brew bundle"
 setup_homebrew_env || die "Homebrew not found. Install Homebrew first or run scripts/setup.sh"
 brew bundle --file="$DOTFILES_DIR/Brewfile"
 # ──────────────────────────────────────────────────
+# Fish plugins
+# ──────────────────────────────────────────────────
+section "Fish plugins"
+
+FISH_PATH="$(command -v fish 2>/dev/null || true)"
+[[ -n "$FISH_PATH" ]] || die "fish not found after Brew bundle"
+
+"$FISH_PATH" -c '
+if not type -q fisher
+    curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
+    and fisher install jorgebucaran/fisher
+end
+fisher update
+'
+info "Fish plugins installed"
+# ──────────────────────────────────────────────────
 # Karabiner config
 # ──────────────────────────────────────────────────
 section "Karabiner config"
@@ -147,24 +173,30 @@ info "Installing tmux plugins..."
 bash "$TPM_DIR/bin/install_plugins"
 info "Tmux plugins installed"
 # ──────────────────────────────────────────────────
+# Yazi plugins
+# ──────────────────────────────────────────────────
+section "Yazi plugins"
+
+command -v ya &>/dev/null || die "ya not found after Brew bundle"
+ya pkg install
+info "Yazi plugins installed"
+# ──────────────────────────────────────────────────
 # Default shell → fish
 # ──────────────────────────────────────────────────
 section "Default shell"
 
-FISH_PATH="$(command -v fish 2>/dev/null || echo "")"
-if [[ -z "$FISH_PATH" ]]; then
-	warn "fish not found in PATH, skipping default shell setup"
+if ! grep -qxF "$FISH_PATH" /etc/shells; then
+	echo "$FISH_PATH" | sudo tee -a /etc/shells >/dev/null
+	info "Added $FISH_PATH to /etc/shells"
+fi
+
+CURRENT_SHELL="$(get_login_shell)"
+
+if [[ "$CURRENT_SHELL" == "$FISH_PATH" ]]; then
+	info "fish is already the default shell"
 else
-	if ! grep -qxF "$FISH_PATH" /etc/shells; then
-		echo "$FISH_PATH" | sudo tee -a /etc/shells >/dev/null
-		info "Added $FISH_PATH to /etc/shells"
-	fi
-	if [[ "$SHELL" == "$FISH_PATH" ]]; then
-		info "fish is already the default shell"
-	else
-		chsh -s "$FISH_PATH"
-		info "Default shell set to $FISH_PATH"
-	fi
+	chsh -s "$FISH_PATH"
+	info "Default shell set to $FISH_PATH"
 fi
 # ──────────────────────────────────────────────────
 # Cargo packages
