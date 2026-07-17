@@ -35,7 +35,7 @@ function u --description "Update everything"
 
     # ── Homebrew
     __u_section Homebrew
-    __u_run "Homebrew done" bash -lc "brew update && brew upgrade && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode"
+    __u_run "Homebrew done" bash -lc "brew update && brew upgrade --no-ask && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode"
 
     # ── Conda
     __u_section Conda
@@ -44,7 +44,7 @@ function u --description "Update everything"
     # ── Node
     __u_section Node
     __u_run "npm updated" env PUPPETEER_SKIP_DOWNLOAD=true npm update -g
-    __u_run "pnpm updated" bash -lc "pnpm update -g && pnpm store prune"
+    __u_run "pnpm updated" env PATH="$PNPM_HOME/bin:$PATH" fish -c "pnpm update -g; and pnpm store prune"
 
     # ── Python (uv)
     __u_section "Python / uv"

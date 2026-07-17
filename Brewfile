@@ -134,7 +134,6 @@ cask "zed"
 mas "Amphetamine", id: 937984704
 mas "QQ", id: 451108668
 mas "WPS Office", id: 1443749478
-mas "剪映专业版", id: 1529999940
 mas "微信", id: 836500024
 mas "百度网盘", id: 547166701
 mas "网易云音乐", id: 944848654

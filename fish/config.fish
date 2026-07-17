@@ -77,8 +77,8 @@ end
 
 # ── Interactive Integrations ──────────────────────────────────────────
 
-if test -f ~/.orbstack/shell/init.fish
-    source ~/.orbstack/shell/init.fish 2>/dev/null
+if test -f ~/.orbstack/shell/init2.fish
+    source ~/.orbstack/shell/init2.fish 2>/dev/null
 end
 
 if type -q zoxide
@@ -164,15 +164,3 @@ function fish_user_key_bindings
     fzf_configure_bindings --directory=\ct --history=\cr
     bind \cg ripgrep_search
 end
-
-# >>> otty shell integration >>>
-# Added by Otty — toggle in Settings > Shell > Shell Integration.
-# Inert unless launched by Otty (it sets $OTTY_SHELL_INTEGRATION).
-if test -n "$OTTY_SHELL_INTEGRATION" -a -r "$OTTY_SHELL_INTEGRATION/otty-integration.fish"
-    source "$OTTY_SHELL_INTEGRATION/otty-integration.fish"
-end
-# <<< otty shell integration <<<
-
-# Added by OrbStack: command-line tools and integration
-# This won't be added again if you remove it.
-source ~/.orbstack/shell/init2.fish 2>/dev/null || :

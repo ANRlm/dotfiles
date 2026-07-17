@@ -8,6 +8,7 @@ set -g __u_test_commands
 set -g __u_test_mole_stdin unknown
 set -g __u_test_brew_status 7
 set -g __u_test_nvim_failure_pattern ''
+set -g __u_test_pnpm_path_ok unknown
 
 function __u_test_assert_equal --argument-names expected actual message
     if test "$expected" != "$actual"
@@ -19,6 +20,13 @@ end
 function __u_test_assert_command --argument-names expected message
     if not contains -- "$expected" $__u_test_commands
         echo "FAIL: $message (missing '$expected')" >&2
+        set -g __u_test_failures (math $__u_test_failures + 1)
+    end
+end
+
+function __u_test_assert_command_match --argument-names pattern message
+    if not string match --quiet -- "$pattern" $__u_test_commands
+        echo "FAIL: $message (no command matches '$pattern')" >&2
         set -g __u_test_failures (math $__u_test_failures + 1)
     end
 end
@@ -49,6 +57,9 @@ function bash
     if string match --quiet -- '*brew update*' "$argv"
         return $__u_test_brew_status
     end
+    if string match --quiet -- '*pnpm update -g*' "$argv"
+        return 11
+    end
     return 0
 end
 
@@ -58,7 +69,16 @@ function fish
 end
 
 function env
-    set -a __u_test_commands (string join ' ' -- env $argv)
+    set -l command (string join ' ' -- env $argv)
+    set -a __u_test_commands $command
+    if string match --quiet -- '*pnpm update -g*' "$command"
+        if string match --quiet -- "env PATH=*$PNPM_HOME/bin:* fish -c pnpm update -g; and pnpm store prune" "$command"
+            set -g __u_test_pnpm_path_ok yes
+            return 0
+        end
+        set -g __u_test_pnpm_path_ok no
+        return 11
+    end
     return 0
 end
 
@@ -102,6 +122,7 @@ function mo
 end
 
 set -gx HOME $repo_root/fish/tests/fixtures/home
+set -gx PNPM_HOME $HOME/Library/pnpm
 
 # These names belonged to the shell before u ran and must survive unchanged.
 function _section
@@ -115,7 +136,9 @@ set -l u_status $status
 __u_test_assert_equal 1 $u_status 'u returns failure when an updater fails'
 __u_test_assert_equal yes (functions -q _section; and echo yes; or echo no) 'pre-existing helper survives'
 __u_test_assert_equal preserved "$__u_failures" 'pre-existing global survives'
-__u_test_assert_command 'bash -lc pnpm update -g && pnpm store prune' 'pnpm prune still runs on every update'
+__u_test_assert_command_match 'bash -lc *brew upgrade --no-ask*' 'Homebrew upgrades without confirmation'
+__u_test_assert_command_match 'env PATH=*Library/pnpm/bin:* fish -c pnpm update -g; and pnpm store prune' 'pnpm receives its v11 global bin path'
+__u_test_assert_equal yes $__u_test_pnpm_path_ok 'pnpm PATH is valid during the update'
 __u_test_assert_command 'mas update' 'MAS uses its canonical update command'
 __u_test_assert_command 'mo clean' 'Mole runs directly'
 __u_test_assert_equal noninteractive $__u_test_mole_stdin 'Mole cleanup is explicitly non-interactive'
@@ -124,11 +147,13 @@ __u_test_assert_nvim_sequence
 # A second, successful run proves pnpm cleanup remains part of every update.
 set __u_test_brew_status 0
 set __u_test_commands
+set __u_test_pnpm_path_ok unknown
 u >/dev/null 2>/dev/null
 set -l second_status $status
 
 __u_test_assert_equal 0 $second_status 'u returns success when every updater succeeds'
-__u_test_assert_command 'bash -lc pnpm update -g && pnpm store prune' 'pnpm prune runs on subsequent updates'
+__u_test_assert_command_match 'env PATH=*Library/pnpm/bin:* fish -c pnpm update -g; and pnpm store prune' 'pnpm prune runs on subsequent updates'
+__u_test_assert_equal yes $__u_test_pnpm_path_ok 'pnpm PATH remains valid on subsequent updates'
 __u_test_assert_nvim_sequence
 
 # A Neovim failure must affect u's status without stopping later updates.
@@ -141,7 +166,7 @@ __u_test_assert_equal 1 $nvim_failure_status 'u returns failure when a Neovim up
 __u_test_assert_nvim_sequence
 __u_test_assert_command 'ya pkg upgrade' 'updates after Neovim continue after a failure'
 
-functions --erase __u_test_assert_equal __u_test_assert_command __u_test_assert_match __u_test_assert_nvim_sequence
+functions --erase __u_test_assert_equal __u_test_assert_command __u_test_assert_command_match __u_test_assert_match __u_test_assert_nvim_sequence
 functions --erase bash fish env uv fisher nvim ya mas mo _section
 set -e __u_failures
 
