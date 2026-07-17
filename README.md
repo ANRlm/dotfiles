@@ -124,7 +124,8 @@ u
 ```
 
 `u` 会更新 Homebrew、Conda、npm/pnpm 全局包、uv 工具、Fisher、TPM、
-Yazi 和 MAS，并执行 Mole 清理。它还会强制重写 `~/dotfiles/Brewfile`，
-因此仓库应保持在该路径。
+Neovim/AstroNvim（Lazy 插件、Treesitter parser 和 Mason 工具）、Yazi 和 MAS，
+并执行 Mole 清理。它还会强制重写 `~/dotfiles/Brewfile`，因此仓库应保持在该路径。
 
-`u` 不会拉取 dotfiles 仓库，也不会更新 Neovim 插件；Neovim 插件由 AstroNvim/Lazy 在编辑器内管理。
+`u` 不会拉取 dotfiles 仓库。Neovim 可执行文件由 Homebrew 更新阶段负责；
+AstroNvim 生态则由后续三个同步步骤完整更新。

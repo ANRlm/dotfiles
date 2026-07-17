@@ -32,8 +32,8 @@ Mason 管理的工具。`AstroUpdate` 内部会触发这三类更新，但 Mason
    安装和更新全部完成。
 2. Treesitter parser 更新：调用 `require("nvim-treesitter").update():wait()`，
    使用 AstroNvim v6 当前 Treesitter API 阻塞至结束。
-3. Mason 工具更新：执行 `MasonToolsUpdateSync`，阻塞更新配置中
-   `ensure_installed` 管理的工具。
+3. Mason 工具更新：配置中存在 `ensure_installed` 工具时执行
+   `MasonToolsUpdateSync` 并阻塞至完成；列表为空时成功跳过，避免该命令永久等待。
 
 三步分别通过 `__u_run` 执行，而不是合并在同一 Neovim 进程中。这样插件同步
 完成后，后续进程会重新加载已更新的插件代码；同时，错误会准确归属到
@@ -55,6 +55,7 @@ Neovim 插件”的旧描述。说明 Neovim 可执行文件仍由 Homebrew 更�
 
 - 新增 `nvim` 替身并记录参数，不运行真实 Neovim。
 - 断言每次 `u` 都按顺序调用 Lazy、Treesitter 和 Mason 三个更新步骤。
+- 断言 Mason 步骤会保护空的 `ensure_installed` 列表。
 - 断言 Neovim 某一步失败会使 `u` 返回非零，但之后的步骤仍会执行。
 - 保留现有 pnpm 连续两次执行的断言，防止本次变更破坏“每次都更新 pnpm”。
 

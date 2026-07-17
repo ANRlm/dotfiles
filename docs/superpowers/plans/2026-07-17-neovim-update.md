@@ -32,7 +32,7 @@
 
 **Interfaces:**
 - Consumes: `__u_run LABEL COMMAND ARGS...`, which records a nonzero child status in function-scoped `__u_failures` and then returns that child status.
-- Produces: three `nvim --headless` calls labeled `Plugins synced`, `Treesitter parsers updated`, and `Mason tools updated`, in that order.
+- Produces: three `nvim --headless` calls labeled `Plugins synced`, `Treesitter parsers updated`, and `Mason tools updated`, in that order; the Mason call skips an empty managed-tool list.
 
 - [ ] **Step 1: Add the failing behavioral tests**
 
@@ -60,6 +60,7 @@ function __u_test_assert_nvim_sequence
         __u_test_assert_match '*require("lazy").sync({ wait = true })*' "$nvim_commands[1]" 'Lazy sync runs first and waits'
         __u_test_assert_match '*require("nvim-treesitter").update():wait()*' "$nvim_commands[2]" 'Treesitter update runs second and waits'
         __u_test_assert_match '*MasonToolsUpdateSync*' "$nvim_commands[3]" 'Mason tools update runs third and waits'
+        __u_test_assert_match '*next(tools)*' "$nvim_commands[3]" 'Mason sync skips an empty managed-tool list'
     end
 end
 ```
@@ -126,7 +127,7 @@ Insert this block in `fish/functions/u.fish` after the TPM block and before Yazi
     __u_section "Neovim / AstroNvim"
     __u_run "Plugins synced" nvim --headless -c 'lua local ok, err = pcall(function() require("lazy").sync({ wait = true }) end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
     __u_run "Treesitter parsers updated" nvim --headless -c 'lua local ok, err = pcall(function() require("nvim-treesitter").update():wait() end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
-    __u_run "Mason tools updated" nvim --headless -c 'lua local ok, err = pcall(function() vim.cmd.MasonToolsUpdateSync() end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
+    __u_run "Mason tools updated" nvim --headless -c 'lua local ok, err = pcall(function() local plugin = require("lazy.core.config").plugins["mason-tool-installer.nvim"]; local tools = plugin and type(plugin.opts) == "table" and plugin.opts.ensure_installed or {}; if type(tools) == "table" and next(tools) then vim.cmd.MasonToolsUpdateSync() end end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
 
 ```
 
