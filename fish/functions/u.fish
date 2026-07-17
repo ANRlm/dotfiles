@@ -1,87 +1,93 @@
+function __u_section
+    set_color --bold cyan
+    echo ""
+    echo "══ $argv ══"
+    set_color normal
+end
+
+function __u_ok
+    set_color green
+    echo "  ✓ $argv"
+    set_color normal
+end
+
+function __u_fail
+    set_color red
+    echo "  ✗ $argv"
+    set_color normal
+end
+
+function __u_run --no-scope-shadowing --argument-names label
+    set -e argv[1]
+    $argv
+    set -l status_code $status
+    if test $status_code -eq 0
+        __u_ok "$label"
+    else
+        __u_fail "$label (exit $status_code)"
+        set __u_failures (math $__u_failures + 1)
+    end
+    return $status_code
+end
+
 function u --description "Update everything"
-    set -g __u_failures 0
-
-    # ── helpers
-    function _section
-        set_color --bold cyan
-        echo ""
-        echo "══ $argv ══"
-        set_color normal
-    end
-
-    function _ok
-        set_color green
-        echo "  ✓ $argv"
-        set_color normal
-    end
-
-    function _fail
-        set_color red
-        echo "  ✗ $argv"
-        set_color normal
-    end
-
-    function _run --argument-names label
-        set -e argv[1]
-        $argv
-        set -l status_code $status
-        if test $status_code -eq 0
-            _ok "$label"
-        else
-            _fail "$label (exit $status_code)"
-            set -g __u_failures (math $__u_failures + 1)
-        end
-        return $status_code
-    end
+    set -f __u_failures 0
 
     # ── Homebrew
-    _section Homebrew
-    _run "Homebrew done" bash -lc "brew update && brew upgrade && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode"
+    __u_section Homebrew
+    __u_run "Homebrew done" bash -lc "brew update && brew upgrade && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode"
 
     # ── Conda
-    _section Conda
-    _run "Conda updated" fish -c "conda update conda -y; and conda update --all -y; and conda clean --all -y"
+    __u_section Conda
+    __u_run "Conda updated" fish -c "conda update conda -y; and conda update --all -y; and conda clean --all -y"
 
     # ── Node
-    _section Node
-    _run "npm updated" env PUPPETEER_SKIP_DOWNLOAD=true npm update -g
-    _run "pnpm updated" bash -lc "pnpm update -g && pnpm store prune"
+    __u_section Node
+    __u_run "npm updated" env PUPPETEER_SKIP_DOWNLOAD=true npm update -g
+    __u_run "pnpm updated" bash -lc "pnpm update -g && pnpm store prune"
 
     # ── Python (uv)
-    _section "Python / uv"
-    _run "uv tools upgraded" uv tool upgrade --all
+    __u_section "Python / uv"
+    __u_run "uv tools upgraded" uv tool upgrade --all
 
     # ── Fish / Fisher
-    _section "Fish / Fisher"
-    _run "Fisher plugins updated" fisher update
+    __u_section "Fish / Fisher"
+    __u_run "Fisher plugins updated" fisher update
 
     # ── Tmux / TPM
-    _section "Tmux / TPM"
-    _run "TPM plugins updated" ~/.config/tmux/plugins/tpm/bin/update_plugins all
+    __u_section "Tmux / TPM"
+    __u_run "TPM plugins updated" ~/.config/tmux/plugins/tpm/bin/update_plugins all
+
+    # ── Neovim / AstroNvim
+    __u_section "Neovim / AstroNvim"
+    __u_run "Plugins synced" nvim --headless -c 'lua local ok, err = pcall(function() require("lazy").sync({ wait = true }) end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
+    __u_run "Treesitter parsers updated" nvim --headless -c 'lua local ok, err = pcall(function() require("nvim-treesitter").update():wait() end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
+    __u_run "Mason tools updated" nvim --headless -c 'lua local ok, err = pcall(function() local plugin = require("lazy.core.config").plugins["mason-tool-installer.nvim"]; local tools = plugin and type(plugin.opts) == "table" and plugin.opts.ensure_installed or {}; if type(tools) == "table" and next(tools) then vim.cmd.MasonToolsUpdateSync() end end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
 
     # ── Yazi
-    _section Yazi
-    _run "Yazi plugins updated" ya pkg upgrade
+    __u_section Yazi
+    __u_run "Yazi plugins updated" ya pkg upgrade
 
     # ── Mac App Store
-    _section "Mac App Store"
-    _run "MAS updated" mas upgrade
+    __u_section "Mac App Store"
+    __u_run "MAS updated" mas update
 
     # ── Mole
-    _section Mole
-    _run "Mole cleaned" bash -lc "printf '\\n' | mo clean"
+    __u_section Mole
+    __u_run "Mole cleaned" mo clean </dev/null
 
     # ── Done
     echo ""
+    set -l final_status 0
     if test $__u_failures -eq 0
         set_color --bold green
         echo "✓ All updated"
     else
         set_color --bold red
         echo "✗ Update finished with $__u_failures failure(s)"
+        set final_status 1
     end
     set_color normal
 
-    functions --erase _section _ok _fail _run
-    set -e __u_failures
+    return $final_status
 end
