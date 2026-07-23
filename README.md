@@ -114,6 +114,8 @@ dotfiles/
   将当前 Homebrew 状态写回 `Brewfile`。
 - `goku`
   从 `karabiner/edn/karabiner.edn` 生成 Karabiner JSON。
+- `fish fish/tests/u_test.fish`
+  运行全量更新函数 `u` 的回归测试。
 
 ## 更新
 
@@ -126,6 +128,9 @@ u
 `u` 会更新 Homebrew、Conda、npm/pnpm 全局包、uv 工具、Fisher、TPM、
 Neovim/AstroNvim（Lazy 插件、Treesitter parser 和 Mason 工具）、Yazi 和 MAS，
 并执行 Mole 清理。它还会强制重写 `~/dotfiles/Brewfile`，因此仓库应保持在该路径。
+
+Lazy 插件同步和 Yazi 插件更新遇到瞬时失败时最多尝试三次；Lazy 后台任务报错会
+作为更新失败返回，并计入最终失败数。
 
 `u` 不会拉取 dotfiles 仓库。Neovim 可执行文件由 Homebrew 更新阶段负责；
 AstroNvim 生态则由后续三个同步步骤完整更新。
