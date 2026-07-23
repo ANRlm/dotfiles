@@ -17,6 +17,25 @@ function __u_fail
     set_color normal
 end
 
+function __u_retry --argument-names max_attempts
+    set -e argv[1]
+    set -l attempt 1
+
+    while true
+        $argv
+        set -l status_code $status
+        if test $status_code -eq 0; or test $attempt -ge $max_attempts
+            return $status_code
+        end
+
+        set_color yellow
+        echo "  ↻ Retrying update ($attempt/$max_attempts)"
+        set_color normal
+        sleep 2
+        set attempt (math $attempt + 1)
+    end
+end
+
 function __u_run --no-scope-shadowing --argument-names label
     set -e argv[1]
     $argv
@@ -60,13 +79,13 @@ function u --description "Update everything"
 
     # ── Neovim / AstroNvim
     __u_section "Neovim / AstroNvim"
-    __u_run "Plugins synced" nvim --headless -c 'lua local ok, err = pcall(function() require("lazy").sync({ wait = true }) end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
+    __u_run "Plugins synced" __u_retry 3 nvim --headless -c 'lua local ok, err = pcall(function() require("lazy").sync({ wait = true }); local Plugin = require("lazy.core.plugin"); for name, plugin in pairs(require("lazy.core.config").plugins) do if Plugin.has_errors(plugin) then error("lazy.nvim task failed: " .. name) end end end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
     __u_run "Treesitter parsers updated" nvim --headless -c 'lua local ok, err = pcall(function() require("nvim-treesitter").update():wait() end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
     __u_run "Mason tools updated" nvim --headless -c 'lua local ok, err = pcall(function() local plugin = require("lazy.core.config").plugins["mason-tool-installer.nvim"]; local tools = plugin and type(plugin.opts) == "table" and plugin.opts.ensure_installed or {}; if type(tools) == "table" and next(tools) then vim.cmd.MasonToolsUpdateSync() end end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
 
     # ── Yazi
     __u_section Yazi
-    __u_run "Yazi plugins updated" ya pkg upgrade
+    __u_run "Yazi plugins updated" __u_retry 3 ya pkg upgrade
 
     # ── Mac App Store
     __u_section "Mac App Store"
