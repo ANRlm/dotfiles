@@ -1,6 +1,5 @@
 tap "oven-sh/bun", trusted: true
 tap "tw93/tap", trusted: true
-tap "yqrashawn/goku", trusted: true
 # Bourne-Again SHell, a UNIX command interpreter
 brew "bash"
 # Clone of cat(1) with syntax highlighting and Git integration
@@ -17,6 +16,8 @@ brew "dua-cli"
 brew "eza"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
+# Play, record, convert, and stream select audio and video codecs
+brew "ffmpeg"
 # User-friendly command-line shell for UNIX-like operating systems
 brew "fish"
 # Software library to render fonts
@@ -39,6 +40,8 @@ brew "lazygit"
 brew "macmon"
 # Mac App Store command-line interface
 brew "mas"
+# Deep clean and optimize your Mac
+brew "mole"
 # Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
 # Open-source, cross-platform JavaScript runtime environment
@@ -65,10 +68,6 @@ brew "yazi"
 brew "zoxide"
 # Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.
 brew "oven-sh/bun/bun", trusted: true
-# Comprehensive macOS cleanup and application uninstall tool
-brew "tw93/tap/mole", trusted: true
-# karabiner configurator
-brew "yqrashawn/goku/goku", trusted: true
 # Display management tool
 cask "betterdisplay"
 # Configuration manager for AI coding agents
@@ -81,8 +80,6 @@ cask "chatgpt-atlas"
 cask "clash-verge-rev"
 # Terminal-based AI coding assistant
 cask "claude-code@latest"
-# Write, edit, and chat about your code with AI
-cask "cursor"
 # Dictionary and translator app
 cask "easydict"
 # Waterfall-style image viewer
@@ -99,14 +96,10 @@ cask "google-chrome"
 cask "iina"
 # JetBrains tools manager
 cask "jetbrains-toolbox"
-# Keyboard customiser
-cask "karabiner-elements"
 # File archiver
 cask "keka"
 # Minimal installer for conda specific to conda-forge
 cask "miniforge"
-# Database administration and development tool
-cask "navicat-premium-lite"
 # App to write, plan, collaborate, and get organised
 cask "notion"
 # Knowledge base that works on top of a local folder of plain text Markdown files

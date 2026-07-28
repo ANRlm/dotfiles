@@ -114,14 +114,6 @@ section "Claude"
 
 link_file "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 # ──────────────────────────────────────────────────
-# Karabiner
-# ──────────────────────────────────────────────────
-section "Karabiner"
-
-mkdir -p "$DOTFILES_DIR/karabiner/config"
-link_dir "$DOTFILES_DIR/karabiner/config" "$CONFIG_DIR/karabiner"
-link_file "$DOTFILES_DIR/karabiner/edn/karabiner.edn" "$CONFIG_DIR/karabiner.edn"
-# ──────────────────────────────────────────────────
 # Brew bundle
 # ──────────────────────────────────────────────────
 section "Brew bundle"
@@ -249,34 +241,6 @@ fi
 trap - EXIT
 
 info "Fish plugins installed"
-# ──────────────────────────────────────────────────
-# Karabiner config
-# ──────────────────────────────────────────────────
-section "Karabiner config"
-
-if command -v goku &>/dev/null; then
-	KARABINER_JSON="$CONFIG_DIR/karabiner/karabiner.json"
-	if [[ ! -e "$KARABINER_JSON" && ! -L "$KARABINER_JSON" ]] &&
-		(
-			set -o noclobber
-			printf '%s\n' \
-				'{' \
-				'  "profiles": [' \
-				'    {' \
-				'      "name": "Default",' \
-				'      "selected": true' \
-				'    }' \
-				'  ]' \
-				'}' 2>/dev/null >"$KARABINER_JSON"
-		); then
-		info "Karabiner Default profile initialized"
-	fi
-
-	goku
-	info "Karabiner config generated"
-else
-	warn "goku not found in PATH, skipping Karabiner config generation"
-fi
 # ──────────────────────────────────────────────────
 # TPM
 # ──────────────────────────────────────────────────

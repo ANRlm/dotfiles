@@ -24,7 +24,6 @@
 | 文件管理 | yazi + eza + fd |
 | 搜索 | fzf + ripgrep |
 | 系统工具 | btop + bat |
-| 键位映射 | Karabiner-Elements + Goku |
 | 包与环境管理 | Homebrew + pnpm + bun + uv + Conda |
 
 ## 安装
@@ -67,7 +66,7 @@ bash scripts/restore.sh
 - 脚本按顺序执行且不会回滚；后续步骤失败时，之前的改动会保留。
 - 准备阶段会创建或更新时间戳 `~/.hushlogin`。
 - Fisher 会精确同步 `fish/fish_plugins`，并删除未在清单中声明的 Fish 插件。
-- 脚本会安装软件和插件、生成 Karabiner 配置，并可能修改默认登录 Shell。
+- 脚本会安装软件和插件，并可能修改默认登录 Shell。
 
 ## 恢复内容
 
@@ -75,10 +74,9 @@ bash scripts/restore.sh
 
 1. 将配置目录链接到 `~/.config/`。
 2. 将 [`claude/CLAUDE.md`](claude/CLAUDE.md) 链接到 `~/.claude/CLAUDE.md`。
-3. 链接 Karabiner 配置源，并通过 Goku 生成 JSON 配置。
-4. 使用 [`Brewfile`](Brewfile) 安装 formula、cask 和 MAS 应用。
-5. 同步 Fisher、TPM 和 Yazi 插件。
-6. 将 Fish 设为默认 Shell；Cargo 可用时安装 `cargo-cache` 和 `cargo-update`。
+3. 使用 [`Brewfile`](Brewfile) 安装 formula、cask 和 MAS 应用。
+4. 同步 Fisher、TPM 和 Yazi 插件。
+5. 将 Fish 设为默认 Shell；Cargo 可用时安装 `cargo-cache` 和 `cargo-update`。
 
 ## 目录结构
 
@@ -91,7 +89,6 @@ dotfiles/
 ├── fish/        # Fish 配置、函数与插件清单
 ├── ghostty/     # Ghostty 配置与 shader
 ├── git/         # Git 全局配置
-├── karabiner/   # Goku EDN 源文件与生成目录
 ├── lazygit/     # lazygit 配置
 ├── nvim/        # AstroNvim v6 配置
 ├── scripts/     # setup.sh 与 restore.sh
@@ -112,8 +109,6 @@ dotfiles/
   安装 `Brewfile` 中声明的项目。
 - `brew bundle dump --force --file=Brewfile --no-vscode`
   将当前 Homebrew 状态写回 `Brewfile`。
-- `goku`
-  从 `karabiner/edn/karabiner.edn` 生成 Karabiner JSON。
 - `fish fish/tests/u_test.fish`
   运行全量更新函数 `u` 的回归测试。
 

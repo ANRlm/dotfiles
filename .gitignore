@@ -10,10 +10,6 @@ fish/functions/_fzf_*.fish
 fish/functions/fisher.fish
 fish/functions/fzf_configure_bindings.fish
 
-karabiner/config/automatic_backups/
-karabiner/config/assets/
-karabiner/config/karabiner.json
-
 yazi/plugins/
 yazi/flavors/
 
