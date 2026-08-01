@@ -109,8 +109,6 @@ dotfiles/
   安装 `Brewfile` 中声明的项目。
 - `brew bundle dump --force --file=Brewfile --no-vscode`
   将当前 Homebrew 状态写回 `Brewfile`。
-- `fish fish/tests/u_test.fish`
-  运行全量更新函数 `u` 的回归测试。
 
 ## 更新
 
