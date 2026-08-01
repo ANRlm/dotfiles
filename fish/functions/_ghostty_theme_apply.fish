@@ -2,7 +2,7 @@ function _ghostty_theme_apply --description "Apply a Ghostty theme: rewrite conf
     set -l name $argv[1]
     test -n "$name"; or return 1
 
-    set -l config_file ~/.config/ghostty/config
+    set -l config_file ~/.config/ghostty/config.ghostty
     test -f $config_file; or return 1
 
     # Refuse to write a theme name that doesn't resolve to a real file.

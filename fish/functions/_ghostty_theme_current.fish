@@ -1,5 +1,5 @@
 function _ghostty_theme_current --description "Read current Ghostty theme from config"
-    set -l config_file ~/.config/ghostty/config
+    set -l config_file ~/.config/ghostty/config.ghostty
     test -f $config_file; or return 1
 
     # Last `theme = xxx` wins (matches Ghostty's own behavior)

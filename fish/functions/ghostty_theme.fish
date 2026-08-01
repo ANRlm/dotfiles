@@ -1,5 +1,5 @@
 function ghostty_theme --description "Live-switch Ghostty themes with fzf preview"
-    set -l config_file ~/.config/ghostty/config
+    set -l config_file ~/.config/ghostty/config.ghostty
 
     if not test -f $config_file
         echo "ghostty_theme: config not found at $config_file" >&2
