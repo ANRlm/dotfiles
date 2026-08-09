@@ -74,8 +74,6 @@ cask "betterdisplay"
 cask "cc-switch"
 # OpenAI's official ChatGPT desktop app
 cask "chatgpt"
-# OpenAI's official browser with ChatGPT built in
-cask "chatgpt-atlas"
 # Continuation of Clash Verge - A Clash Meta GUI based on Tauri
 cask "clash-verge-rev"
 # Terminal-based AI coding assistant
@@ -100,6 +98,8 @@ cask "jetbrains-toolbox"
 cask "keka"
 # Minimal installer for conda specific to conda-forge
 cask "miniforge"
+# Database administration and development tool
+cask "navicat-premium-lite"
 # App to write, plan, collaborate, and get organised
 cask "notion"
 # Knowledge base that works on top of a local folder of plain text Markdown files
@@ -124,7 +124,6 @@ cask "warp"
 cask "zed"
 mas "Amphetamine", id: 937984704
 mas "QQ", id: 451108668
-mas "VideoFusion-macOS.app", id: 1529999940
 mas "WPS Office", id: 1443749478
 mas "微信", id: 836500024
 mas "百度网盘", id: 547166701

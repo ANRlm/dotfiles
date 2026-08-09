@@ -1,45 +1,33 @@
 git:
-  pagers:
+  diffRenderers:
     - colorArg: always
-      pager: delta --dark --paging=never --features="nord" --syntax-theme="Nord"
+      command: delta --dark --paging=never --features="nord" --syntax-theme="Nord"
       useConfig: false
-
 gui:
   theme:
     activeBorderColor:
       - "#88C0D0"
       - bold
-
     inactiveBorderColor:
       - "#4C566A"
-
     searchingActiveBorderColor:
       - "#EBCB8B"
       - bold
-
     optionsTextColor:
       - "#81A1C1"
-
     selectedLineBgColor:
       - "#3B4252"
-
     inactiveViewSelectedLineBgColor:
       - "#434C5E"
-
     cherryPickedCommitFgColor:
       - "#2E3440"
-
     cherryPickedCommitBgColor:
       - "#EBCB8B"
-
     markedBaseCommitFgColor:
       - "#2E3440"
-
     markedBaseCommitBgColor:
       - "#A3BE8C"
-
     unstagedChangesColor:
       - "#BF616A"
-
     defaultFgColor:
       - "#D8DEE9"
