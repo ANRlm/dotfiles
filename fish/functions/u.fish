@@ -54,7 +54,7 @@ function u --description "Update everything"
 
     # ── Homebrew
     __u_section Homebrew
-    __u_run "Homebrew done" bash -lc "brew update && brew upgrade --no-ask && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode"
+    __u_run "Homebrew done" bash -c "brew update && brew upgrade --no-ask && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode"
 
     # ── Conda
     __u_section Conda
@@ -68,6 +68,7 @@ function u --description "Update everything"
     # ── Python (uv)
     __u_section "Python / uv"
     __u_run "uv tools upgraded" uv tool upgrade --all
+    __u_run "uv cache pruned" uv cache prune
 
     # ── Fish / Fisher
     __u_section "Fish / Fisher"
@@ -76,12 +77,6 @@ function u --description "Update everything"
     # ── Tmux / TPM
     __u_section "Tmux / TPM"
     __u_run "TPM plugins updated" ~/.config/tmux/plugins/tpm/bin/update_plugins all
-
-    # ── Neovim / AstroNvim
-    __u_section "Neovim / AstroNvim"
-    __u_run "Plugins synced" __u_retry 3 nvim --headless -c 'lua local ok, err = pcall(function() require("lazy").sync({ wait = true }); local Plugin = require("lazy.core.plugin"); for name, plugin in pairs(require("lazy.core.config").plugins) do if Plugin.has_errors(plugin) then error("lazy.nvim task failed: " .. name) end end end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
-    __u_run "Treesitter parsers updated" nvim --headless -c 'lua local ok, err = pcall(function() require("nvim-treesitter").update():wait() end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
-    __u_run "Mason tools updated" nvim --headless -c 'lua local ok, err = pcall(function() local plugin = require("lazy.core.config").plugins["mason-tool-installer.nvim"]; local tools = plugin and type(plugin.opts) == "table" and plugin.opts.ensure_installed or {}; if type(tools) == "table" and next(tools) then vim.cmd.MasonToolsUpdateSync() end end); if not ok then vim.api.nvim_err_writeln(tostring(err)); vim.cmd("cquit") end' -c qa
 
     # ── Yazi
     __u_section Yazi

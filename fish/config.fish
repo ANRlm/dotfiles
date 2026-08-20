@@ -4,15 +4,10 @@ set -g fish_greeting ""
 
 set -gx EDITOR nvim
 
-set -gx CONDA_ROOT /opt/homebrew/Caskroom/miniforge/base
 set -gx STARSHIP_CONFIG $HOME/.config/starship/starship.toml
 set -gx NPM_CONFIG_USERCONFIG $HOME/.config/npm/npmrc
 set -gx PNPM_HOME $HOME/Library/pnpm
-
-# ── Tool Flags ────────────────────────────────────────────────────────
-
-set -gx CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS 1
-set -gx OMO_SEND_ANONYMOUS_TELEMETRY 0
+set -gx JAVA_HOME /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
 
 # ── Homebrew ──────────────────────────────────────────────────────────
 
@@ -31,7 +26,7 @@ if test -x /opt/homebrew/bin/brew
     set -gx HOMEBREW_CELLAR /opt/homebrew/Cellar
     set -gx HOMEBREW_REPOSITORY /opt/homebrew
 
-    fish_add_path --global --move --path /opt/homebrew/bin /opt/homebrew/sbin
+    fish_add_path -g -m -p /opt/homebrew/bin /opt/homebrew/sbin
 
     if test -n "$MANPATH[1]"
         set -gx MANPATH '' $MANPATH
@@ -46,8 +41,12 @@ end
 
 fish_add_path -g "$PNPM_HOME/bin"
 fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+fish_add_path -g "/opt/homebrew/opt/openjdk@17/bin"
+fish_add_path -g "/opt/homebrew/opt/node@20/bin"
 
 # ── Lazy Conda ────────────────────────────────────────────────────────
+
+set -gx CONDA_ROOT /opt/homebrew/Caskroom/miniforge/base
 
 function conda
     if not set -q CONDA_ROOT
@@ -96,8 +95,8 @@ abbr -a s 'exec fish'
 abbr -a v nvim
 abbr -a lg lazygit
 abbr -a py python
-abbr -a ip 'ipconfig getifaddr en0'
 abbr -a copy pbcopy
+abbr -a ip 'ipconfig getifaddr en0'
 abbr -a ports 'lsof -i -P | grep -i "listen"'
 
 # ── Abbreviations: Homebrew ───────────────────────────────────────────
@@ -136,10 +135,10 @@ abbr -a cu 'conda update conda -y; and conda update --all -y'
 
 # ── Abbreviations: Yazi ───────────────────────────────────────────────
 
-abbr -a yau 'ya pkg upgrade'
 abbr -a yaa 'ya pkg add'
 abbr -a yad 'ya pkg delete'
 abbr -a yal 'ya pkg list'
+abbr -a yau 'ya pkg upgrade'
 
 # ── Abbreviations: Eza ────────────────────────────────────────────────
 
@@ -161,6 +160,8 @@ set -g fzf_diff_highlighter "delta --paging=never --features='nord' --syntax-the
 set -g fzf_history_time_format %d-%m-%y
 
 function fish_user_key_bindings
-    fzf_configure_bindings --directory=\ct --history=\cr
+    if type -q fzf_configure_bindings
+        fzf_configure_bindings --directory=\ct --history=\cr
+    end
     bind \cg ripgrep_search
 end

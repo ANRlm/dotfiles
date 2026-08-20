@@ -10,5 +10,5 @@ function _ghostty_theme_list --description "List available Ghostty theme names"
         return 1
     end
 
-    find $dirs -maxdepth 1 -type f -exec basename {} \; | sort -fu
+    find $dirs -maxdepth 1 -type f ! -name '*.*' -exec basename {} \; | sort -fu
 end

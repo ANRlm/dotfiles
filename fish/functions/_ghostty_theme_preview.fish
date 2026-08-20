@@ -77,8 +77,8 @@ function _ghostty_theme_preview --description "Render a rich Ghostty theme previ
     set -l DIM (printf '\e[2m')
 
     # Fallbacks
-    test -z "$bg"; and set bg "1d1f21"
-    test -z "$fg"; and set fg "c5c8c6"
+    test -z "$bg"; and set bg 1d1f21
+    test -z "$fg"; and set fg c5c8c6
     test -z "$cursor"; and set cursor $fg
     test -z "$cursor_text"; and set cursor_text $bg
     test -z "$sel_bg"; and set sel_bg $palette[8]
@@ -133,41 +133,41 @@ function _ghostty_theme_preview --description "Render a rich Ghostty theme previ
     echo
 
     # ── Meta colors line ────────────────────────────────────────────────
-    echo -n -e -s $DIM 'bg' $RESET ' ' (__gtt_bg $bg) '   ' $RESET '  '
-    echo -n -e -s $DIM 'fg' $RESET ' ' (__gtt_bg $fg) '   ' $RESET '  '
-    echo -n -e -s $DIM 'cursor' $RESET ' ' (__gtt_bg $cursor) '   ' $RESET '  '
-    echo -n -e -s $DIM 'sel-bg' $RESET ' ' (__gtt_bg $sel_bg) '   ' $RESET '  '
-    echo -n -e -s $DIM 'sel-fg' $RESET ' ' (__gtt_bg $sel_fg) '   ' $RESET
+    echo -n -e -s $DIM bg $RESET ' ' (__gtt_bg $bg) '   ' $RESET '  '
+    echo -n -e -s $DIM fg $RESET ' ' (__gtt_bg $fg) '   ' $RESET '  '
+    echo -n -e -s $DIM cursor $RESET ' ' (__gtt_bg $cursor) '   ' $RESET '  '
+    echo -n -e -s $DIM sel-bg $RESET ' ' (__gtt_bg $sel_bg) '   ' $RESET '  '
+    echo -n -e -s $DIM sel-fg $RESET ' ' (__gtt_bg $sel_fg) '   ' $RESET
     echo
     echo
 
     # ── Shell session ───────────────────────────────────────────────────
     echo -n -e -s $DIM '-- shell' $RESET
     echo
-    echo -n -e -s (__gtt_fg $c_grn) '❯' $RESET ' ' (__gtt_fg $c_bblu) '~/code/project' $RESET ' ' (__gtt_fg $c_mag) 'main' $RESET ' ' (__gtt_fg $c_yel) '✱' $RESET ' ' (__gtt_fg $c_red) '!2' $RESET ' ' (__gtt_fg $c_grn) '+1' $RESET
+    echo -n -e -s (__gtt_fg $c_grn) '❯' $RESET ' ' (__gtt_fg $c_bblu) '~/code/project' $RESET ' ' (__gtt_fg $c_mag) main $RESET ' ' (__gtt_fg $c_yel) '✱' $RESET ' ' (__gtt_fg $c_red) '!2' $RESET ' ' (__gtt_fg $c_grn) '+1' $RESET
     echo
-    echo -n -e -s (__gtt_fg $c_cyn) '$' $RESET ' git status ' $DIM '--short' $RESET
+    echo -n -e -s (__gtt_fg $c_cyn) '$' $RESET ' git status ' $DIM --short $RESET
     echo
-    echo -n -e -s ' ' (__gtt_fg $c_yel) 'M' $RESET ' src/main.ts'
+    echo -n -e -s ' ' (__gtt_fg $c_yel) M $RESET ' src/main.ts'
     echo
-    echo -n -e -s ' ' (__gtt_fg $c_grn) 'A' $RESET ' tests/api.test.ts'
+    echo -n -e -s ' ' (__gtt_fg $c_grn) A $RESET ' tests/api.test.ts'
     echo
-    echo -n -e -s ' ' (__gtt_fg $c_red) 'D' $RESET ' README.old.md'
+    echo -n -e -s ' ' (__gtt_fg $c_red) D $RESET ' README.old.md'
     echo
     echo
 
     # ── Git diff ────────────────────────────────────────────────────────
     echo -n -e -s $DIM '-- diff' $RESET
     echo
-    echo -n -e -s $DIM 'diff ' $RESET (__gtt_fg $c_blu) '--git' $RESET $DIM ' a/auth.ts b/auth.ts' $RESET
+    echo -n -e -s $DIM 'diff ' $RESET (__gtt_fg $c_blu) --git $RESET $DIM ' a/auth.ts b/auth.ts' $RESET
     echo
     echo -n -e -s (__gtt_fg $c_cyn) '@@ -10,3 +10,3 @@' $RESET
     echo
-    echo -n -e -s (__gtt_fg $c_red) '-' $RESET ' ' (__gtt_fg $c_mag) 'const' $RESET ' ' (__gtt_fg $c_blu) 'token' $RESET ' = ' (__gtt_fg $c_grn) '"abc"' $RESET
+    echo -n -e -s (__gtt_fg $c_red) - $RESET ' ' (__gtt_fg $c_mag) const $RESET ' ' (__gtt_fg $c_blu) token $RESET ' = ' (__gtt_fg $c_grn) '"abc"' $RESET
     echo
-    echo -n -e -s (__gtt_fg $c_grn) '+' $RESET ' ' (__gtt_fg $c_mag) 'const' $RESET ' ' (__gtt_fg $c_blu) 'token' $RESET ' = ' (__gtt_fg $c_grn) 'env.JWT' $RESET
+    echo -n -e -s (__gtt_fg $c_grn) '+' $RESET ' ' (__gtt_fg $c_mag) const $RESET ' ' (__gtt_fg $c_blu) token $RESET ' = ' (__gtt_fg $c_grn) 'env.JWT' $RESET
     echo
-    echo -n -e -s '  ' (__gtt_fg $c_mag) 'return' $RESET ' ' (__gtt_fg $c_bblu) 'verify' $RESET '(' (__gtt_fg $c_blu) 'token' $RESET ')'
+    echo -n -e -s '  ' (__gtt_fg $c_mag) return $RESET ' ' (__gtt_fg $c_bblu) verify $RESET '(' (__gtt_fg $c_blu) token $RESET ')'
     echo
     echo
 
@@ -176,16 +176,16 @@ function _ghostty_theme_preview --description "Render a rich Ghostty theme previ
     echo
     echo -n -e -s $DIM '// Greet a user and log the result' $RESET
     echo
-    echo -n -e -s (__gtt_fg $c_mag) 'import' $RESET ' { ' (__gtt_fg $c_bblu) 'logger' $RESET ' } ' (__gtt_fg $c_mag) 'from' $RESET ' ' (__gtt_fg $c_grn) '"./log"' $RESET ';'
+    echo -n -e -s (__gtt_fg $c_mag) import $RESET ' { ' (__gtt_fg $c_bblu) logger $RESET ' } ' (__gtt_fg $c_mag) from $RESET ' ' (__gtt_fg $c_grn) '"./log"' $RESET ';'
     echo
     echo
-    echo -n -e -s (__gtt_fg $c_mag) 'export async function' $RESET ' ' (__gtt_fg $c_bblu) 'greet' $RESET '(' (__gtt_fg $c_blu) 'name' $RESET ': ' (__gtt_fg $c_yel) 'string' $RESET ', ' (__gtt_fg $c_blu) 'n' $RESET ' = ' (__gtt_fg $c_byel) '3' $RESET '): ' (__gtt_fg $c_yel) 'Promise' $RESET '<' (__gtt_fg $c_yel) 'void' $RESET '> {'
+    echo -n -e -s (__gtt_fg $c_mag) 'export async function' $RESET ' ' (__gtt_fg $c_bblu) greet $RESET '(' (__gtt_fg $c_blu) name $RESET ': ' (__gtt_fg $c_yel) string $RESET ', ' (__gtt_fg $c_blu) n $RESET ' = ' (__gtt_fg $c_byel) 3 $RESET '): ' (__gtt_fg $c_yel) Promise $RESET '<' (__gtt_fg $c_yel) void $RESET '> {'
     echo
-    echo -n -e -s '  ' (__gtt_fg $c_mag) 'for' $RESET ' (' (__gtt_fg $c_mag) 'let' $RESET ' ' (__gtt_fg $c_blu) 'i' $RESET ' = ' (__gtt_fg $c_byel) '0' $RESET '; ' (__gtt_fg $c_blu) 'i' $RESET ' < ' (__gtt_fg $c_blu) 'n' $RESET '; ' (__gtt_fg $c_blu) 'i' $RESET '++) {'
+    echo -n -e -s '  ' (__gtt_fg $c_mag) for $RESET ' (' (__gtt_fg $c_mag) let $RESET ' ' (__gtt_fg $c_blu) i $RESET ' = ' (__gtt_fg $c_byel) 0 $RESET '; ' (__gtt_fg $c_blu) i $RESET ' < ' (__gtt_fg $c_blu) n $RESET '; ' (__gtt_fg $c_blu) i $RESET '++) {'
     echo
-    echo -n -e -s '    ' (__gtt_fg $c_bblu) 'logger' $RESET '.' (__gtt_fg $c_bblu) 'info' $RESET '(' (__gtt_fg $c_grn) '`hello ' $RESET (__gtt_fg $c_mag) '${' $RESET (__gtt_fg $c_blu) 'name' $RESET (__gtt_fg $c_mag) '}' $RESET (__gtt_fg $c_grn) '!`' $RESET ');'
+    echo -n -e -s '    ' (__gtt_fg $c_bblu) logger $RESET '.' (__gtt_fg $c_bblu) info $RESET '(' (__gtt_fg $c_grn) '`hello ' $RESET (__gtt_fg $c_mag) '${' $RESET (__gtt_fg $c_blu) name $RESET (__gtt_fg $c_mag) '}' $RESET (__gtt_fg $c_grn) '!`' $RESET ');'
     echo
-    echo -n -e -s '    ' (__gtt_fg $c_mag) 'await' $RESET ' ' (__gtt_fg $c_bblu) 'delay' $RESET '(' (__gtt_fg $c_byel) '100' $RESET ');'
+    echo -n -e -s '    ' (__gtt_fg $c_mag) await $RESET ' ' (__gtt_fg $c_bblu) delay $RESET '(' (__gtt_fg $c_byel) 100 $RESET ');'
     echo
     echo -n -e -s '  }'
     echo
@@ -198,44 +198,44 @@ function _ghostty_theme_preview --description "Render a rich Ghostty theme previ
     echo
     echo -n -e -s (__gtt_fg $c_mag) '@dataclass' $RESET
     echo
-    echo -n -e -s (__gtt_fg $c_mag) 'class' $RESET ' ' (__gtt_fg $c_yel) 'User' $RESET ':'
+    echo -n -e -s (__gtt_fg $c_mag) class $RESET ' ' (__gtt_fg $c_yel) User $RESET ':'
     echo
-    echo -n -e -s '    ' (__gtt_fg $c_blu) 'name' $RESET ': ' (__gtt_fg $c_yel) 'str' $RESET
+    echo -n -e -s '    ' (__gtt_fg $c_blu) name $RESET ': ' (__gtt_fg $c_yel) str $RESET
     echo
-    echo -n -e -s '    ' (__gtt_fg $c_blu) 'active' $RESET ': ' (__gtt_fg $c_yel) 'bool' $RESET ' = ' (__gtt_fg $c_mag) 'True' $RESET
+    echo -n -e -s '    ' (__gtt_fg $c_blu) active $RESET ': ' (__gtt_fg $c_yel) bool $RESET ' = ' (__gtt_fg $c_mag) True $RESET
     echo
     echo
-    echo -n -e -s (__gtt_fg $c_mag) 'def' $RESET ' ' (__gtt_fg $c_bblu) 'fetch_user' $RESET '(' (__gtt_fg $c_blu) 'user_id' $RESET ': ' (__gtt_fg $c_yel) 'int' $RESET ') -> ' (__gtt_fg $c_yel) 'User' $RESET ':'
+    echo -n -e -s (__gtt_fg $c_mag) def $RESET ' ' (__gtt_fg $c_bblu) fetch_user $RESET '(' (__gtt_fg $c_blu) user_id $RESET ': ' (__gtt_fg $c_yel) int $RESET ') -> ' (__gtt_fg $c_yel) User $RESET ':'
     echo
     echo -n -e -s '    ' (__gtt_fg $c_dim) '"""Retrieve a user by id."""' $RESET
     echo
-    echo -n -e -s '    ' (__gtt_fg $c_blu) 'user' $RESET ' = ' (__gtt_fg $c_bblu) 'db' $RESET '.' (__gtt_fg $c_bblu) 'get' $RESET '(' (__gtt_fg $c_blu) 'user_id' $RESET ')'
+    echo -n -e -s '    ' (__gtt_fg $c_blu) user $RESET ' = ' (__gtt_fg $c_bblu) db $RESET '.' (__gtt_fg $c_bblu) get $RESET '(' (__gtt_fg $c_blu) user_id $RESET ')'
     echo
-    echo -n -e -s '    ' (__gtt_fg $c_mag) 'if' $RESET ' ' (__gtt_fg $c_blu) 'user' $RESET ' ' (__gtt_fg $c_mag) 'is' $RESET ' ' (__gtt_fg $c_mag) 'None' $RESET ':'
+    echo -n -e -s '    ' (__gtt_fg $c_mag) if $RESET ' ' (__gtt_fg $c_blu) user $RESET ' ' (__gtt_fg $c_mag) is $RESET ' ' (__gtt_fg $c_mag) None $RESET ':'
     echo
-    echo -n -e -s '        ' (__gtt_fg $c_mag) 'raise' $RESET ' ' (__gtt_fg $c_yel) 'ValueError' $RESET '(' (__gtt_fg $c_grn) 'f"User {user_id} not found"' $RESET ')'
+    echo -n -e -s '        ' (__gtt_fg $c_mag) raise $RESET ' ' (__gtt_fg $c_yel) ValueError $RESET '(' (__gtt_fg $c_grn) 'f"User {user_id} not found"' $RESET ')'
     echo
-    echo -n -e -s '    ' (__gtt_fg $c_mag) 'return' $RESET ' ' (__gtt_fg $c_blu) 'user' $RESET
+    echo -n -e -s '    ' (__gtt_fg $c_mag) return $RESET ' ' (__gtt_fg $c_blu) user $RESET
     echo
     echo
 
     # ── Rust code ───────────────────────────────────────────────────────
     echo -n -e -s $DIM '-- code · rust' $RESET
     echo
-    echo -n -e -s (__gtt_fg $c_mag) 'use' $RESET ' ' (__gtt_fg $c_yel) 'std::fs' $RESET ';'
+    echo -n -e -s (__gtt_fg $c_mag) use $RESET ' ' (__gtt_fg $c_yel) 'std::fs' $RESET ';'
     echo
     echo
-    echo -n -e -s (__gtt_fg $c_mag) 'pub fn' $RESET ' ' (__gtt_fg $c_bblu) 'read_config' $RESET '(' (__gtt_fg $c_blu) 'path' $RESET ': &' (__gtt_fg $c_yel) 'str' $RESET ') -> ' (__gtt_fg $c_yel) 'Result' $RESET '<' (__gtt_fg $c_yel) 'String' $RESET ', ' (__gtt_fg $c_yel) 'io::Error' $RESET '> {'
+    echo -n -e -s (__gtt_fg $c_mag) 'pub fn' $RESET ' ' (__gtt_fg $c_bblu) read_config $RESET '(' (__gtt_fg $c_blu) path $RESET ': &' (__gtt_fg $c_yel) str $RESET ') -> ' (__gtt_fg $c_yel) Result $RESET '<' (__gtt_fg $c_yel) String $RESET ', ' (__gtt_fg $c_yel) 'io::Error' $RESET '> {'
     echo
-    echo -n -e -s '    ' (__gtt_fg $c_mag) 'match' $RESET ' ' (__gtt_fg $c_bblu) 'fs' $RESET '::' (__gtt_fg $c_bblu) 'read_to_string' $RESET '(' (__gtt_fg $c_blu) 'path' $RESET ') {'
+    echo -n -e -s '    ' (__gtt_fg $c_mag) match $RESET ' ' (__gtt_fg $c_bblu) fs $RESET '::' (__gtt_fg $c_bblu) read_to_string $RESET '(' (__gtt_fg $c_blu) path $RESET ') {'
     echo
-    echo -n -e -s '        ' (__gtt_fg $c_yel) 'Ok' $RESET '(' (__gtt_fg $c_blu) 'data' $RESET ') => ' (__gtt_fg $c_yel) 'Ok' $RESET '(' (__gtt_fg $c_blu) 'data' $RESET '.' (__gtt_fg $c_bblu) 'trim' $RESET '().' (__gtt_fg $c_bblu) 'to_string' $RESET '()),'
+    echo -n -e -s '        ' (__gtt_fg $c_yel) Ok $RESET '(' (__gtt_fg $c_blu) data $RESET ') => ' (__gtt_fg $c_yel) Ok $RESET '(' (__gtt_fg $c_blu) data $RESET '.' (__gtt_fg $c_bblu) trim $RESET '().' (__gtt_fg $c_bblu) to_string $RESET '()),'
     echo
-    echo -n -e -s '        ' (__gtt_fg $c_yel) 'Err' $RESET '(' (__gtt_fg $c_blu) 'e' $RESET ') => {'
+    echo -n -e -s '        ' (__gtt_fg $c_yel) Err $RESET '(' (__gtt_fg $c_blu) e $RESET ') => {'
     echo
-    echo -n -e -s '            ' (__gtt_fg $c_bblu) 'eprintln' $RESET '!(' (__gtt_fg $c_grn) '"read failed: {}"' $RESET ', ' (__gtt_fg $c_blu) 'e' $RESET ');'
+    echo -n -e -s '            ' (__gtt_fg $c_bblu) eprintln $RESET '!(' (__gtt_fg $c_grn) '"read failed: {}"' $RESET ', ' (__gtt_fg $c_blu) e $RESET ');'
     echo
-    echo -n -e -s '            ' (__gtt_fg $c_yel) 'Err' $RESET '(' (__gtt_fg $c_blu) 'e' $RESET ')'
+    echo -n -e -s '            ' (__gtt_fg $c_yel) Err $RESET '(' (__gtt_fg $c_blu) e $RESET ')'
     echo
     echo -n -e -s '        }'
     echo

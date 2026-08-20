@@ -8,6 +8,7 @@
 [core]
     pager = delta
     excludesfile = ~/.config/git/ignore
+    editor = nvim
 
 [interactive]
     diffFilter = delta --color-only
@@ -23,8 +24,14 @@
 [init]
     defaultBranch = main
 
+[fetch]
+    prune = true
+
 [pull]
     rebase = true
+
+[rebase]
+    autoStash = true
 
 [push]
     autoSetupRemote = true
