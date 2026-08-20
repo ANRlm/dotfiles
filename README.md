@@ -1,17 +1,6 @@
 # dotfiles
 
-面向 Apple Silicon macOS 的个人配置仓库。配置文件保存在 Git 中，并通过符号链接部署到 `$HOME` 与 `~/.config`。
-
-## 支持范围
-
-仓库按平台维护两个长期分支：
-
-| 分支 | 平台 | Shell | 内容 |
-| --- | --- | --- | --- |
-| `main` | Apple Silicon macOS | Fish | 完整桌面配置 |
-| [`Linux`](https://github.com/ANRlm/dotfiles/tree/Linux) | Linux 服务器与 TUI 环境 | Zsh | CLI/TUI 配置与 Homebrew/Linuxbrew，不包含 macOS 桌面组件 |
-
-本文档描述 `main` 分支。Linux 的安装和恢复细节以 `Linux` 分支中的 README 为准。
+面向 Apple Silicon macOS 的个人配置仓库。配置文件保存在 Git 中，并通过符号链接部署到 `~/.config`。
 
 ## 工具栈
 
@@ -19,96 +8,100 @@
 | --- | --- |
 | Shell | Fish + Starship |
 | 终端 | Ghostty + tmux |
-| 编辑器 | Neovim + AstroNvim v6 |
+| 编辑器 | Neovim |
 | Git | lazygit + delta |
 | 文件管理 | yazi + eza + fd |
 | 搜索 | fzf + ripgrep |
 | 系统工具 | btop + bat |
 | 包与环境管理 | Homebrew + pnpm + bun + uv + Conda |
 
+## 部署方式
+
+仓库中的每个配置目录通过符号链接挂载到 `~/.config`，应用直接读写仓库内的文件：
+
+```text
+~/.config/btop     -> ~/dotfiles/btop
+~/.config/conda    -> ~/dotfiles/conda
+~/.config/fish     -> ~/dotfiles/fish
+~/.config/ghostty  -> ~/dotfiles/ghostty
+~/.config/git      -> ~/dotfiles/git
+~/.config/lazygit  -> ~/dotfiles/lazygit
+~/.config/starship -> ~/dotfiles/starship
+~/.config/tmux     -> ~/dotfiles/tmux
+~/.config/yazi     -> ~/dotfiles/yazi
+```
+
 ## 安装
 
 ### 前置条件
 
 - Apple Silicon Mac 和可用的网络连接。
-- 可登录的 GitHub 账户；首次安装会引导添加 SSH 公钥。
-- 管理员权限；设置 Fish 为登录 Shell 时可能需要 `sudo`。
+- 可登录的 GitHub 账户，并已配置好 GitHub SSH。
+- Homebrew 与 Git 已安装。
 - 如需安装 `Brewfile` 中的 MAS 应用，请先登录 Mac App Store。
+- 管理员权限；设置 Fish 为登录 Shell 时可能需要 `sudo`。
 
-### 全新 macOS
-
-在终端运行远程引导脚本：
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ANRlm/dotfiles/main/scripts/setup.sh)"
-```
-
-[`scripts/setup.sh`](scripts/setup.sh) 会交互式配置 GitHub SSH、安装
-Homebrew 和 Git、将仓库克隆到 `~/dotfiles`，然后调用恢复脚本。
-
-### 已有 macOS
-
-Homebrew、Git 和 GitHub SSH 已可用时，克隆仓库并执行恢复：
+### 克隆仓库
 
 ```bash
 git clone git@github.com:ANRlm/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-bash scripts/restore.sh
 ```
 
-如果仓库已经位于 `~/dotfiles`，只需执行后两行。
+### 创建符号链接
 
-### 恢复前注意
+目标位置已有同名文件或目录时，请先备份或迁移：
 
-- `main` 分支的 [`scripts/restore.sh`](scripts/restore.sh) 没有 dry-run 模式。
-- 目标位置已有普通文件或目录时，脚本会拒绝覆盖并退出；请先备份或迁移现有配置。
-- 已有符号链接会被重新创建。
-- 脚本按顺序执行且不会回滚；后续步骤失败时，之前的改动会保留。
-- 准备阶段会创建或更新时间戳 `~/.hushlogin`。
-- Fisher 会精确同步 `fish/fish_plugins`，并删除未在清单中声明的 Fish 插件。
-- 脚本会安装软件和插件，并可能修改默认登录 Shell。
+```fish
+for dir in btop conda fish ghostty git lazygit starship tmux yazi
+    ln -s ~/dotfiles/$dir ~/.config/$dir
+end
+```
 
-## 恢复内容
+### 安装软件
 
-`restore.sh` 会依次执行以下操作：
+```bash
+brew bundle --file=~/dotfiles/Brewfile
+```
 
-1. 将配置目录链接到 `~/.config/`。
-2. 将 [`claude/CLAUDE.md`](claude/CLAUDE.md) 链接到 `~/.claude/CLAUDE.md`。
-3. 使用 [`Brewfile`](Brewfile) 安装 formula、cask 和 MAS 应用。
-4. 同步 Fisher、TPM 和 Yazi 插件。
-5. 将 Fish 设为默认 Shell；Cargo 可用时安装 `cargo-cache` 和 `cargo-update`。
+### 同步插件
+
+```fish
+# Fisher：按 fish/fish_plugins 清单安装 Fish 插件
+curl -fsSL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
+fisher install
+
+# Yazi：按 yazi/package.toml 清单安装插件
+ya pkg install
+```
+
+```bash
+# TPM：安装 tmux 插件
+git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+bash ~/.config/tmux/plugins/tpm/bin/install_plugins
+```
+
+### 默认 Shell
+
+```fish
+chsh -s (command -v fish)
+```
 
 ## 目录结构
 
 ```text
 dotfiles/
-├── bat/         # bat 配置
 ├── btop/        # btop 配置
-├── claude/      # Claude Code 全局指令源文件
 ├── conda/       # Conda/Miniforge 配置
 ├── fish/        # Fish 配置、函数与插件清单
 ├── ghostty/     # Ghostty 配置与 shader
-├── git/         # Git 全局配置
+├── git/         # Git 全局配置、忽略规则与 delta 主题
 ├── lazygit/     # lazygit 配置
-├── nvim/        # AstroNvim v6 配置
-├── scripts/     # setup.sh 与 restore.sh
 ├── starship/    # Starship 提示符配置
 ├── tmux/        # tmux 配置
 ├── yazi/        # Yazi 配置与插件清单
 ├── Brewfile     # Homebrew Bundle 清单
-└── README.md    # 安装、恢复与维护说明
+└── README.md
 ```
-
-## 常用命令
-
-- `bash scripts/setup.sh`
-  引导新的 macOS 机器，并调用 `restore.sh`。
-- `bash scripts/restore.sh`
-  恢复符号链接、软件、插件和默认 Shell。
-- `brew bundle --file=Brewfile`
-  安装 `Brewfile` 中声明的项目。
-- `brew bundle dump --force --file=Brewfile --no-vscode`
-  将当前 Homebrew 状态写回 `Brewfile`。
 
 ## 更新
 
@@ -118,12 +111,12 @@ dotfiles/
 u
 ```
 
-`u` 会更新 Homebrew、Conda、npm/pnpm 全局包、uv 工具、Fisher、TPM、
-Neovim/AstroNvim（Lazy 插件、Treesitter parser 和 Mason 工具）、Yazi 和 MAS，
-并执行 Mole 清理。它还会强制重写 `~/dotfiles/Brewfile`，因此仓库应保持在该路径。
+`u` 会更新 Homebrew、Conda、npm/pnpm 全局包、uv 工具与缓存、Fisher、TPM、Yazi 和 MAS，并执行 Mole 清理。Yazi 插件更新遇到瞬时失败时最多重试三次。它还会强制重写 `~/dotfiles/Brewfile`，因此仓库应保持在 `~` 目录下。
 
-Lazy 插件同步和 Yazi 插件更新遇到瞬时失败时最多尝试三次；Lazy 后台任务报错会
-作为更新失败返回，并计入最终失败数。
+`u` 不会拉取 dotfiles 仓库，Git 拉取请手动执行。
 
-`u` 不会拉取 dotfiles 仓库。Neovim 可执行文件由 Homebrew 更新阶段负责；
-AstroNvim 生态则由后续三个同步步骤完整更新。
+## 常用命令
+
+- `u` — 更新全部
+- `brew bundle --file=Brewfile` — 按 Brewfile 安装软件
+- `brew bundle dump --force --file=Brewfile --no-vscode` — 将当前 Homebrew 状态写回 Brewfile
