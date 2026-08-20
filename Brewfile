@@ -1,4 +1,5 @@
 tap "oven-sh/bun", trusted: true
+tap "stablyai/orca", trusted: true
 tap "tw93/tap", trusted: true
 # Bourne-Again SHell, a UNIX command interpreter
 brew "bash"
@@ -6,6 +7,8 @@ brew "bash"
 brew "bat"
 # Resource monitor. C++ version and continuation of bashtop and bpytop
 brew "btop"
+# Software library to render fonts
+brew "freetype"
 # Statistics utility to count lines of code
 brew "cloc"
 # Get a file from an HTTP, HTTPS or FTP server
@@ -20,8 +23,6 @@ brew "fd"
 brew "ffmpeg"
 # User-friendly command-line shell for UNIX-like operating systems
 brew "fish"
-# Software library to render fonts
-brew "freetype"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # GitHub command-line tool
@@ -40,22 +41,22 @@ brew "lazygit"
 brew "macmon"
 # Mac App Store command-line interface
 brew "mas"
+# Java-based project management
+brew "maven"
 # Deep clean and optimize your Mac
 brew "mole"
 # Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
 # Open-source, cross-platform JavaScript runtime environment
 brew "node"
-# Search tool like grep and The Silver Searcher
-brew "ripgrep"
-# AI coding agent, built for the terminal
-brew "opencode"
-# AI agent toolkit
-brew "pi-coding-agent"
+# Open-source, cross-platform JavaScript runtime environment
+brew "node@20"
+# Development kit for the Java programming language
+brew "openjdk@17"
 # Fast, disk space efficient package manager
 brew "pnpm"
-# SMART hard drive monitoring
-brew "smartmontools"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
 # Cross-shell prompt for astronauts
 brew "starship"
 # Terminal multiplexer
@@ -78,6 +79,8 @@ cask "chatgpt"
 cask "clash-verge-rev"
 # Terminal-based AI coding assistant
 cask "claude-code@latest"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
 # Dictionary and translator app
 cask "easydict"
 # Waterfall-style image viewer
@@ -106,6 +109,8 @@ cask "notion"
 cask "obsidian"
 # Replacement for Docker Desktop
 cask "orbstack"
+# IDE for orchestrating AI coding agents across terminals and worktrees
+cask "stablyai/orca/orca", trusted: true
 # Utility to uninstall apps and remove leftover files from old/uninstalled apps
 cask "pearcleaner"
 # Tool that provides consistent, highly configurable symbols for apps
