@@ -9,6 +9,10 @@ set -gx NPM_CONFIG_USERCONFIG $HOME/.config/npm/npmrc
 set -gx PNPM_HOME $HOME/Library/pnpm
 set -gx JAVA_HOME /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
 
+if command -q gh
+    set -gx GITHUB_PERSONAL_ACCESS_TOKEN (gh auth token 2>/dev/null)
+end
+
 # ── Homebrew ──────────────────────────────────────────────────────────
 
 set -gx HOMEBREW_NO_AUTO_UPDATE 1
@@ -39,7 +43,8 @@ end
 
 # ── PATH ──────────────────────────────────────────────────────────────
 
-fish_add_path -g "$PNPM_HOME/bin"
+fish_add_path -g "$HOME/.local/bin"
+fish_add_path -g "$PNPM_HOME"
 fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fish_add_path -g "/opt/homebrew/opt/openjdk@17/bin"
 fish_add_path -g "/opt/homebrew/opt/node@20/bin"
@@ -165,3 +170,11 @@ function fish_user_key_bindings
     end
     bind \cg ripgrep_search
 end
+
+# >>> otty shell integration >>>
+# Added by Otty — toggle in Settings > Shell > Shell Integration.
+# Inert unless launched by Otty (it sets $OTTY_SHELL_INTEGRATION).
+if test -n "$OTTY_SHELL_INTEGRATION" -a -r "$OTTY_SHELL_INTEGRATION/otty-integration.fish"
+    source "$OTTY_SHELL_INTEGRATION/otty-integration.fish"
+end
+# <<< otty shell integration <<<

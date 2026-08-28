@@ -63,7 +63,7 @@ function u --description "Update everything"
     # ── Node
     __u_section Node
     __u_run "npm updated" env PUPPETEER_SKIP_DOWNLOAD=true npm update -g
-    __u_run "pnpm updated" env PATH="$PNPM_HOME/bin:$PATH" fish -c "pnpm update -g; and pnpm store prune"
+    __u_run "pnpm updated" env PATH="$PNPM_HOME:$PATH" fish -c "pnpm update -g; and pnpm store prune"
 
     # ── Python (uv)
     __u_section "Python / uv"

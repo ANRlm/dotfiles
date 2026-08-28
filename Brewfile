@@ -53,6 +53,8 @@ brew "node"
 brew "node@20"
 # Development kit for the Java programming language
 brew "openjdk@17"
+# AI agent toolkit
+brew "pi-coding-agent"
 # Fast, disk space efficient package manager
 brew "pnpm"
 # Search tool like grep and The Silver Searcher
@@ -107,10 +109,14 @@ cask "navicat-premium-lite"
 cask "notion"
 # Knowledge base that works on top of a local folder of plain text Markdown files
 cask "obsidian"
+# Local-first, agent-native design tool
+cask "open-design"
 # Replacement for Docker Desktop
 cask "orbstack"
 # IDE for orchestrating AI coding agents across terminals and worktrees
 cask "stablyai/orca/orca", trusted: true
+# Terminal emulator built for code agents
+cask "otty"
 # Utility to uninstall apps and remove leftover files from old/uninstalled apps
 cask "pearcleaner"
 # Tool that provides consistent, highly configurable symbols for apps
@@ -123,8 +129,6 @@ cask "typora"
 cask "upscayl"
 # Open-source code editor
 cask "visual-studio-code"
-# Rust-based terminal
-cask "warp"
 # Multiplayer code editor
 cask "zed"
 mas "Amphetamine", id: 937984704

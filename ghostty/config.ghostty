@@ -23,7 +23,7 @@ font-size = 14
 # -------------------------------------------------- #
 # Custom 
 # -------------------------------------------------- #
-theme = 0x96f
+theme = Nord Wave
 background-opacity      = 1
 background-blur         = 85
 mouse-hide-while-typing = true
