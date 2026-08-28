@@ -92,6 +92,7 @@ chsh -s (command -v fish)
 dotfiles/
 ├── btop/        # btop 配置
 ├── conda/       # Conda/Miniforge 配置
+├── docs/        # Agent 技能约定（issue tracker、领域文档）
 ├── fish/        # Fish 配置、函数与插件清单
 ├── ghostty/     # Ghostty 配置与 shader
 ├── git/         # Git 全局配置、忽略规则与 delta 主题
@@ -100,6 +101,7 @@ dotfiles/
 ├── tmux/        # tmux 配置
 ├── yazi/        # Yazi 配置与插件清单
 ├── Brewfile     # Homebrew Bundle 清单
+├── CLAUDE.md    # Claude Code 项目配置（Agent skills）
 └── README.md
 ```
 
@@ -114,9 +116,3 @@ u
 `u` 会更新 Homebrew、Conda、npm/pnpm 全局包、uv 工具与缓存、Fisher、TPM、Yazi 和 MAS，并执行 Mole 清理。Yazi 插件更新遇到瞬时失败时最多重试三次。它还会强制重写 `~/dotfiles/Brewfile`，因此仓库应保持在 `~` 目录下。
 
 `u` 不会拉取 dotfiles 仓库，Git 拉取请手动执行。
-
-## 常用命令
-
-- `u` — 更新全部
-- `brew bundle --file=Brewfile` — 按 Brewfile 安装软件
-- `brew bundle dump --force --file=Brewfile --no-vscode` — 将当前 Homebrew 状态写回 Brewfile
