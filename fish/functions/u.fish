@@ -94,7 +94,7 @@ function u --description "Update global tools and applications"
 
     # ── Homebrew
     __u_section Homebrew
-    __u_run "Homebrew done" bash -c "brew update && brew upgrade --no-ask && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode"
+    __u_run "Homebrew done" bash -c "brew update && brew upgrade --no-ask && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode --no-describe"
 
     # ── Node
     __u_section Node

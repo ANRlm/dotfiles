@@ -12,36 +12,15 @@ set -gx CLAUDE_CONFIG_DIR $HOME/.claude
 # ── Homebrew ──────────────────────────────────────────────────────────
 
 set -gx HOMEBREW_NO_AUTO_UPDATE 1
-set -gx HOMEBREW_NO_ANALYTICS 1
-
-if not set -q HOMEBREW_MAKE_JOBS
-    set -l logical_cpu (sysctl -n hw.logicalcpu 2>/dev/null)
-    if test -n "$logical_cpu"
-        set -gx HOMEBREW_MAKE_JOBS $logical_cpu
-    end
-end
 
 if test -x /opt/homebrew/bin/brew
-    set -gx HOMEBREW_PREFIX /opt/homebrew
-    set -gx HOMEBREW_CELLAR /opt/homebrew/Cellar
-    set -gx HOMEBREW_REPOSITORY /opt/homebrew
-
-    fish_add_path -g -m -p /opt/homebrew/bin /opt/homebrew/sbin
-
-    if test -n "$MANPATH[1]"
-        set -gx MANPATH '' $MANPATH
-    end
-
-    if not contains /opt/homebrew/share/info $INFOPATH
-        set -gx INFOPATH /opt/homebrew/share/info $INFOPATH
-    end
+    /opt/homebrew/bin/brew shellenv fish | source
 end
 
 # ── PATH ──────────────────────────────────────────────────────────────
 
 fish_add_path -g "$HOME/.local/bin"
 fish_add_path -g "$PNPM_HOME"
-fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fish_add_path -g "/opt/homebrew/opt/openjdk@17/bin"
 
 if not status is-interactive
@@ -122,7 +101,7 @@ set -gx FZF_DEFAULT_OPTS "\
 set -g fzf_fd_opts "--hidden --follow --exclude .git"
 set -g fzf_preview_dir_cmd eza --all --color=always --icons --git --tree --level=2
 set -g fzf_preview_file_cmd bat --style=numbers --color=always --line-range :500
-set -g fzf_diff_highlighter "delta --paging=never --features='nord' --syntax-theme='Nord'"
+set -g fzf_diff_highlighter "delta --paging=never --features='nord'"
 set -g fzf_history_time_format %d-%m-%y
 
 function fish_user_key_bindings

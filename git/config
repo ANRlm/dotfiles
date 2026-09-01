@@ -15,10 +15,6 @@
 
 [delta]
     navigate = true  # use n and N to move between diff sections
-    side-by-side = true
-    line-numbers = true
-    dark = true      # or light = true, or omit for auto-detection
-    syntax-theme = Nord
     features = nord
 
 [init]

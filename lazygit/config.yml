@@ -1,7 +1,7 @@
 git:
   diffRenderers:
     - colorArg: always
-      command: delta --dark --paging=never --features="nord" --syntax-theme="Nord"
+      command: delta --paging=never --features="nord"
       useConfig: false
 gui:
   theme:
