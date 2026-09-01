@@ -13,7 +13,7 @@
 | 文件管理 | yazi + eza + fd |
 | 搜索 | fzf + ripgrep |
 | 系统工具 | btop + bat |
-| 包与环境管理 | Homebrew + pnpm + bun + uv + Conda |
+| 包与环境管理 | Homebrew + fnm + pnpm + bun + uv + Conda |
 
 ## 部署方式
 
@@ -63,11 +63,20 @@ end
 brew bundle --file=~/dotfiles/Brewfile
 ```
 
+### Node 版本管理
+
+全局 Node 与 pnpm 由 Homebrew 管理；Fish 通过 fnm 自动读取项目根目录的 `.node-version` 或 `.nvmrc`，切换项目使用的 Node。首次进入一个尚未安装对应 Node 的项目时运行：
+
+```fish
+fnm use --install-if-missing
+```
+
+新项目应把精确版本写入 `.node-version` 并提交到 Git；pnpm 版本使用 `package.json` 的 `packageManager` 字段固定。
+
 ### 同步插件
 
 ```fish
-# Fisher：按 fish/fish_plugins 清单安装 Fish 插件
-curl -fsSL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
+# Fisher 由 Brewfile 安装；按 fish/fish_plugins 清单安装 Fish 插件
 fisher install
 
 # Yazi：按 yazi/package.toml 清单安装插件
@@ -79,6 +88,8 @@ ya pkg install
 git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
 bash ~/.config/tmux/plugins/tpm/bin/install_plugins
 ```
+
+插件采用跟随最新版的策略；日常更新使用 `u plugins`，与全局工具链更新分开执行。
 
 ### 默认 Shell
 
@@ -92,7 +103,6 @@ chsh -s (command -v fish)
 dotfiles/
 ├── btop/        # btop 配置
 ├── conda/       # Conda/Miniforge 配置
-├── docs/        # Agent 技能约定（issue tracker、领域文档）
 ├── fish/        # Fish 配置、函数与插件清单
 ├── ghostty/     # Ghostty 配置与 shader
 ├── git/         # Git 全局配置、忽略规则与 delta 主题
@@ -101,7 +111,6 @@ dotfiles/
 ├── tmux/        # tmux 配置
 ├── yazi/        # Yazi 配置与插件清单
 ├── Brewfile     # Homebrew Bundle 清单
-├── CLAUDE.md    # Claude Code 项目配置（Agent skills）
 └── README.md
 ```
 
@@ -111,8 +120,13 @@ dotfiles/
 
 ```fish
 u
+u plugins
 ```
 
-`u` 会更新 Homebrew、Conda、npm/pnpm 全局包、uv 工具与缓存、Fisher、TPM、Yazi 和 MAS，并执行 Mole 清理。Yazi 插件更新遇到瞬时失败时最多重试三次。它还会强制重写 `~/dotfiles/Brewfile`，因此仓库应保持在 `~` 目录下。
+`u` 会更新 Homebrew、Conda、npm/pnpm 全局包、uv 工具与缓存和 MAS，并执行 Mole 清理。它始终使用 Homebrew 的全局 Node 工具链，不会改动 fnm 管理的项目 Node。
+
+`u plugins` 会把 Fisher、TPM 和 Yazi 插件更新到最新版本；Yazi 遇到瞬时失败时最多重试三次。
+
+`u` 还会强制重写 `~/dotfiles/Brewfile`，因此仓库应保持在 `~` 目录下。
 
 `u` 不会拉取 dotfiles 仓库，Git 拉取请手动执行。

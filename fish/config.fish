@@ -5,13 +5,8 @@ set -g fish_greeting ""
 set -gx EDITOR nvim
 
 set -gx STARSHIP_CONFIG $HOME/.config/starship/starship.toml
-set -gx NPM_CONFIG_USERCONFIG $HOME/.config/npm/npmrc
 set -gx PNPM_HOME $HOME/Library/pnpm
 set -gx JAVA_HOME /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
-
-if command -q gh
-    set -gx GITHUB_PERSONAL_ACCESS_TOKEN (gh auth token 2>/dev/null)
-end
 
 # ── Homebrew ──────────────────────────────────────────────────────────
 
@@ -47,7 +42,6 @@ fish_add_path -g "$HOME/.local/bin"
 fish_add_path -g "$PNPM_HOME"
 fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fish_add_path -g "/opt/homebrew/opt/openjdk@17/bin"
-fish_add_path -g "/opt/homebrew/opt/node@20/bin"
 
 # ── Lazy Conda ────────────────────────────────────────────────────────
 
@@ -80,6 +74,10 @@ if not status is-interactive
 end
 
 # ── Interactive Integrations ──────────────────────────────────────────
+
+if command -q fnm
+    fnm env --use-on-cd --corepack-enabled --version-file-strategy recursive --resolve-engines=false --log-level quiet --shell fish | source
+end
 
 if test -f ~/.orbstack/shell/init2.fish
     source ~/.orbstack/shell/init2.fish 2>/dev/null

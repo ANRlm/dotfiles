@@ -1,5 +1,4 @@
 tap "oven-sh/bun", trusted: true
-tap "stablyai/orca", trusted: true
 tap "tw93/tap", trusted: true
 # Bourne-Again SHell, a UNIX command interpreter
 brew "bash"
@@ -23,6 +22,10 @@ brew "fd"
 brew "ffmpeg"
 # User-friendly command-line shell for UNIX-like operating systems
 brew "fish"
+# Plugin manager for the Fish shell
+brew "fisher"
+# Fast and simple Node.js version manager
+brew "fnm"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # GitHub command-line tool
@@ -49,12 +52,8 @@ brew "mole"
 brew "neovim"
 # Open-source, cross-platform JavaScript runtime environment
 brew "node"
-# Open-source, cross-platform JavaScript runtime environment
-brew "node@20"
 # Development kit for the Java programming language
 brew "openjdk@17"
-# AI agent toolkit
-brew "pi-coding-agent"
 # Fast, disk space efficient package manager
 brew "pnpm"
 # Search tool like grep and The Silver Searcher
@@ -113,12 +112,12 @@ cask "obsidian"
 cask "open-design"
 # Replacement for Docker Desktop
 cask "orbstack"
-# IDE for orchestrating AI coding agents across terminals and worktrees
-cask "stablyai/orca/orca", trusted: true
 # Terminal emulator built for code agents
 cask "otty"
 # Utility to uninstall apps and remove leftover files from old/uninstalled apps
 cask "pearcleaner"
+# Control your tools with a few keystrokes
+cask "raycast"
 # Tool that provides consistent, highly configurable symbols for apps
 cask "sf-symbols"
 # Screenshot measurement and annotation tool
@@ -134,6 +133,7 @@ cask "zed"
 mas "Amphetamine", id: 937984704
 mas "QQ", id: 451108668
 mas "WPS Office", id: 1443749478
+mas "剪映专业版", id: 1529999940
 mas "微信", id: 836500024
 mas "百度网盘", id: 547166701
 mas "网易云音乐", id: 944848654
