@@ -7,6 +7,7 @@ set -gx EDITOR nvim
 set -gx STARSHIP_CONFIG $HOME/.config/starship/starship.toml
 set -gx PNPM_HOME $HOME/Library/pnpm
 set -gx JAVA_HOME /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
+set -gx CLAUDE_CONFIG_DIR $HOME/.claude
 
 # ── Homebrew ──────────────────────────────────────────────────────────
 
@@ -42,32 +43,6 @@ fish_add_path -g "$HOME/.local/bin"
 fish_add_path -g "$PNPM_HOME"
 fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fish_add_path -g "/opt/homebrew/opt/openjdk@17/bin"
-
-# ── Lazy Conda ────────────────────────────────────────────────────────
-
-set -gx CONDA_ROOT /opt/homebrew/Caskroom/miniforge/base
-
-function conda
-    if not set -q CONDA_ROOT
-        echo "lazyconda: \$CONDA_ROOT is not set" >&2
-        return 1
-    end
-
-    set -l conda_argv $argv
-    functions --erase conda
-
-    if test -f $CONDA_ROOT/bin/conda
-        eval $CONDA_ROOT/bin/conda shell.fish hook | source
-        or return $status
-    else if test -f $CONDA_ROOT/etc/fish/conf.d/conda.fish
-        source $CONDA_ROOT/etc/fish/conf.d/conda.fish
-        or return $status
-    else
-        fish_add_path -g $CONDA_ROOT/bin
-    end
-
-    conda $conda_argv
-end
 
 if not status is-interactive
     return
@@ -124,18 +99,6 @@ abbr -a ta 'tmux attach'
 abbr -a trw 'tmux rename-window'
 abbr -a trs 'tmux rename-session'
 
-# ── Abbreviations: Conda ──────────────────────────────────────────────
-
-abbr -a ca 'conda activate'
-abbr -a cde 'conda deactivate'
-abbr -a cel 'conda env list'
-abbr -a ci 'conda install'
-abbr -a cui 'conda remove'
-abbr -a cs 'conda search'
-abbr -a cl 'conda list'
-abbr -a cc 'conda clean --all -y'
-abbr -a cu 'conda update conda -y; and conda update --all -y'
-
 # ── Abbreviations: Yazi ───────────────────────────────────────────────
 
 abbr -a yaa 'ya pkg add'
@@ -168,11 +131,3 @@ function fish_user_key_bindings
     end
     bind \cg ripgrep_search
 end
-
-# >>> otty shell integration >>>
-# Added by Otty — toggle in Settings > Shell > Shell Integration.
-# Inert unless launched by Otty (it sets $OTTY_SHELL_INTEGRATION).
-if test -n "$OTTY_SHELL_INTEGRATION" -a -r "$OTTY_SHELL_INTEGRATION/otty-integration.fish"
-    source "$OTTY_SHELL_INTEGRATION/otty-integration.fish"
-end
-# <<< otty shell integration <<<

@@ -13,7 +13,7 @@
 | 文件管理 | yazi + eza + fd |
 | 搜索 | fzf + ripgrep |
 | 系统工具 | btop + bat |
-| 包与环境管理 | Homebrew + fnm + pnpm + bun + uv + Conda |
+| 包与环境管理 | Homebrew + fnm + pnpm + bun + uv |
 
 ## 部署方式
 
@@ -21,7 +21,6 @@
 
 ```text
 ~/.config/btop     -> ~/dotfiles/btop
-~/.config/conda    -> ~/dotfiles/conda
 ~/.config/fish     -> ~/dotfiles/fish
 ~/.config/ghostty  -> ~/dotfiles/ghostty
 ~/.config/git      -> ~/dotfiles/git
@@ -52,7 +51,7 @@ git clone git@github.com:ANRlm/dotfiles.git ~/dotfiles
 目标位置已有同名文件或目录时，请先备份或迁移：
 
 ```fish
-for dir in btop conda fish ghostty git lazygit starship tmux yazi
+for dir in btop fish ghostty git lazygit starship tmux yazi
     ln -s ~/dotfiles/$dir ~/.config/$dir
 end
 ```
@@ -102,7 +101,6 @@ chsh -s (command -v fish)
 ```text
 dotfiles/
 ├── btop/        # btop 配置
-├── conda/       # Conda/Miniforge 配置
 ├── fish/        # Fish 配置、函数与插件清单
 ├── ghostty/     # Ghostty 配置与 shader
 ├── git/         # Git 全局配置、忽略规则与 delta 主题
@@ -123,7 +121,7 @@ u
 u plugins
 ```
 
-`u` 会更新 Homebrew、Conda、npm/pnpm 全局包、uv 工具与缓存和 MAS，并执行 Mole 清理。它始终使用 Homebrew 的全局 Node 工具链，不会改动 fnm 管理的项目 Node。
+`u` 会更新 Homebrew、npm/pnpm 全局包、uv 工具与缓存和 MAS，并执行 Mole 清理。它始终使用 Homebrew 的全局 Node 工具链，不会改动 fnm 管理的项目 Node。
 
 `u plugins` 会把 Fisher、TPM 和 Yazi 插件更新到最新版本；Yazi 遇到瞬时失败时最多重试三次。
 

@@ -100,8 +100,6 @@ cask "iina"
 cask "jetbrains-toolbox"
 # File archiver
 cask "keka"
-# Minimal installer for conda specific to conda-forge
-cask "miniforge"
 # Database administration and development tool
 cask "navicat-premium-lite"
 # App to write, plan, collaborate, and get organised

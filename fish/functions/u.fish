@@ -96,10 +96,6 @@ function u --description "Update global tools and applications"
     __u_section Homebrew
     __u_run "Homebrew done" bash -c "brew update && brew upgrade --no-ask && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode"
 
-    # ── Conda
-    __u_section Conda
-    __u_run "Conda updated" fish -c "conda update conda -y; and conda update --all -y; and conda clean --all -y"
-
     # ── Node
     __u_section Node
     __u_run "npm updated" env PATH="/opt/homebrew/bin:$PATH" PUPPETEER_SKIP_DOWNLOAD=true npm update -g
