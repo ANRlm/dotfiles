@@ -112,7 +112,7 @@ u
 u plugins
 ```
 
-`u` 会更新 Homebrew、npm/pnpm 全局包、uv 工具与缓存和 MAS，并执行 Mole 清理。它始终使用 Homebrew 的全局 Node 工具链，不会改动 fnm 管理的项目 Node。
+`u` 会更新 Homebrew、npm/pnpm/bun 全局包、uv 工具与缓存和 MAS，并执行 Mole 清理。它始终使用 Homebrew 的全局 Node 工具链，不会改动 fnm 管理的项目 Node。
 
 `u plugins` 会把 TPM 和 Yazi 插件更新到最新版本；Yazi 遇到瞬时失败时最多重试三次。
 

@@ -18,7 +18,7 @@ end
 
 # ── PATH ──────────────────────────────────────────────────────────────
 
-set -l extra_paths "$HOME/.local/bin" "$PNPM_HOME"
+set -l extra_paths "$HOME/.local/bin" "$PNPM_HOME/bin"
 
 set -l jdk /opt/homebrew/opt/openjdk@17
 if test -d $jdk/libexec/openjdk.jdk/Contents/Home

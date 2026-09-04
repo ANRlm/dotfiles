@@ -95,7 +95,16 @@ function u --description "Update global tools and applications"
     # ── Node
     __u_section Node
     __u_run "npm updated" env PATH="/opt/homebrew/bin:$PATH" PUPPETEER_SKIP_DOWNLOAD=true npm update -g
-    __u_run "pnpm updated" env PATH="/opt/homebrew/bin:$PNPM_HOME:$PATH" fish -c "cd; and pnpm update -g; and pnpm store prune"
+    __u_run "pnpm updated" env PATH="/opt/homebrew/bin:$PNPM_HOME/bin:$PATH" fish -c "cd; and pnpm update -g; and pnpm store prune"
+
+    # bun exits 1 when no global packages exist, so only run it when some do
+    set -l bun_home $BUN_INSTALL
+    test -n "$bun_home"; or set bun_home $HOME/.bun
+    if test -f $bun_home/install/global/package.json
+        __u_run "bun updated" env PATH="/opt/homebrew/bin:$PATH" bun update -g
+    else
+        __u_ok "bun (no global packages)"
+    end
 
     # ── Python (uv)
     __u_section "Python / uv"
