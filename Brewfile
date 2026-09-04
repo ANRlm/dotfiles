@@ -1,26 +1,20 @@
+tap "chen08209/tap"
 tap "oven-sh/bun", trusted: true
 tap "tw93/tap", trusted: true
 brew "bash"
 brew "bat"
-brew "btop"
 brew "freetype"
-brew "cloc"
-brew "dua-cli"
 brew "eza"
 brew "fd"
 brew "fish"
-brew "fisher"
 brew "fnm"
 brew "fzf"
 brew "gh"
 brew "git"
-brew "git-delta"
-brew "git-lfs"
-brew "jq"
+brew "herdr"
 brew "lazygit"
 brew "macmon"
 brew "mas"
-brew "maven"
 brew "mole"
 brew "neovim"
 brew "node"
@@ -36,10 +30,10 @@ brew "oven-sh/bun/bun", trusted: true
 cask "betterdisplay"
 cask "cc-switch"
 cask "chatgpt"
-cask "clash-verge-rev"
 cask "claude-code@latest"
 cask "codex"
 cask "easydict"
+cask "chen08209/tap/flclash", trusted: true
 cask "flowvision"
 cask "font-fira-code-nerd-font"
 cask "font-jetbrains-mono-nerd-font"
@@ -53,7 +47,6 @@ cask "notion"
 cask "obsidian"
 cask "open-design"
 cask "orbstack"
-cask "otty"
 cask "pearcleaner"
 cask "raycast"
 cask "sf-symbols"
@@ -63,11 +56,12 @@ cask "upscayl"
 cask "visual-studio-code"
 cask "zed"
 mas "Amphetamine", id: 937984704
+mas "BaiduNetdisk", id: 547166701
+mas "Feishu", id: 1551632588
+mas "NetEaseMusic", id: 944848654
 mas "QQ", id: 451108668
+mas "Shadowrocket", id: 932747118
+mas "TencentMeeting", id: 1484048379
+mas "WeChat", id: 836500024
 mas "WPS Office", id: 1443749478
 mas "剪映专业版", id: 1529999940
-mas "微信", id: 836500024
-mas "百度网盘", id: 547166701
-mas "网易云音乐", id: 944848654
-mas "腾讯会议", id: 1484048379
-mas "飞书", id: 1551632588

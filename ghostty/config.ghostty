@@ -5,49 +5,36 @@ shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 # -------------------------------------------------- #
 # Macos
 # -------------------------------------------------- #
-macos-titlebar-style          = native
-macos-titlebar-proxy-icon     = visible
-macos-window-buttons          = hidden
-macos-window-shadow           = true
-macos-option-as-alt           = true
-macos-auto-secure-input       = true
-macos-secure-input-indication = true
+macos-titlebar-style = native
+macos-window-buttons = hidden
+macos-option-as-alt  = true
 # -------------------------------------------------- #
 # Font
 # -------------------------------------------------- #
 font-family = MesloLGS Nerd Font Mono
-font-family = Sarasa Mono SC
 font-thicken = true
 font-thicken-strength = 128
 font-size = 14
 # -------------------------------------------------- #
-# Custom 
+# Custom
 # -------------------------------------------------- #
 theme = Nord Wave
-background-opacity      = 1
+background-opacity      = 0.85
 background-blur         = 85
 mouse-hide-while-typing = true
 unfocused-split-opacity = 0.8
 window-padding-x        = 5
 window-padding-y        = 5
 window-padding-balance  = true
-window-decoration       = auto
-window-theme            = auto
 window-colorspace       = display-p3
-window-step-resize      = false
 window-width            = 150
 window-height           = 50
-window-new-tab-position = current
-focus-follows-mouse     = false
 # -------------------------------------------------- #
-# Shader 
+# Shader
 # -------------------------------------------------- #
 custom-shader = "shaders/cursor_warp.glsl"
 custom-shader = "shaders/ripple_cursor.glsl"
 # -------------------------------------------------- #
-# Clipboard 
+# Clipboard
 # -------------------------------------------------- #
-clipboard-read                 = allow
-clipboard-write                = allow
-clipboard-paste-protection     = true
-clipboard-trim-trailing-spaces = true
+clipboard-read = allow

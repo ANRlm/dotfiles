@@ -52,10 +52,6 @@ end
 function __u_update_plugins
     set -f __u_failures 0
 
-    # ── Fish / Fisher
-    __u_section "Fish / Fisher"
-    __u_run "Fisher plugins updated" fisher update
-
     # ── Tmux / TPM
     __u_section "Tmux / TPM"
     __u_run "TPM plugins updated" ~/.config/tmux/plugins/tpm/bin/update_plugins all

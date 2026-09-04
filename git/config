@@ -1,21 +1,10 @@
 [user]
-	name = cnhyk
-	email = nai.ying.cnhyk@gmail.com
-
-[include]
-    path = ~/.config/git/themes.gitconfig
+    name = cnhyk
+    email = nai.ying.cnhyk@gmail.com
 
 [core]
-    pager = delta
     excludesfile = ~/.config/git/ignore
     editor = nvim
-
-[interactive]
-    diffFilter = delta --color-only
-
-[delta]
-    navigate = true  # use n and N to move between diff sections
-    features = nord
 
 [init]
     defaultBranch = main
@@ -37,9 +26,3 @@
 
 [diff]
     colorMoved = default
-
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true

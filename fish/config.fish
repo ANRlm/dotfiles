@@ -6,7 +6,6 @@ set -gx EDITOR nvim
 
 set -gx STARSHIP_CONFIG $HOME/.config/starship/starship.toml
 set -gx PNPM_HOME $HOME/Library/pnpm
-set -gx JAVA_HOME /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
 set -gx CLAUDE_CONFIG_DIR $HOME/.claude
 
 # ── Homebrew ──────────────────────────────────────────────────────────
@@ -19,9 +18,15 @@ end
 
 # ── PATH ──────────────────────────────────────────────────────────────
 
-fish_add_path -g "$HOME/.local/bin"
-fish_add_path -g "$PNPM_HOME"
-fish_add_path -g "/opt/homebrew/opt/openjdk@17/bin"
+set -l extra_paths "$HOME/.local/bin" "$PNPM_HOME"
+
+set -l jdk /opt/homebrew/opt/openjdk@17
+if test -d $jdk/libexec/openjdk.jdk/Contents/Home
+    set -gx JAVA_HOME $jdk/libexec/openjdk.jdk/Contents/Home
+    set -a extra_paths $jdk/bin
+end
+
+fish_add_path -g $extra_paths
 
 if not status is-interactive
     return
@@ -49,9 +54,7 @@ end
 
 abbr -a c clear
 abbr -a s 'exec fish'
-abbr -a v nvim
 abbr -a lg lazygit
-abbr -a py python
 abbr -a copy pbcopy
 abbr -a ip 'ipconfig getifaddr en0'
 abbr -a ports 'lsof -i -P | grep -i "listen"'
@@ -78,13 +81,6 @@ abbr -a ta 'tmux attach'
 abbr -a trw 'tmux rename-window'
 abbr -a trs 'tmux rename-session'
 
-# ── Abbreviations: Yazi ───────────────────────────────────────────────
-
-abbr -a yaa 'ya pkg add'
-abbr -a yad 'ya pkg delete'
-abbr -a yal 'ya pkg list'
-abbr -a yau 'ya pkg upgrade'
-
 # ── Abbreviations: Eza ────────────────────────────────────────────────
 
 abbr -a el 'eza --long --header --icons --git --all'
@@ -92,21 +88,17 @@ abbr -a et 'eza --tree --level=2 --long --header --icons --git'
 
 # ── FZF ───────────────────────────────────────────────────────────────
 
-set -gx FZF_DEFAULT_OPTS "\
-    --height 75% \
-    --layout=reverse \
-    --border \
-    --info=inline"
+set -gx FZF_DEFAULT_OPTS --height=75% --layout=reverse --border --info=inline
 
-set -g fzf_fd_opts "--hidden --follow --exclude .git"
-set -g fzf_preview_dir_cmd eza --all --color=always --icons --git --tree --level=2
-set -g fzf_preview_file_cmd bat --style=numbers --color=always --line-range :500
-set -g fzf_diff_highlighter "delta --paging=never --features='nord'"
-set -g fzf_history_time_format %d-%m-%y
+set -gx FZF_CTRL_T_COMMAND "fd --type=file --hidden --follow --exclude=.git"
+set -gx FZF_CTRL_T_OPTS "--preview='bat --style=numbers --color=always --line-range=:500 {}'"
+set -gx FZF_ALT_C_COMMAND "fd --type=directory --hidden --follow --exclude=.git"
+set -gx FZF_ALT_C_OPTS "--preview='eza --all --color=always --icons --git --tree --level=2 {}'"
+
+if command -q fzf
+    fzf --fish | source
+end
 
 function fish_user_key_bindings
-    if type -q fzf_configure_bindings
-        fzf_configure_bindings --directory=\ct --history=\cr
-    end
     bind \cg ripgrep_search
 end

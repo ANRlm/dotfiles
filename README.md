@@ -9,10 +9,10 @@
 | Shell | Fish + Starship |
 | 终端 | Ghostty + tmux |
 | 编辑器 | Neovim |
-| Git | lazygit + delta |
+| Git | lazygit |
 | 文件管理 | yazi + eza + fd |
 | 搜索 | fzf + ripgrep |
-| 系统工具 | btop + bat |
+| 系统工具 | bat + macmon |
 | 包与环境管理 | Homebrew + fnm + pnpm + bun + uv |
 
 ## 部署方式
@@ -20,11 +20,9 @@
 仓库中的每个配置目录通过符号链接挂载到 `~/.config`，应用直接读写仓库内的文件：
 
 ```text
-~/.config/btop     -> ~/dotfiles/btop
 ~/.config/fish     -> ~/dotfiles/fish
 ~/.config/ghostty  -> ~/dotfiles/ghostty
 ~/.config/git      -> ~/dotfiles/git
-~/.config/lazygit  -> ~/dotfiles/lazygit
 ~/.config/starship -> ~/dotfiles/starship
 ~/.config/tmux     -> ~/dotfiles/tmux
 ~/.config/yazi     -> ~/dotfiles/yazi
@@ -51,7 +49,7 @@ git clone git@github.com:ANRlm/dotfiles.git ~/dotfiles
 目标位置已有同名文件或目录时，请先备份或迁移：
 
 ```fish
-for dir in btop fish ghostty git lazygit starship tmux yazi
+for dir in fish ghostty git starship tmux yazi
     ln -s ~/dotfiles/$dir ~/.config/$dir
 end
 ```
@@ -75,18 +73,13 @@ fnm use --install-if-missing
 ### 同步插件
 
 ```fish
-# Fisher 由 Brewfile 安装；按 fish/fish_plugins 清单安装 Fish 插件
-fisher install
-
 # Yazi：按 yazi/package.toml 清单安装插件
 ya pkg install
 ```
 
-```bash
-# TPM：安装 tmux 插件
-git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
-bash ~/.config/tmux/plugins/tpm/bin/install_plugins
-```
+tmux 插件无需手动安装：首次启动 tmux 时，`tmux.conf` 会自动克隆 TPM 并安装插件。
+
+Fish 不使用插件管理器，fzf 的键位集成由 `fzf --fish` 在 `config.fish` 中直接加载。
 
 插件采用跟随最新版的策略；日常更新使用 `u plugins`，与全局工具链更新分开执行。
 
@@ -100,11 +93,9 @@ chsh -s (command -v fish)
 
 ```text
 dotfiles/
-├── btop/        # btop 配置
-├── fish/        # Fish 配置、函数与插件清单
+├── fish/        # Fish 配置与函数
 ├── ghostty/     # Ghostty 配置与 shader
-├── git/         # Git 全局配置、忽略规则与 delta 主题
-├── lazygit/     # lazygit 配置
+├── git/         # Git 全局配置与忽略规则
 ├── starship/    # Starship 提示符配置
 ├── tmux/        # tmux 配置
 ├── yazi/        # Yazi 配置与插件清单
@@ -123,7 +114,7 @@ u plugins
 
 `u` 会更新 Homebrew、npm/pnpm 全局包、uv 工具与缓存和 MAS，并执行 Mole 清理。它始终使用 Homebrew 的全局 Node 工具链，不会改动 fnm 管理的项目 Node。
 
-`u plugins` 会把 Fisher、TPM 和 Yazi 插件更新到最新版本；Yazi 遇到瞬时失败时最多重试三次。
+`u plugins` 会把 TPM 和 Yazi 插件更新到最新版本；Yazi 遇到瞬时失败时最多重试三次。
 
 `u` 还会强制重写 `~/dotfiles/Brewfile`，因此仓库应保持在 `~` 目录下。
 

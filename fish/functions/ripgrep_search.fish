@@ -1,5 +1,8 @@
 function ripgrep_search --description "Live ripgrep search with fzf"
-    for cmd in rg fzf bat nvim
+    set -l editor $EDITOR
+    test -n "$editor"; or set editor nvim
+
+    for cmd in rg fzf bat $editor
         if not command -q $cmd
             echo "ripgrep_search: missing dependency: $cmd" >&2
             commandline -f repaint
@@ -16,7 +19,7 @@ function ripgrep_search --description "Live ripgrep search with fzf"
             --disabled \
             --query "$query" \
             --bind "change:reload:$RG_PREFIX {q} || true" \
-            --bind 'ctrl-o:execute(nvim {1} +{2})' \
+            --bind "ctrl-o:execute($editor {1} +{2})" \
             --preview 'bat --color=always {1} --highlight-line {2}' \
             --preview-window 'right:60%:~3:+{2}+3/3' \
             --delimiter $field_separator
