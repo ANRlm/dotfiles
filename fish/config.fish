@@ -58,6 +58,7 @@ abbr -a lg lazygit
 abbr -a copy pbcopy
 abbr -a ip 'ipconfig getifaddr en0'
 abbr -a ports 'lsof -i -P | grep -i "listen"'
+abbr -a claude 'claude --allow-dangerously-skip-permissions'
 
 # ── Abbreviations: Homebrew ───────────────────────────────────────────
 

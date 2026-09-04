@@ -7,7 +7,7 @@
 | 类别 | 工具 |
 | --- | --- |
 | Shell | Fish + Starship |
-| 终端 | Ghostty + tmux |
+| 终端 | Ghostty + tmux + herdr |
 | 编辑器 | Neovim |
 | Git | lazygit |
 | 文件管理 | yazi + eza + fd |
@@ -23,10 +23,13 @@
 ~/.config/fish     -> ~/dotfiles/fish
 ~/.config/ghostty  -> ~/dotfiles/ghostty
 ~/.config/git      -> ~/dotfiles/git
+~/.config/herdr    -> ~/dotfiles/herdr
 ~/.config/starship -> ~/dotfiles/starship
 ~/.config/tmux     -> ~/dotfiles/tmux
 ~/.config/yazi     -> ~/dotfiles/yazi
 ```
+
+herdr 把 socket 和日志固定写在配置目录下，链接后它们会落在 `herdr/` 里，已由 `.gitignore` 排除。`herdr/config.toml` 由 herdr 自身管理并会被重写，其中的注释无法保留。
 
 ## 安装
 
@@ -49,7 +52,7 @@ git clone git@github.com:ANRlm/dotfiles.git ~/dotfiles
 目标位置已有同名文件或目录时，请先备份或迁移：
 
 ```fish
-for dir in fish ghostty git starship tmux yazi
+for dir in fish ghostty git herdr starship tmux yazi
     ln -s ~/dotfiles/$dir ~/.config/$dir
 end
 ```
@@ -96,6 +99,7 @@ dotfiles/
 ├── fish/        # Fish 配置与函数
 ├── ghostty/     # Ghostty 配置与 shader
 ├── git/         # Git 全局配置与忽略规则
+├── herdr/       # herdr 键位与界面配置
 ├── starship/    # Starship 提示符配置
 ├── tmux/        # tmux 配置
 ├── yazi/        # Yazi 配置与插件清单

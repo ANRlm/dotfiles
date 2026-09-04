@@ -8,4 +8,9 @@ fish/completions/
 yazi/plugins/
 yazi/flavors/
 
+herdr/*.log
+herdr/*.sock
+herdr/session.json
+herdr/.plugins.lock
+
 .claude/worktrees/
