@@ -2,7 +2,7 @@ set -g fish_greeting ""
 
 # ── Core Environment ──────────────────────────────────────────────────
 
-set -gx EDITOR nvim
+set -gx EDITOR hx
 
 set -gx STARSHIP_CONFIG $HOME/.config/starship/starship.toml
 set -gx PNPM_HOME $HOME/Library/pnpm

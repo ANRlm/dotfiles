@@ -8,7 +8,7 @@
 | --- | --- |
 | Shell | Fish + Starship |
 | 终端 | Ghostty + tmux + herdr |
-| 编辑器 | Neovim |
+| 编辑器 | Helix（`hx`） |
 | Git | lazygit |
 | 文件管理 | yazi + eza + fd |
 | 搜索 | fzf + ripgrep |
@@ -23,6 +23,7 @@
 ~/.config/fish     -> ~/dotfiles/fish
 ~/.config/ghostty  -> ~/dotfiles/ghostty
 ~/.config/git      -> ~/dotfiles/git
+~/.config/helix    -> ~/dotfiles/helix
 ~/.config/herdr    -> ~/dotfiles/herdr
 ~/.config/starship -> ~/dotfiles/starship
 ~/.config/tmux     -> ~/dotfiles/tmux
@@ -52,7 +53,8 @@ git clone git@github.com:ANRlm/dotfiles.git ~/dotfiles
 目标位置已有同名文件或目录时，请先备份或迁移：
 
 ```fish
-for dir in fish ghostty git herdr starship tmux yazi
+mkdir -p ~/.config
+for dir in fish ghostty git helix herdr starship tmux yazi
     ln -s ~/dotfiles/$dir ~/.config/$dir
 end
 ```
@@ -62,6 +64,18 @@ end
 ```bash
 brew bundle --file=~/dotfiles/Brewfile
 ```
+
+### 默认编辑器
+
+Fish 的 `EDITOR` 和 Git 的 `core.editor` 均设为 `hx`；Fish 的 `Ctrl-G` 搜索中，`Ctrl-O` 使用 `$EDITOR` 打开匹配文件并跳转到对应行，未设置时回退到 `hx`。
+
+Helix 配置位于 `helix/config.toml`，使用 `adwaita-dark` 主题，按界面、编辑行为、文件选择、诊断和键位分组。复制与粘贴默认使用系统剪贴板；文件选择器显示隐藏文件，同时遵循 Git 忽略规则。
+
+`Tab` / `Shift-Tab` 使用官方 Smart Tab 导航配置：普通模式跳到父语法节点末尾 / 开头，选择模式扩展到对应位置；插入模式保留默认 Smart Tab，`Shift-Tab` 跳到父节点开头。
+
+在 Helix 中运行 `:config-open` 编辑配置，`:config-reload` 重新加载。语言服务器与格式化器需按使用的语言另行安装，可用 `hx --health <语言>` 检查。
+
+参考：[配置文件](https://docs.helix-editor.com/configuration.html)、[编辑器选项](https://docs.helix-editor.com/editor.html)、[键位映射](https://docs.helix-editor.com/remapping.html)。
 
 ### Node 版本管理
 
@@ -99,6 +113,7 @@ dotfiles/
 ├── fish/        # Fish 配置与函数
 ├── ghostty/     # Ghostty 配置与 shader
 ├── git/         # Git 全局配置与忽略规则
+├── helix/       # Helix 编辑器配置
 ├── herdr/       # herdr 键位与界面配置
 ├── starship/    # Starship 提示符配置
 ├── tmux/        # tmux 配置

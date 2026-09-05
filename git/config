@@ -4,7 +4,16 @@
 
 [core]
     excludesfile = ~/.config/git/ignore
-    editor = nvim
+    editor = hx
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    line-numbers = true
+    navigate = true
+    hyperlinks = true
 
 [init]
     defaultBranch = main
@@ -24,5 +33,10 @@
 [merge]
     conflictStyle = zdiff3
 
+[rerere]
+    enabled = true
+
 [diff]
+    algorithm = histogram
     colorMoved = default
+    colorMovedWS = allow-indentation-change

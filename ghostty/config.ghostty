@@ -32,8 +32,8 @@ window-height           = 45
 # -------------------------------------------------- #
 # Shader
 # -------------------------------------------------- #
-custom-shader = "shaders/cursor_warp.glsl"
-custom-shader = "shaders/ripple_cursor.glsl"
+# custom-shader = "shaders/cursor_warp.glsl"
+# custom-shader = "shaders/ripple_cursor.glsl"
 # -------------------------------------------------- #
 # Clipboard
 # -------------------------------------------------- #

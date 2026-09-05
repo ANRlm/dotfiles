@@ -48,6 +48,9 @@ symbol = "C++ "
 [cobol]
 symbol = "cobol "
 
+[conda]
+symbol = "conda "
+
 [container]
 symbol = "container "
 
@@ -147,6 +150,9 @@ symbol = "kubernetes "
 
 [lua]
 symbol = "lua "
+
+[maven]
+symbol = "maven "
 
 [nodejs]
 symbol = "nodejs "
