@@ -61,8 +61,7 @@ tmux 首次启动时会自动安装 TPM 及声明的插件。Fish 的 fzf 键位
 | `y` | 打开 Yazi，退出后切换到其中选定的目录 |
 | `Ctrl-G` | 使用 ripgrep 和 fzf 搜索；`Ctrl-O` 在编辑器中打开匹配位置 |
 | `ts` | 重新加载 tmux 配置 |
-| `u` | 更新全局工具和应用，并执行清理 |
-| `u plugins` | 更新 TPM 和 Yazi 插件 |
+| `u` | 更新全局工具、应用及 tmux / Yazi 插件，并执行清理 |
 
 默认编辑器为 Helix（`hx`）。普通模式下，`Space+w` 保存、`Space+q` 退出；`Tab` / `Shift-Tab` 跳到父语法节点末尾 / 开头，选择模式下扩展选区。使用 `:config-reload` 重新加载配置。
 
@@ -72,9 +71,9 @@ tmux 的前缀键为 `Ctrl-A`：随后按 `=` / `-` 分屏，`h/j/k/l` 选择窗
 
 ## 更新与维护
 
-`u` 更新 Homebrew、npm/pnpm/bun 全局包、uv 工具和 Mac App Store 应用，清理相关缓存并运行 Mole 清理。它会重写 `~/dotfiles/Brewfile`，因此仓库需放在 `~/dotfiles`。
+`u` 更新 Homebrew、npm/pnpm/bun 全局包、uv 工具、Mac App Store 应用，以及已安装的 tmux 和 Yazi 插件，清理相关缓存并运行 Mole 清理。它会重写 `~/dotfiles/Brewfile`，因此仓库需放在 `~/dotfiles`。
 
-`u plugins` 更新 TPM 和 Yazi 插件；这些命令不会拉取本仓库，配置同步需自行执行 Git 操作。
+更新统一使用 `u`，不需要参数。tmux 插件仅执行 Git 快进更新，Yazi 更新失败最多尝试三次；某项失败会继续执行其他独立步骤，最终返回失败状态。`u` 不会拉取本仓库，配置同步需自行执行 Git 操作。
 
 配置按功能分组，标题沿用 `fish/config.fish` 的 `# ── 类别 ──…` 样式；Lua 使用 `--` 注释符。
 
