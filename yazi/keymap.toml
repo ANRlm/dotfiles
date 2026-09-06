@@ -1,3 +1,5 @@
+# ── Navigation ────────────────────────────────────────────────────────
+
 [[mgr.prepend_keymap]]
 on = "l"
 run = "plugin smart-enter"

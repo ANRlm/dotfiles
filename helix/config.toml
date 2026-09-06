@@ -1,7 +1,11 @@
+# ── Theme ─────────────────────────────────────────────────────────────
+
 theme = "adwaita-dark"
 
 [editor]
-# Appearance
+
+# ── Editor: Appearance ────────────────────────────────────────────────
+
 line-number = "relative"
 cursorline = true
 bufferline = "multiple"
@@ -9,12 +13,16 @@ color-modes = true
 popup-border = "all"
 scrolloff = 8
 
-# Editing
+# ── Editor: Editing ───────────────────────────────────────────────────
+
 default-yank-register = "+"
 trim-trailing-whitespace = true
 
-# Diagnostics
+# ── Editor: Diagnostics ───────────────────────────────────────────────
+
 end-of-line-diagnostics = "hint"
+
+# ── Appearance: Cursor & Status Line ──────────────────────────────────
 
 [editor.cursor-shape]
 insert = "bar"
@@ -24,6 +32,8 @@ select = "underline"
 left = ["mode", "spinner", "version-control"]
 center = ["file-name", "file-modification-indicator"]
 right = ["diagnostics", "selections", "position", "file-type"]
+
+# ── Appearance: Whitespace ────────────────────────────────────────────
 
 [editor.indent-guides]
 render = true
@@ -35,18 +45,27 @@ nbsp = "all"
 nnbsp = "all"
 newline = "none"
 
+# ── File Picker ───────────────────────────────────────────────────────
+
 [editor.file-picker]
 hidden = false
 git-ignore = true
+
+# ── Inline Diagnostics ────────────────────────────────────────────────
 
 [editor.inline-diagnostics]
 cursor-line = "warning"
 other-lines = "disable"
 
-# Smart Tab navigation
+# ── Keybindings ───────────────────────────────────────────────────────
+
 [keys.normal]
 tab = "move_parent_node_end"
 S-tab = "move_parent_node_start"
+
+[keys.normal.space]
+q = ":quit"
+w = ":write"
 
 [keys.insert]
 S-tab = "move_parent_node_start"

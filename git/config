@@ -1,11 +1,17 @@
+# ── Identity ──────────────────────────────────────────────────────────
+
 [user]
     name = cnhyk
     email = nai.ying.cnhyk@gmail.com
+
+# ── Core ──────────────────────────────────────────────────────────────
 
 [core]
     excludesfile = ~/.config/git/ignore
     editor = hx
     pager = delta
+
+# ── Diff & Pager ──────────────────────────────────────────────────────
 
 [interactive]
     diffFilter = delta --color-only
@@ -14,6 +20,13 @@
     line-numbers = true
     navigate = true
     hyperlinks = true
+
+[diff]
+    algorithm = histogram
+    colorMoved = default
+    colorMovedWS = allow-indentation-change
+
+# ── Repository & Sync ─────────────────────────────────────────────────
 
 [init]
     defaultBranch = main
@@ -30,13 +43,10 @@
 [push]
     autoSetupRemote = true
 
+# ── Merge & Conflict Resolution ───────────────────────────────────────
+
 [merge]
     conflictStyle = zdiff3
 
 [rerere]
     enabled = true
-
-[diff]
-    algorithm = histogram
-    colorMoved = default
-    colorMovedWS = allow-indentation-change

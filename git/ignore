@@ -1,6 +1,10 @@
+# ── Local Files ───────────────────────────────────────────────────────
+
 **/.claude/settings.local.json
 .DS_Store
 *.local.md
+
+# ── Environment & Credentials ─────────────────────────────────────────
 
 .env
 .env.*

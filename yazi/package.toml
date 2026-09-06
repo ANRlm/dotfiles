@@ -1,3 +1,5 @@
+# ── Plugins ───────────────────────────────────────────────────────────
+
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-enter"
 rev = "c591a36"
@@ -27,6 +29,8 @@ hash = "9776f378459072b6c2875eae5addc49d"
 use = "yazi-rs/plugins:no-status"
 rev = "c591a36"
 hash = "3e023d31f29201efdac2a6ae35fedb78"
+
+# ── Flavors ───────────────────────────────────────────────────────────
 
 [flavor]
 deps = []

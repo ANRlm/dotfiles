@@ -1,14 +1,23 @@
+# ── Onboarding ────────────────────────────────────────────────────────
+
 onboarding = false
+
+# ── Theme ─────────────────────────────────────────────────────────────
+
 [theme]
 name = "terminal"
 auto_switch = false
 
+# ── Interface & Notifications ─────────────────────────────────────────
+
 [ui]
 status_indicators = "symbols"
-
 show_agent_labels_on_pane_borders = false
+
 [ui.toast]
 delivery = "system"
+
+# ── Keybindings ───────────────────────────────────────────────────────
 
 [keys]
 prefix = "ctrl+a"

@@ -52,11 +52,13 @@ end
 function __u_update_plugins
     set -f __u_failures 0
 
-    # ── Tmux / TPM
+    # ── Tmux / TPM ────────────────────────────────────────────────────
+
     __u_section "Tmux / TPM"
     __u_run "TPM plugins updated" ~/.config/tmux/plugins/tpm/bin/update_plugins all
 
-    # ── Yazi
+    # ── Yazi ──────────────────────────────────────────────────────────
+
     __u_section Yazi
     __u_run "Yazi plugins updated" __u_retry 3 ya pkg upgrade
 
@@ -88,11 +90,13 @@ function u --description "Update global tools and applications"
 
     set -f __u_failures 0
 
-    # ── Homebrew
+    # ── Homebrew ──────────────────────────────────────────────────────
+
     __u_section Homebrew
     __u_run "Homebrew done" bash -c "brew update && brew upgrade --no-ask && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode --no-describe"
 
-    # ── Node
+    # ── Node ──────────────────────────────────────────────────────────
+
     __u_section Node
     __u_run "npm updated" env PATH="/opt/homebrew/bin:$PATH" PUPPETEER_SKIP_DOWNLOAD=true npm update -g
     __u_run "pnpm updated" env PATH="/opt/homebrew/bin:$PNPM_HOME/bin:$PATH" fish -c "cd; and pnpm update -g; and pnpm store prune"
@@ -106,20 +110,24 @@ function u --description "Update global tools and applications"
         __u_ok "bun (no global packages)"
     end
 
-    # ── Python (uv)
+    # ── Python (uv) ───────────────────────────────────────────────────
+
     __u_section "Python / uv"
     __u_run "uv tools upgraded" uv tool upgrade --all
     __u_run "uv cache pruned" uv cache prune
 
-    # ── Mac App Store
+    # ── Mac App Store ─────────────────────────────────────────────────
+
     __u_section "Mac App Store"
     __u_run "MAS updated" mas update
 
-    # ── Mole
+    # ── Mole ──────────────────────────────────────────────────────────
+
     __u_section Mole
     __u_run "Mole cleaned" mo clean </dev/null
 
-    # ── Done
+    # ── Done ──────────────────────────────────────────────────────────
+
     echo ""
     set -l final_status 0
     if test $__u_failures -eq 0

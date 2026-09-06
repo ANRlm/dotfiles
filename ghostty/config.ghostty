@@ -1,40 +1,37 @@
-# -------------------------------------------------- #
-# Shell
-# -------------------------------------------------- #
+# ── Shell ─────────────────────────────────────────────────────────────
+
 shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
-# -------------------------------------------------- #
-# Macos
-# -------------------------------------------------- #
+
+# ── macOS ─────────────────────────────────────────────────────────────
+
 macos-titlebar-style = native
 macos-window-buttons = hidden
 macos-option-as-alt  = true
-# -------------------------------------------------- #
-# Font
-# -------------------------------------------------- #
+
+# ── Font ──────────────────────────────────────────────────────────────
+
 font-family = MesloLGS Nerd Font Mono
 font-thicken = true
 font-thicken-strength = 128
 font-size = 14
-# -------------------------------------------------- #
-# Custom
-# -------------------------------------------------- #
+
+# ── Theme & Colors ────────────────────────────────────────────────────
+
 theme = Nord Wave
 background-opacity      = 0.85
 background-blur         = 85
-mouse-hide-while-typing = true
+window-colorspace       = display-p3
+
+# ── Window & Splits ───────────────────────────────────────────────────
+
 unfocused-split-opacity = 0.8
 window-padding-x        = 5
 window-padding-y        = 5
 window-padding-balance  = true
-window-colorspace       = display-p3
 window-width            = 140
 window-height           = 45
-# -------------------------------------------------- #
-# Shader
-# -------------------------------------------------- #
-# custom-shader = "shaders/cursor_warp.glsl"
-# custom-shader = "shaders/ripple_cursor.glsl"
-# -------------------------------------------------- #
-# Clipboard
-# -------------------------------------------------- #
+
+# ── Mouse & Clipboard ─────────────────────────────────────────────────
+
+mouse-hide-while-typing = true
 clipboard-read = allow
