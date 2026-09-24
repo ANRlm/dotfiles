@@ -6,7 +6,21 @@ set -gx EDITOR hx
 
 set -gx STARSHIP_CONFIG $HOME/.config/starship/starship.toml
 set -gx PNPM_HOME $HOME/Library/pnpm
-set -gx CLAUDE_CONFIG_DIR $HOME/.claude
+
+# Claude Code runs through the cchost profile wrapper, which stores its data in
+# ~/.claude-profiles/<profile>/ (see ~/.config/claudecode-cchost/default-profile).
+# ~/.claude does not hold that data, so pointing CLAUDE_CONFIG_DIR there breaks
+# tools that read it (e.g. `ccusage`). Follow the wrapper's own directory.
+if test -r $HOME/.config/claudecode-cchost/default-profile
+    set -l claude_profile (cat $HOME/.config/claudecode-cchost/default-profile | string collect)
+    if test -n "$claude_profile" -a "$claude_profile" != legacy
+        set -gx CLAUDE_CONFIG_DIR $HOME/.claude-profiles/$claude_profile
+    else
+        set -e CLAUDE_CONFIG_DIR
+    end
+else
+    set -e CLAUDE_CONFIG_DIR
+end
 
 # ── Homebrew ──────────────────────────────────────────────────────────
 
@@ -35,6 +49,10 @@ end
 # ── Interactive Integrations ──────────────────────────────────────────
 
 if command -q fnm
+    # Use Homebrew's Node when no fnm default has been configured.
+    if not fnm default >/dev/null 2>&1
+        fnm default system
+    end
     fnm env --use-on-cd --corepack-enabled --version-file-strategy recursive --resolve-engines=false --log-level quiet --shell fish | source
 end
 
