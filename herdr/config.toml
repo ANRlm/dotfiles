@@ -11,11 +11,11 @@ auto_switch = false
 # ── Interface & Notifications ─────────────────────────────────────────
 
 [ui]
-status_indicators = "symbols"
+status_indicators = "dots"
 show_agent_labels_on_pane_borders = false
 
 [ui.toast]
-delivery = "system"
+delivery = "herdr"
 
 # ── Keybindings ───────────────────────────────────────────────────────
 

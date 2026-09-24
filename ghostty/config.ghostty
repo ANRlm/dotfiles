@@ -18,7 +18,7 @@ font-size = 14
 # ── Theme & Colors ────────────────────────────────────────────────────
 
 theme = Nord Wave
-background-opacity      = 0.85
+background-opacity      = 1
 background-blur         = 85
 window-colorspace       = display-p3
 
