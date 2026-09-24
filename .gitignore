@@ -12,5 +12,6 @@ herdr/*.log
 herdr/*.sock
 herdr/session.json
 herdr/.plugins.lock
+herdr/release-notes.json
 
 .claude/worktrees/
