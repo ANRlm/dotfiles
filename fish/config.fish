@@ -7,19 +7,12 @@ set -gx EDITOR hx
 set -gx STARSHIP_CONFIG $HOME/.config/starship/starship.toml
 set -gx PNPM_HOME $HOME/Library/pnpm
 
-# Claude Code runs through the cchost profile wrapper, which stores its data in
-# ~/.claude-profiles/<profile>/ (see ~/.config/claudecode-cchost/default-profile).
-# ~/.claude does not hold that data, so pointing CLAUDE_CONFIG_DIR there breaks
-# tools that read it (e.g. `ccusage`). Follow the wrapper's own directory.
-if test -r $HOME/.config/claudecode-cchost/default-profile
-    set -l claude_profile (cat $HOME/.config/claudecode-cchost/default-profile | string collect)
-    if test -n "$claude_profile" -a "$claude_profile" != legacy
-        set -gx CLAUDE_CONFIG_DIR $HOME/.claude-profiles/$claude_profile
-    else
-        set -e CLAUDE_CONFIG_DIR
-    end
-else
+if not set -q CLAUDECODE
     set -e CLAUDE_CONFIG_DIR
+    set -l selector $HOME/.config/claudecode-cchost/default-profile
+    if test -r $selector; and read -l claude_profile <$selector; and test -n "$claude_profile" -a "$claude_profile" != legacy
+        set -gx CLAUDE_CONFIG_DIR $HOME/.claude-profiles/$claude_profile
+    end
 end
 
 # ── Homebrew ──────────────────────────────────────────────────────────
@@ -60,7 +53,7 @@ if test -f ~/.orbstack/shell/init2.fish
     source ~/.orbstack/shell/init2.fish 2>/dev/null
 end
 
-if type -q zoxide
+if command -q zoxide
     zoxide init fish --cmd cd | source
 end
 
@@ -75,7 +68,7 @@ abbr -a s 'exec fish'
 abbr -a lg lazygit
 abbr -a copy pbcopy
 abbr -a ip 'ipconfig getifaddr en0'
-abbr -a ports 'lsof -i -P | grep -i "listen"'
+abbr -a ports 'lsof -nP -iTCP -sTCP:LISTEN'
 abbr -a claude 'claude --allow-dangerously-skip-permissions'
 
 # ── Abbreviations: Homebrew ───────────────────────────────────────────
@@ -120,4 +113,10 @@ end
 
 function fish_user_key_bindings
     bind \cg ripgrep_search
+end
+
+# ── Herdr ─────────────────────────────────────────────────────────────
+
+for _f in $HOME/.config/herdr/plugins/github/herdr-automatic-rename-*/shell/hook.fish
+    test -r "$_f"; and source "$_f"; and break
 end

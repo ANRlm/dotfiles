@@ -10,7 +10,7 @@ Apple Silicon macOS 的个人配置，通过符号链接部署到 `~/.config`。
 | [ghostty/](ghostty/) | 字体、主题、窗口和剪贴板 |
 | [git/](git/) | 用户信息、Delta、同步策略及全局忽略规则 |
 | [helix/](helix/) | 主题、编辑行为、诊断和快捷键 |
-| [herdr/](herdr/) | 界面、通知和快捷键 |
+| [herdr/](herdr/) | 界面、通知、快捷键及 automatic-rename 插件配置 |
 | [starship/](starship/) | 提示符及各模块的符号 |
 | [tmux/](tmux/) | 终端、窗口、快捷键及 TPM 插件 |
 | [yazi/](yazi/) | 文件管理、预览、快捷键及插件清单 |
@@ -32,6 +32,7 @@ mkdir -p ~/.config
 for dir in fish ghostty git helix herdr starship tmux yazi
     ln -s ~/dotfiles/$dir ~/.config/$dir
 end
+ln -s ~/dotfiles/herdr/plugins/config/herdr-automatic-rename ~/.config/herdr-automatic-rename
 ```
 
 Git 配置包含个人姓名和邮箱，使用前请检查 [git/config](git/config)。
@@ -42,10 +43,11 @@ Git 配置包含个人姓名和邮箱，使用前请检查 [git/config](git/conf
 chsh -s (command -v fish)
 ```
 
-安装 Yazi 插件：
+安装 Yazi 和 herdr 插件：
 
 ```fish
 ya pkg install
+herdr plugin install qu8n/herdr-automatic-rename
 ```
 
 tmux 首次启动时会自动安装 TPM 及声明的插件。Fish 的 fzf 键位由 `fzf --fish` 加载。
@@ -77,4 +79,4 @@ tmux 的前缀键为 `Ctrl-A`：随后按 `=` / `-` 分屏，`h/j/k/l` 选择窗
 
 配置按功能分组，标题沿用 `fish/config.fish` 的 `# ── 类别 ──…` 样式；Lua 使用 `--` 注释符。
 
-Brewfile 由 `u` 重新生成，保留工具生成的格式。插件目录、Fish 运行状态及 herdr 会话、日志和 socket 已由 `.gitignore` 排除。
+Brewfile 由 `u` 重新生成，保留工具生成的格式。各工具下载的插件、Fish 运行状态及 herdr 会话、日志和 socket 已由 `.gitignore` 排除；herdr 插件的配置（`herdr/plugins/config/`）纳入版本管理。
