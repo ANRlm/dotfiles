@@ -1,23 +1,17 @@
 -- ── Appearance: Borders ──────────────────────────────────────────────
 
 require("full-border"):setup({
-	-- Available values: ui.Border.PLAIN, ui.Border.ROUNDED
-	type = ui.Border.ROUNDED,
+	-- Available values: ui.Border.PLAIN, ROUNDED, DOUBLE, THICK, QUADRANT_INSIDE, QUADRANT_OUTSIDE
+	type = ui.Border.PLAIN,
 })
 
 -- ── Git ──────────────────────────────────────────────────────────────
 
 th.git = th.git or {}
-th.git.modified = ui.Style():fg("blue")
-th.git.deleted = ui.Style():fg("red"):bold()
-th.git.modified_sign = "M"
+th.git.unstaged_sign = "M"
 th.git.deleted_sign = "D"
 require("git"):setup()
 
 -- ── Appearance: Prompt ───────────────────────────────────────────────
 
 require("starship"):setup()
-
--- ── Appearance: Status Line ──────────────────────────────────────────
-
-require("no-status"):setup()
