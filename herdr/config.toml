@@ -1,5 +1,3 @@
-# ── Onboarding ────────────────────────────────────────────────────────
-
 onboarding = false
 
 # ── Theme ─────────────────────────────────────────────────────────────
@@ -8,45 +6,52 @@ onboarding = false
 name = "terminal"
 auto_switch = false
 
-# ── Interface & Notifications ─────────────────────────────────────────
+# ── UI ────────────────────────────────────────────────────────────────
 
 [ui]
+# Sidebar
 sidebar_width = 24
 sidebar_min_width = 20
 sidebar_max_width = 30
+sidebar_collapsed_mode = "hidden"
+
+# Tabs & window
+prompt_new_tab_name = false
+hide_tab_bar_when_single_tab = false
+window_title = "{workspace} · {tab}"
+
+# Panes
+pane_borders = "always"
+show_agent_labels_on_pane_borders = true
+
+# Agents
 agent_panel_sort = "priority"
 status_indicators = "symbols"
-sidebar_collapsed_mode = "hidden"
-prompt_new_tab_name = false
-hide_tab_bar_when_single_tab = true
-window_title = "{workspace} · {tab}"
-pane_borders = "auto"
-
-[ui.toast]
-delivery = "herdr"
 
 [ui.sidebar.agents]
 row_gap = 0
 rows = [
-  [
-    "state_icon",
-    { token = "workspace", dim = true },
-    { token = "agent", dim = true }
-  ],
-  [
-    { token = "tab", bold = true }
-  ]
+  ["state_icon", { token = "workspace", dim = true }, { token = "agent", dim = true }],
+  [{ token = "tab", bold = true }],
 ]
+
+# ── Notifications ─────────────────────────────────────────────────────
+
+[ui.toast]
+delivery = "herdr"
 
 # ── Keybindings ───────────────────────────────────────────────────────
 
 [keys]
 prefix = "ctrl+a"
 
+# Panes
 split_vertical = "prefix+="
 
+# Agents
 previous_agent = "prefix+up"
 next_agent = "prefix+down"
 
+# Tabs & workspaces
 switch_tab = "prefix+1..9"
 switch_workspace = "prefix+shift+1..9"
