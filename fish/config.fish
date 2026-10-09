@@ -42,7 +42,6 @@ end
 # ── Interactive Integrations ──────────────────────────────────────────
 
 if command -q fnm
-    # Use Homebrew's Node when no fnm default has been configured.
     if not fnm default >/dev/null 2>&1
         fnm default system
     end
@@ -60,6 +59,9 @@ end
 if command -q starship
     starship init fish --print-full-init | source
 end
+
+fish_add_path --move --prepend --path "$HOME/.local/bin" /opt/homebrew/bin /usr/local/bin
+functions -q claude; and functions -e claude
 
 # ── Abbreviations: General ────────────────────────────────────────────
 

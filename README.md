@@ -1,16 +1,18 @@
 # dotfiles
 
-Apple Silicon macOS 的个人配置，通过符号链接部署到 `~/.config`。
+Apple Silicon macOS 的个人配置，通过符号链接部署到各应用的配置位置。
 
 ## 配置
 
 | 目录 / 文件 | 内容 |
 | --- | --- |
+| [cmux/](cmux/) | 应用设置、Tab 快捷键及 cmux 专用终端配置 |
 | [fish/](fish/) | 环境变量、PATH、工具集成、缩写及辅助函数 |
 | [ghostty/](ghostty/) | 字体、主题、窗口和剪贴板 |
 | [git/](git/) | 用户信息、Delta、同步策略及全局忽略规则 |
 | [helix/](helix/) | 主题、编辑行为、诊断和快捷键 |
 | [herdr/](herdr/) | 界面、通知、快捷键及 automatic-rename 插件配置 |
+| [pi/](pi/) | 对话滚动快捷键与自定义状态栏扩展 |
 | [starship/](starship/) | 提示符及各模块的符号 |
 | [tmux/](tmux/) | 终端、窗口、快捷键及 TPM 插件 |
 | [yazi/](yazi/) | 文件管理、预览、快捷键及插件清单 |
@@ -34,6 +36,18 @@ for dir in fish ghostty git helix herdr starship tmux yazi
 end
 ln -s ~/dotfiles/herdr/plugins/config/herdr-automatic-rename ~/.config/herdr-automatic-rename
 ```
+
+Pi 和 cmux 使用**文件级链接**，不要链接整个配置目录，以免将凭证、会话和缓存放进仓库。同样先备份或移走目标位置的同名文件，再运行：
+
+```fish
+mkdir -p ~/.pi/agent/extensions ~/.config/cmux "$HOME/Library/Application Support/com.cmuxterm.app"
+ln -s ~/dotfiles/pi/keybindings.json ~/.pi/agent/keybindings.json
+ln -s ~/dotfiles/pi/extensions/minimal-statusline.ts ~/.pi/agent/extensions/minimal-statusline.ts
+ln -s ~/dotfiles/cmux/cmux.json ~/.config/cmux/cmux.json
+ln -s ~/dotfiles/cmux/config.ghostty "$HOME/Library/Application Support/com.cmuxterm.app/config.ghostty"
+```
+
+`cmux/config.ghostty` 是 cmux 专用配置，与 `ghostty/config.ghostty` 分开管理；不要互相覆盖。Pi 的 `settings.json`（默认模型、主题等）、`models.json`、`auth.json`、会话、模型缓存、其他扩展和 skills，以及 cmux 的运行数据留在本机。本仓库仅部署 Pi 快捷键和 `minimal-statusline.ts`，不链接整个扩展目录。新机器需单独执行 Pi 的 `/login` 并设置模型等偏好。
 
 Git 配置包含个人姓名和邮箱，使用前请检查 [git/config](git/config)。
 
@@ -65,6 +79,10 @@ tmux 首次启动时会自动安装 TPM 及声明的插件。Fish 的 fzf 键位
 | `ts` | 重新加载 tmux 配置 |
 | `u` | 更新全局工具、应用及 tmux / Yazi 插件，并执行清理 |
 
+Pi 全屏模式下，`Option+K/J` 向上／下滚动一行，修改配置后在 Pi 中运行 `/reload`。cmux 中，`Option+H/L` 切换上一个／下一个 Tab，修改配置后执行 `cmux reload-config`。cmux 不拦截 `Option+J/K`，它们仅在 Pi 内绑定。
+
+Pi 状态栏左上显示路径与分支，左下显示动态上下文窗口、剩余进度条及百分比，右下显示模型与 effort。默认全白、无边框，剩余低于 25% 变黄、低于 10% 变红；窄窗口自动换行。`/statusline default` 临时恢复默认状态栏，`/statusline custom` 切回自定义状态栏；`/reload` 或重启后默认启用。
+
 默认编辑器为 Helix（`hx`）。普通模式下，`Space+w` 保存、`Space+q` 退出；`Tab` / `Shift-Tab` 跳到父语法节点末尾 / 开头，选择模式下扩展选区。使用 `:config-reload` 重新加载配置。
 
 tmux 的前缀键为 `Ctrl-A`：随后按 `=` / `-` 分屏，`h/j/k/l` 选择窗格，`r` 进入调整大小模式，再按 `h/j/k/l` 调整，`q` 或 `Escape` 退出该模式。
@@ -79,4 +97,4 @@ tmux 的前缀键为 `Ctrl-A`：随后按 `=` / `-` 分屏，`h/j/k/l` 选择窗
 
 配置按功能分组，标题沿用 `fish/config.fish` 的 `# ── 类别 ──…` 样式；Lua 使用 `--` 注释符。
 
-Brewfile 由 `u` 重新生成，保留工具生成的格式。各工具下载的插件、Fish 运行状态及 herdr 会话、日志和 socket 已由 `.gitignore` 排除；herdr 插件的配置（`herdr/plugins/config/`）纳入版本管理。
+Brewfile 由 `u` 重新生成，保留工具生成的格式。各工具下载的插件、Fish 运行状态及 herdr 会话、日志和 socket 已由 `.gitignore` 排除；herdr 插件的配置（`herdr/plugins/config/`）纳入版本管理。`pi/` 和 `cmux/` 采用 `.gitignore` 白名单，仅允许 Pi 快捷键、状态栏扩展及两份 cmux 配置；新增配置时先检查是否含凭证，再显式放行。

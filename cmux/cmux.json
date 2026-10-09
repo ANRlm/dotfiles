@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json",
+  "schemaVersion": 1,
+  "shortcuts": {
+    "bindings": {
+      "prevSurface": "opt+h",
+      "nextSurface": "opt+l"
+    }
+  },
+  "computerUse": {
+    "enabled": false,
+    "showInMenuBar": false
+  },
+  "app": {
+    "accentColor": "cmux",
+    "minimalMode": true
+  }
+}

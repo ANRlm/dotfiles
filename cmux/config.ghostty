@@ -1,0 +1,17 @@
+# ── Cursor & Window ───────────────────────────────────────────────────
+
+cursor-style = bar
+window-padding-x = 18
+window-padding-y = 12
+background-opacity = 1
+
+# ── Font ──────────────────────────────────────────────────────────────
+
+font-family = ""
+font-family = "MesloLGS Nerd Font Mono"
+
+# ── Theme ─────────────────────────────────────────────────────────────
+
+# cmux themes start
+theme = light:Lovelace,dark:Lovelace
+# cmux themes end

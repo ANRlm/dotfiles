@@ -16,5 +16,18 @@ herdr/.plugins.lock
 fish/fish_variables
 herdr/*.log
 herdr/*.sock
+herdr/*.sock.agent
 herdr/session.json
+herdr/session-snapshots/
 herdr/release-notes.json
+
+# ── Pi & cmux (only reviewed config files) ─────────────────────────────
+
+/pi/*
+!/pi/keybindings.json
+!/pi/extensions/
+/pi/extensions/*
+!/pi/extensions/minimal-statusline.ts
+/cmux/*
+!/cmux/cmux.json
+!/cmux/config.ghostty

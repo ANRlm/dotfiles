@@ -11,6 +11,7 @@ macos-option-as-alt  = true
 # ── Font ──────────────────────────────────────────────────────────────
 
 font-family = MesloLGS Nerd Font Mono
+font-family = PingFang SC
 font-thicken = true
 font-thicken-strength = 128
 font-size = 14
@@ -18,7 +19,7 @@ font-size = 14
 # ── Theme & Colors ────────────────────────────────────────────────────
 
 theme = Nord Wave
-background-opacity      = 0.85
+background-opacity      = 1
 background-blur         = 85
 window-colorspace       = display-p3
 
