@@ -32,7 +32,6 @@ brew "yazi"
 brew "zoxide"
 brew "oven-sh/bun/bun", trusted: true
 cask "chatgpt"
-cask "claude"
 cask "claude-code@latest"
 cask "codex"
 cask "flowvision"
@@ -43,7 +42,6 @@ cask "google-chrome"
 cask "iina"
 cask "keepingyouawake"
 cask "keka"
-cask "notion"
 cask "obsidian"
 cask "orbstack"
 cask "pearcleaner"
@@ -53,11 +51,11 @@ cask "typora"
 cask "upscayl"
 cask "visual-studio-code"
 cask "zed"
-mas "BaiduNetdisk", id: 547166701
-mas "Feishu", id: 1551632588
-mas "NetEaseMusic", id: 944848654
 mas "QQ", id: 451108668
-mas "TencentMeeting", id: 1484048379
-mas "WeChat", id: 836500024
 mas "WPS Office", id: 1443749478
+mas "微信", id: 836500024
+mas "百度网盘", id: 547166701
+mas "网易云音乐", id: 944848654
+mas "腾讯会议", id: 1484048379
+mas "飞书", id: 1551632588
 npm "@larksuite/cli"
