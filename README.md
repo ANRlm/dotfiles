@@ -11,7 +11,7 @@ Apple Silicon macOS 的个人配置，通过符号链接部署到各应用的配
 | [ghostty/](ghostty/) | 字体、主题、窗口和剪贴板 |
 | [git/](git/) | 用户信息、Delta、同步策略及全局忽略规则 |
 | [helix/](helix/) | 主题、编辑行为、诊断和快捷键 |
-| [herdr/](herdr/) | 界面、通知、快捷键及 automatic-rename 插件配置 |
+| [herdr/](herdr/) | 界面、通知、快捷键、automatic-rename 插件配置及 firstmate 短标签插件 |
 | [lazygit/](lazygit/) | 差异渲染器（Delta）配置 |
 | [pi/](pi/) | 对话滚动快捷键与自定义状态栏扩展 |
 | [starship/](starship/) | 提示符及各模块的符号 |
@@ -65,6 +65,7 @@ chsh -s (command -v fish)
 ```fish
 ya pkg install
 herdr plugin install qu8n/herdr-automatic-rename
+herdr plugin link ~/dotfiles/herdr/plugins/local/fm-short-label
 ```
 
 tmux 首次启动时会自动安装 TPM 及声明的插件。Fish 的 fzf 键位由 `fzf --fish` 加载。

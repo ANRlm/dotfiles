@@ -3,16 +3,21 @@ onboarding = false
 # ── Theme ─────────────────────────────────────────────────────────────
 
 [theme]
-name = "terminal"
+name = "rose-pine"
 auto_switch = false
+
+# Rose Pine highlight-med; the built-in active row is too close to the sidebar bg.
+# Remove or update this when changing theme.name.
+[theme.custom]
+active_row_bg = "#403d52"
 
 # ── UI ────────────────────────────────────────────────────────────────
 
 [ui]
 # Sidebar
-sidebar_width = 24
+sidebar_width = 32
 sidebar_min_width = 20
-sidebar_max_width = 30
+sidebar_max_width = 34
 sidebar_collapsed_mode = "hidden"
 
 # Tabs & window
@@ -21,7 +26,7 @@ hide_tab_bar_when_single_tab = false
 window_title = "{workspace} · {tab}"
 
 # Panes
-pane_borders = "always"
+pane_borders = "auto"
 show_agent_labels_on_pane_borders = true
 
 # Agents
@@ -31,8 +36,29 @@ status_indicators = "symbols"
 [ui.sidebar.agents]
 row_gap = 0
 rows = [
-  ["state_icon", { token = "workspace", dim = true }, { token = "agent", dim = true }],
-  [{ token = "tab", bold = true }],
+  ["state_icon", { token = "workspace", bold = true, rules = [
+    { contains = " · p:", hide = true },
+  ] }, "$short"],
+  # firstmate's tab names just repeat the workspace name; keep real titles only.
+  # Tab first so it lines up regardless of agent name length.
+  [{ token = "tab", rules = [
+    { starts_with = "fm-", hide = true },
+    { equals = "firstmate", hide = true },
+  ] }, "agent"],
+]
+
+# Hierarchy by weight only (no hardcoded colors, so any theme works): top-level
+# bold; firstmate's "└ task · p:<token>" children show $short ("└ task", from
+# plugins/local/fm-short-label) so the token doesn't eat the width. Default branches hidden.
+[ui.sidebar.spaces]
+rows = [
+  ["state_icon", { token = "workspace", bold = true, rules = [
+    { contains = " · p:", hide = true },
+  ] }, "$short"],
+  [{ token = "branch", rules = [
+    { equals = "main", hide = true },
+    { equals = "master", hide = true },
+  ] }, "git_status"],
 ]
 
 # ── Notifications ─────────────────────────────────────────────────────

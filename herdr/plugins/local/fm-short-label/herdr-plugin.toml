@@ -1,0 +1,22 @@
+id = "fm-short-label"
+name = "Firstmate short label"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Expose firstmate's '└ task · p:<token>' workspace labels without the token as the $short sidebar token."
+platforms = ["linux", "macos"]
+
+[[startup]]
+command = ["bash", "short-label.sh"]
+
+[[events]]
+on = "workspace.created"
+command = ["bash", "short-label.sh"]
+
+[[events]]
+on = "workspace.renamed"
+command = ["bash", "short-label.sh"]
+
+# firstmate can replace a task's pane; pane tokens die with the old pane.
+[[events]]
+on = "pane.created"
+command = ["bash", "short-label.sh"]
