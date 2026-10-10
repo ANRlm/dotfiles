@@ -69,15 +69,15 @@ for (const theme of themes) {
   });
 }
 
-test('ctx uses consumed tokens, fills forward and adapts to available columns', () => {
+test('ctx shows remaining tokens, drains with usage and adapts to available columns', () => {
   const render = (state, width = 100) => plain(mod.renderContext({ ...base, ...state }, themes[0], width));
-  assert.match(render({}), /^ctx 92k\/200k ━━━━━━───────.*46% · auto in ≈91.6k$/);
-  assert.match(render({ usedPercent: 0 }), /^ctx 0\/200k ─{14} 0%/);
-  assert.match(render({ usedPercent: 100 }), /━{14} 100% · auto due/);
-  assert.match(render({}, 40), /^ctx 92k\/200k ━━╸─── 46% · auto in ≈91.6k$/);
-  assert.match(render({}, 35), /^ctx 92k\/200k 46% · auto in ≈91.6k$/);
-  assert.equal(render({}, 25), 'ctx 46% · auto ≈91.6k');
-  assert.match(render({}, 5), /92k\/200k/); // Full values returned for wrapping.
+  assert.match(render({}), /^ctx 108k\/200k ━━━━━━━╸────── 54% left · auto in ≈91.6k$/);
+  assert.match(render({ usedPercent: 0 }), /^ctx 200k\/200k ━{14} 100% left/);
+  assert.match(render({ usedPercent: 100 }), /^ctx 0\/200k ─{14} 0% left · auto due/);
+  assert.match(render({}, 46), /^ctx 108k\/200k ━━━─── 54% left · auto in ≈91.6k$/);
+  assert.match(render({}, 40), /^ctx 108k\/200k 54% left · auto in ≈91.6k$/);
+  assert.equal(render({}, 30), 'ctx 54% left · auto ≈91.6k');
+  assert.match(render({}, 5), /108k\/200k/); // Full values returned for wrapping.
 });
 
 test('ctx distinguishes disabled, zero reserve, due and unknown usage', () => {
@@ -94,8 +94,8 @@ test('ctx distinguishes disabled, zero reserve, due and unknown usage', () => {
   }
   assert.equal(render({ window: undefined }), 'ctx —/— · usage pending');
   assert.match(render({ usedPercent: undefined, autoCompactReserve: undefined }), /usage pending · auto off$/);
-  assert.match(render({ usedPercent: -10 }), /0\/200k .*0%/);
-  assert.match(render({ usedPercent: 120 }), /100% · auto due$/);
+  assert.match(render({ usedPercent: -10 }), /200k\/200k .*100% left/);
+  assert.match(render({ usedPercent: 120 }), /0\/200k .*0% left · auto due$/);
 });
 
 test('ctx color reflects effective capacity, with or without auto-compaction', () => {
@@ -106,15 +106,15 @@ test('ctx color reflects effective capacity, with or without auto-compaction', (
   assert.match(render({ usedPercent: 60, autoCompactReserve: 0 }), /<text>≈80k<\/text>/);
   assert.match(render({ usedPercent: 66, autoCompactReserve: 60000 }), /<error>≈8k<\/error>/);
   assert.match(render({ usedPercent: 90, autoCompactReserve: 20000 }), /<error>auto due<\/error>/);
-  assert.match(render({ usedPercent: 95, autoCompactReserve: undefined }), /<error>95%<\/error>/);
-  assert.match(render({ usedPercent: 75, autoCompactReserve: undefined }), /<warning>75%<\/warning>/);
+  assert.match(render({ usedPercent: 95, autoCompactReserve: undefined }), /<error>5% left<\/error>/);
+  assert.match(render({ usedPercent: 75, autoCompactReserve: undefined }), /<warning>25% left<\/warning>/);
 });
 
 test('ctx shrinks against actual right-hand content before moving to overflow', () => {
   const lines = mod.renderFooter({ ...base, model: 'gpt-6-astra', activity }, themes[0], 100).map(plain);
   assert.match(lines[1], /^ctx .*tools×2.*gpt-6-astra · high$/);
   const long = mod.renderFooter(base, themes[0], 80).map(plain);
-  assert.match(long[1], /^ctx 46% · auto ≈91.6k/);
+  assert.match(long[1], /^ctx 54% left · auto ≈91.6k/);
   assert.ok(long[1].endsWith(`${base.model} · high`));
 });
 

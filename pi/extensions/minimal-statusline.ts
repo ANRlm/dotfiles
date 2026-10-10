@@ -191,7 +191,7 @@ export function shortLabel(text: string, width: number): string {
   return sliceByColumn(text, 0, left, true) + "…" + sliceByColumn(text, visibleWidth(text) - (width - 1 - left), width - 1 - left, true);
 }
 
-/** Used-window gauge; color reflects room before the effective limit, not raw usage. */
+/** Remaining-window gauge; color reflects room before the effective limit. */
 export function renderContext(state: FooterSnapshot, theme: Theme, budget: number): string {
   const dim = (text: string) => theme.fg("dim", text);
   const plain = (text: string) => theme.fg("text", text);
@@ -206,6 +206,8 @@ export function renderContext(state: FooterSnapshot, theme: Theme, budget: numbe
   if (used === undefined || windowSize === undefined) {
     return `${dim("ctx")} ${plain(`—/${formatWindow(windowSize)}`)} · ${dim("usage pending")}${auto ? "" : ` · ${dim("auto off")}`}`;
   }
+  const remaining = 100 - used;
+  const remainingTokens = windowSize * remaining / 100;
   const usedTokens = windowSize * used / 100;
   const limit = Math.max(0, windowSize - (auto ? reserve : 0));
   const headroom = limit - usedTokens;
@@ -217,11 +219,11 @@ export function renderContext(state: FooterSnapshot, theme: Theme, budget: numbe
   const status = !auto ? dim("auto off") : headroom <= 0
     ? accent("auto due") : `${dim("auto in")} ${accent(headroomText)}`;
   const compactStatus = auto && headroom > 0 ? `${dim("auto")} ${accent(headroomText)}` : status;
-  const prefix = `${dim("ctx")} ${plain(`${usedTokens === 0 ? "0" : formatWindow(usedTokens)}/${formatWindow(windowSize)}`)}`;
-  const percent = (auto ? plain : accent)(`${Math.round(used)}%`);
-  // Shrink the decoration before removing the redundant absolute usage ratio.
+  const prefix = `${dim("ctx")} ${plain(`${remainingTokens === 0 ? "0" : formatWindow(remainingTokens)}/${formatWindow(windowSize)}`)}`;
+  const percent = (auto ? plain : accent)(`${Math.round(remaining)}% left`);
+  // Shrink the decoration before removing the redundant absolute remaining ratio.
   for (const size of [14, 10, 6]) {
-    const halves = Math.floor(used * size * 2 / 100);
+    const halves = Math.floor(remaining * size * 2 / 100);
     const filled = Math.floor(halves / 2);
     const half = halves % 2;
     const bar = accent("━".repeat(filled) + (half ? "╸" : "")) + dim("─".repeat(size - filled - half));
