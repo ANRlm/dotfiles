@@ -4,9 +4,12 @@ shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 
 # ── macOS ─────────────────────────────────────────────────────────────
 
-macos-titlebar-style = native
-macos-window-buttons = hidden
+macos-titlebar-style = transparent
 macos-option-as-alt  = true
+macos-titlebar-proxy-icon = hidden
+# Quitting the app makes macOS SIGTERM every process in Ghostty's coalition,
+# including the setsid'd herdr server (herdr#4920); closing windows does not.
+keybind = super+q=close_all_windows
 
 # ── Font ──────────────────────────────────────────────────────────────
 
@@ -26,8 +29,8 @@ window-colorspace       = display-p3
 # ── Window & Splits ───────────────────────────────────────────────────
 
 unfocused-split-opacity = 0.8
-window-padding-x        = 18
-window-padding-y        = 12
+window-padding-x        = 12
+window-padding-y        = 8
 window-padding-balance  = true
 window-width            = 140
 window-height           = 45
