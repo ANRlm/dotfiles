@@ -1,4 +1,5 @@
 tap "oven-sh/bun", trusted: true
+tap "tencentcloud/tccli"
 tap "tw93/tap", trusted: true
 brew "aliyun-cli"
 brew "bash"
@@ -13,6 +14,7 @@ brew "fzf"
 brew "gh"
 brew "git"
 brew "git-delta"
+brew "glow"
 brew "helix"
 brew "herdr"
 brew "lazygit"
@@ -32,8 +34,10 @@ brew "uv"
 brew "yazi"
 brew "zoxide"
 brew "oven-sh/bun/bun", trusted: true
+brew "tencentcloud/tccli/tccli", trusted: true
 cask "chatgpt"
 cask "claude-code@latest"
+cask "cmux"
 cask "codex"
 cask "flowvision"
 cask "font-jetbrains-mono-nerd-font"
@@ -59,4 +63,3 @@ mas "百度网盘", id: 547166701
 mas "网易云音乐", id: 944848654
 mas "腾讯会议", id: 1484048379
 mas "飞书", id: 1551632588
-npm "@larksuite/cli"

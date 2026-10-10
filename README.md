@@ -12,11 +12,13 @@ Apple Silicon macOS 的个人配置，通过符号链接部署到各应用的配
 | [git/](git/) | 用户信息、Delta、同步策略及全局忽略规则 |
 | [helix/](helix/) | 主题、编辑行为、诊断和快捷键 |
 | [herdr/](herdr/) | 界面、通知、快捷键及 automatic-rename 插件配置 |
+| [lazygit/](lazygit/) | 差异渲染器（Delta）配置 |
 | [pi/](pi/) | 对话滚动快捷键与自定义状态栏扩展 |
 | [starship/](starship/) | 提示符及各模块的符号 |
 | [tmux/](tmux/) | 终端、窗口、快捷键及 TPM 插件 |
 | [yazi/](yazi/) | 文件管理、预览、快捷键及插件清单 |
 | [Brewfile](Brewfile) | Homebrew、Cask 和 Mac App Store 软件清单 |
+| [AGENT-TOOLS.md](AGENT-TOOLS.md) | Claude Code、Codex、Pi 的 skill、插件、配套命令行工具及 Firstmate 部署清单 |
 
 ## 安装
 
@@ -37,19 +39,20 @@ end
 ln -s ~/dotfiles/herdr/plugins/config/herdr-automatic-rename ~/.config/herdr-automatic-rename
 ```
 
-Pi 和 cmux 使用**文件级链接**，不要链接整个配置目录，以免将凭证、会话和缓存放进仓库。同样先备份或移走目标位置的同名文件，再运行：
+Pi、cmux 和 lazygit 使用**文件级链接**，不要链接整个配置目录，以免将凭证、会话和缓存放进仓库。同样先备份或移走目标位置的同名文件，再运行：
 
 ```fish
-mkdir -p ~/.pi/agent/extensions ~/.config/cmux "$HOME/Library/Application Support/com.cmuxterm.app"
+mkdir -p ~/.pi/agent/extensions ~/.config/cmux "$HOME/Library/Application Support/com.cmuxterm.app" "$HOME/Library/Application Support/lazygit"
 ln -s ~/dotfiles/pi/keybindings.json ~/.pi/agent/keybindings.json
 ln -s ~/dotfiles/pi/extensions/minimal-statusline.ts ~/.pi/agent/extensions/minimal-statusline.ts
 ln -s ~/dotfiles/cmux/cmux.json ~/.config/cmux/cmux.json
 ln -s ~/dotfiles/cmux/config.ghostty "$HOME/Library/Application Support/com.cmuxterm.app/config.ghostty"
+ln -s ~/dotfiles/lazygit/config.yml "$HOME/Library/Application Support/lazygit/config.yml"
 ```
 
-`cmux/config.ghostty` 是 cmux 专用配置，与 `ghostty/config.ghostty` 分开管理；不要互相覆盖。Pi 的 `settings.json`（默认模型、主题等）、`models.json`、`auth.json`、会话、模型缓存、其他扩展和 skills，以及 cmux 的运行数据留在本机。本仓库仅部署 Pi 快捷键和 `minimal-statusline.ts`，不链接整个扩展目录。新机器需单独执行 Pi 的 `/login` 并设置模型等偏好。
+`cmux/config.ghostty` 是 cmux 专用配置，与 `ghostty/config.ghostty` 分开管理；不要互相覆盖。Pi 的 `settings.json`（默认模型、主题等）、`models.json`、`auth.json`、会话、模型缓存、其他扩展和 skills，以及 cmux 和 lazygit（`state.yml`、PR 缓存）的运行数据留在本机。本仓库仅部署 Pi 快捷键和 `minimal-statusline.ts`，不链接整个扩展目录。新机器需单独执行 Pi 的 `/login` 并设置模型等偏好。
 
-Git 配置包含个人姓名和邮箱，使用前请检查 [git/config](git/config)。
+Git 配置包含个人姓名和邮箱，使用前请检查 [git/config](git/config)。Lazygit 不读取 `core.pager`，其 Delta 渲染器须在 [lazygit/config.yml](lazygit/config.yml) 中单独配置；该文件还关闭了 Diff 视图的自动换行——Delta 只在 side-by-side 模式下自行折行，lazygit 折行时续行从第 0 列开始，会压掉 Delta 的行号栏。
 
 如需将 Fish 设为登录 Shell，先确认 `command -v fish` 的路径已列在 `/etc/shells`，再运行：
 
@@ -77,7 +80,7 @@ tmux 首次启动时会自动安装 TPM 及声明的插件。Fish 的 fzf 键位
 | `y` | 打开 Yazi，退出后切换到其中选定的目录 |
 | `Ctrl-G` | 使用 ripgrep 和 fzf 搜索；`Ctrl-O` 在编辑器中打开匹配位置 |
 | `ts` | 重新加载 tmux 配置 |
-| `u` | 更新全局工具、应用及 tmux / Yazi 插件，并执行清理 |
+| `u` | 更新全局工具、应用、Agent skill 与插件及 Herdr / tmux / Yazi 插件，并执行清理 |
 
 Pi 全屏模式下，`Option+K/J` 向上／下滚动一行，修改配置后在 Pi 中运行 `/reload`。cmux 中，`Option+H/L` 切换上一个／下一个 Tab，修改配置后执行 `cmux reload-config`。cmux 不拦截 `Option+J/K`，它们仅在 Pi 内绑定。
 
@@ -129,10 +132,10 @@ tmux 的前缀键为 `Ctrl-A`：随后按 `=` / `-` 分屏，`h/j/k/l` 选择窗
 
 ## 更新与维护
 
-`u` 更新 Homebrew、npm/pnpm/bun 全局包、uv 工具、Mac App Store 应用，以及已安装的 tmux 和 Yazi 插件，清理相关缓存并运行 Mole 清理。它会重写 `~/dotfiles/Brewfile`，因此仓库需放在 `~/dotfiles`。
+`u` 更新 Homebrew、npm 全局包、Agent skill 与插件（见 [AGENT-TOOLS.md](AGENT-TOOLS.md)）、Mac App Store 应用，以及已安装的 Herdr、tmux 和 Yazi 插件，清理 Homebrew、pnpm、uv 缓存并运行 Mole 清理。它会把本机新装的软件追加到 `~/dotfiles/Brewfile`，因此仓库需放在 `~/dotfiles`。
 
 更新统一使用 `u`，不需要参数。tmux 插件仅执行 Git 快进更新，Yazi 更新失败最多尝试三次；某项失败会继续执行其他独立步骤，最终返回失败状态。`u` 不会拉取本仓库，配置同步需自行执行 Git 操作。
 
 配置按功能分组，标题沿用 `fish/config.fish` 的 `# ── 类别 ──…` 样式；Lua 使用 `--` 注释符。
 
-Brewfile 由 `u` 重新生成，保留工具生成的格式。各工具下载的插件、Fish 运行状态及 herdr 会话、日志和 socket 已由 `.gitignore` 排除；herdr 插件的配置（`herdr/plugins/config/`）纳入版本管理。`pi/` 和 `cmux/` 采用 `.gitignore` 白名单，仅允许 Pi 快捷键、状态栏扩展与回归测试及两份 cmux 配置；新增配置时先检查是否含凭证，再显式放行。
+Brewfile 是完整软件清单，本机只装其中一部分：`u` 只追加 `brew bundle dump` 中新出现的条目（放在同类条目末尾），从不删除本机没装的条目；npm 全局包不记录。卸载软件后需手动删除对应行。各工具下载的插件、Fish 运行状态及 herdr 会话、日志和 socket 已由 `.gitignore` 排除；herdr 插件的配置（`herdr/plugins/config/`）纳入版本管理。`pi/` 和 `cmux/` 采用 `.gitignore` 白名单，仅允许 Pi 快捷键、状态栏扩展与回归测试及两份 cmux 配置；新增配置时先检查是否含凭证，再显式放行。

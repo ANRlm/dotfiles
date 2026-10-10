@@ -1,0 +1,10 @@
+# Lazygit ignores git's core.pager, so Delta is wired up here.
+# https://github.com/jesseduffield/lazygit/blob/master/docs/Custom_DiffRenderers.md
+# Wrapping is off because lazygit's continuation lines overwrite Delta's line numbers.
+
+gui:
+  wrapLinesInDiffView: false
+
+git:
+  diffRenderers:
+    - command: delta --{{colorScheme}} --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
