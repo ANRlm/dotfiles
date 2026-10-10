@@ -2,26 +2,112 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { stripVTControlCharacters } from "node:util";
-import type { ContextUsage, ExtensionAPI, ExtensionContext, SessionEntry, Theme } from "@earendil-works/pi-coding-agent";
-import { truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@earendil-works/pi-tui";
+import type { CompactionSettings, ContextUsage, ExtensionAPI, ExtensionContext, SessionEntry, Theme } from "@earendil-works/pi-coding-agent";
+import { sliceByColumn, truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@earendil-works/pi-tui";
 
 /** Spinner frames for the live activity indicator, advanced every 100ms. */
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
-/** Rough characters-per-token ratio used for the live throughput estimate. */
-const CHARS_PER_TOKEN = 4;
+/**
+ * Characters-per-token varies too much between scripts for one constant: measured
+ * over 13k assistant messages, CJK text averages ~1.05 tokens per character while
+ * Latin/code text averages ~1 token per 2.73 characters. Weighting streamed text by
+ * script removes most of the error a flat 4-chars/token estimate has on mixed output.
+ */
+const TOKENS_PER_CJK_CHAR = 1.05;
+const TOKENS_PER_OTHER_CHAR = 1 / 2.73;
+
+/** CJK ideographs (incl. extensions), kana, Hangul, CJK punctuation and fullwidth forms. */
+const CJK_CHAR = /[\u2e80-\u9fff\u3000-\u30ff\uac00-\ud7af\uff00-\uffef\u{20000}-\u{2ffff}\u{30000}-\u{3134f}]/gu;
+
+export function countCjkCharacters(text: string): number {
+  return text.match(CJK_CHAR)?.length ?? 0;
+}
+
+/** Script-aware estimate of how many output tokens the streamed characters produced. */
+export function scriptTokenEstimate(cjkCharacters: number, otherCharacters: number): number {
+  return cjkCharacters * TOKENS_PER_CJK_CHAR + otherCharacters * TOKENS_PER_OTHER_CHAR;
+}
+
+/**
+ * Per-model residual calibration of the script estimate. The script weights absorb the
+ * dominant difference between providers (content mix); two leftovers remain per model —
+ * one for streamed text (prose and thinking) and one for tool-call argument JSON, which
+ * may tokenize differently from prose. Completed messages distribute output tokens
+ * proportionally to estimated mass. Both factors therefore learn the same aggregate
+ * ratio, with different weights; mixed samples cannot identify independent errors.
+ * Keep this lightweight heuristic and its persisted format for compatibility. The nudge grows with the part's token mass, so a long message teaches
+ * more than a short one, while the cap and bounds keep one unusual message from sticking.
+ */
+const RATE_CALIBRATION_FILE = join(homedir(), ".pi", "agent", "statusline-rate.json");
+const RATE_CALIBRATION_ALPHA = 0.05;
+const RATE_CALIBRATION_SCALE = 300;
+const RATE_CALIBRATION_MAX_WEIGHT = 0.5;
+const RATE_CALIBRATION_MIN_TOKENS = 30;
+const RATE_CALIBRATION_MIN = 0.5;
+const RATE_CALIBRATION_MAX = 2;
+
+/** Residual factors for one model: streamed text and tool-call argument JSON. */
+export interface RateCalibration {
+  text: number;
+  tool: number;
+}
+
+const clampCalibration = (value: number): number => Math.min(RATE_CALIBRATION_MAX, Math.max(RATE_CALIBRATION_MIN, value));
+
+export function updateRateCalibration(
+  previous: number | undefined,
+  actualTokens: number,
+  estimatedTokens: number,
+): number | undefined {
+  if (!Number.isFinite(actualTokens) || actualTokens <= 0 || estimatedTokens < RATE_CALIBRATION_MIN_TOKENS) return undefined;
+  const ratio = clampCalibration(actualTokens / estimatedTokens);
+  if (previous === undefined || !Number.isFinite(previous)) return ratio;
+  const weight = Math.min(RATE_CALIBRATION_MAX_WEIGHT, RATE_CALIBRATION_ALPHA * estimatedTokens / RATE_CALIBRATION_SCALE);
+  return previous + weight * (ratio - previous);
+}
+
+export function loadRateCalibration(file: string = RATE_CALIBRATION_FILE): Map<string, RateCalibration> {
+  try {
+    const raw: unknown = JSON.parse(readFileSync(file, "utf8"));
+    const entries = new Map<string, RateCalibration>();
+    if (raw && typeof raw === "object") {
+      for (const [model, value] of Object.entries(raw)) {
+        if (typeof value === "number" && Number.isFinite(value)) {
+          // Legacy single coefficient: it was learned from text messages only.
+          entries.set(model, { text: clampCalibration(value), tool: 1 });
+        } else if (value && typeof value === "object") {
+          const record = value as { text?: unknown; tool?: unknown };
+          if (typeof record.text === "number" && Number.isFinite(record.text)
+            && typeof record.tool === "number" && Number.isFinite(record.tool)) {
+            entries.set(model, { text: clampCalibration(record.text), tool: clampCalibration(record.tool) });
+          }
+        }
+      }
+    }
+    return entries;
+  } catch {
+    return new Map();
+  }
+}
+
+export function saveRateCalibration(entries: Map<string, RateCalibration>, file: string = RATE_CALIBRATION_FILE): void {
+  try {
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, `${JSON.stringify(Object.fromEntries(entries), null, 2)}\n`);
+  } catch {
+    // A failed write only means the calibration is relearned in the next session.
+  }
+}
 
 const SEPARATOR = " · ";
 
-/** In narrow panes the lowest-value fields disappear first, never a whole line. */
-const STATS_DROP_ORDER = ["cache", "tokens", "cacheHit", "cost"] as const;
-const RIGHT_DROP_ORDER = ["rate", "effort", "activity"] as const;
-
 /** Footer state while the agent is working; absent when idle. */
 export interface ActivitySnapshot {
-  phase: "waiting" | "streaming" | "tool";
+  phase: "waiting" | "thinking" | "streaming" | "tool" | "compacting" | "finishing";
   toolName?: string;
-  /** Milliseconds elapsed: the running tool's own time in phase "tool", the turn's time otherwise. */
+  toolCount?: number;
+  /** Milliseconds elapsed for the whole run, including tools and recovery. */
   elapsedMs: number;
   frame: string;
 }
@@ -32,17 +118,20 @@ export interface RateSnapshot {
   estimated: boolean;
 }
 
-/** Which groups the footer shows; `/statusline <preset>` switches it. */
-export type FooterPreset = "full" | "minimal" | "cost";
+/** Code-point counts of the characters streamed for one message part. */
+interface StreamCounts {
+  cjk: number;
+  other: number;
+}
 
-interface PresetFlags {
-  tokens: boolean;
-  cache: boolean;
-  cost: boolean;
-  cacheHit: boolean;
-  rate: boolean;
-  activity: boolean;
-  effort: boolean;
+/** Accumulated streamed characters of the in-flight assistant message. */
+interface StreamState {
+  firstDeltaAt?: number;
+  /** Streamed prose and thinking. */
+  text: StreamCounts;
+  /** Streamed tool-call argument JSON. */
+  tool: StreamCounts;
+  exactTokens?: number;
 }
 
 /**
@@ -52,36 +141,23 @@ interface PresetFlags {
  */
 const DEFAULT_RESERVE_TOKENS = 16384;
 
-const PRESETS: Record<FooterPreset, PresetFlags> = {
-  full: { tokens: true, cache: true, cost: true, cacheHit: true, rate: true, activity: true, effort: true },
-  // Working state only: no session totals, no throughput.
-  minimal: { tokens: false, cache: false, cost: false, cacheHit: false, rate: false, activity: true, effort: true },
-  // Money only.
-  cost: { tokens: false, cache: false, cost: true, cacheHit: false, rate: false, activity: false, effort: false },
-};
-
-const PRESET_FILE = join(homedir(), ".pi", "agent", "statusline.json");
-
-function loadPreset(): FooterPreset {
-  try {
-    const value = JSON.parse(readFileSync(PRESET_FILE, "utf8")).preset;
-    if (value === "full" || value === "minimal" || value === "cost") return value;
-  } catch {
-    // Missing or unreadable: fall back to the default preset.
-  }
-  return "full";
+/**
+ * The reserve Pi actually applies for a model: a per-model
+ * `compaction.modelOverrides["provider/id"]` entry wins over the ordinary
+ * `compaction.reserveTokens`, which wins over the built-in default. Mirrors
+ * `SettingsManager.getCompactionReserveTokens`.
+ */
+export function resolveAutoCompactReserve(
+  compaction: CompactionSettings | undefined,
+  model: { provider?: string; id?: string } | undefined,
+): number | undefined {
+  if (compaction?.enabled === false) return undefined;
+  const key = model ? `${model.provider}/${model.id}` : undefined;
+  const override = key ? compaction?.modelOverrides?.[key] : undefined;
+  return override?.reserveTokens ?? compaction?.reserveTokens ?? DEFAULT_RESERVE_TOKENS;
 }
 
-function savePreset(preset: FooterPreset): void {
-  try {
-    mkdirSync(dirname(PRESET_FILE), { recursive: true });
-    writeFileSync(PRESET_FILE, `${JSON.stringify({ preset }, null, 2)}\n`);
-  } catch {
-    // A failed write only means the choice is not remembered.
-  }
-}
-
-/** Local footer: location + session stats above, remaining context left, model/activity right. */
+/** One footer: location/stats above, context and activity/model/effort below. */
 export interface FooterSnapshot {
   cwd: string;
   home: string;
@@ -96,21 +172,103 @@ export interface FooterSnapshot {
   cacheHitPercent?: number;
   cacheRead?: number;
   cacheWrite?: number;
-  /** Tokens auto-compaction keeps as headroom (`compaction.reserveTokens`). */
+  /** Tokens auto-compaction keeps as headroom, after model overrides are applied. */
   autoCompactReserve?: number;
   activity?: ActivitySnapshot;
   rate?: RateSnapshot;
-  preset?: FooterPreset;
 }
 
 function label(text: string): string {
   return stripVTControlCharacters(text).replace(/[\x00-\x1f\x7f-\x9f]/g, " ");
 }
 
+/** Preserve both ends of model/branch names, measuring terminal columns. */
+export function shortLabel(text: string, width: number): string {
+  width = Math.max(0, Math.floor(width));
+  if (visibleWidth(text) <= width) return text;
+  if (width < 5) return truncateToWidth(text, width, "…");
+  const left = Math.ceil((width - 1) * 0.6);
+  return sliceByColumn(text, 0, left, true) + "…" + sliceByColumn(text, visibleWidth(text) - (width - 1 - left), width - 1 - left, true);
+}
+
+/** Used-window gauge; color reflects room before the effective limit, not raw usage. */
+export function renderContext(state: FooterSnapshot, theme: Theme, budget: number): string {
+  const dim = (text: string) => theme.fg("dim", text);
+  const plain = (text: string) => theme.fg("text", text);
+  const windowSize = state.window !== undefined && Number.isFinite(state.window) && state.window > 0
+    ? state.window : undefined;
+  const used = typeof state.usedPercent === "number" && Number.isFinite(state.usedPercent)
+    ? Math.max(0, Math.min(100, state.usedPercent)) : undefined;
+  // Undefined means auto-compaction is disabled. Zero is a valid enabled reserve.
+  const auto = state.autoCompactReserve !== undefined;
+  const reserve = typeof state.autoCompactReserve === "number" && Number.isFinite(state.autoCompactReserve)
+    ? Math.max(0, state.autoCompactReserve) : 0;
+  if (used === undefined || windowSize === undefined) {
+    return `${dim("ctx")} ${plain(`—/${formatWindow(windowSize)}`)} · ${dim("usage pending")}${auto ? "" : ` · ${dim("auto off")}`}`;
+  }
+  const usedTokens = windowSize * used / 100;
+  const limit = Math.max(0, windowSize - (auto ? reserve : 0));
+  const headroom = limit - usedTokens;
+  // Yellow below 30%, red below 10% of the effective capacity still available.
+  const fraction = limit > 0 ? headroom / limit : 0;
+  const color = fraction < 0.1 ? "error" : fraction < 0.3 ? "warning" : "text";
+  const accent = (text: string) => theme.fg(color, text);
+  const headroomText = `≈${formatWindow(Math.max(1, Math.round(headroom)))}`;
+  const status = !auto ? dim("auto off") : headroom <= 0
+    ? accent("auto due") : `${dim("auto in")} ${accent(headroomText)}`;
+  const compactStatus = auto && headroom > 0 ? `${dim("auto")} ${accent(headroomText)}` : status;
+  const prefix = `${dim("ctx")} ${plain(`${usedTokens === 0 ? "0" : formatWindow(usedTokens)}/${formatWindow(windowSize)}`)}`;
+  const percent = (auto ? plain : accent)(`${Math.round(used)}%`);
+  // Shrink the decoration before removing the redundant absolute usage ratio.
+  for (const size of [14, 10, 6]) {
+    const halves = Math.floor(used * size * 2 / 100);
+    const filled = Math.floor(halves / 2);
+    const half = halves % 2;
+    const bar = accent("━".repeat(filled) + (half ? "╸" : "")) + dim("─".repeat(size - filled - half));
+    const text = `${prefix} ${bar} ${percent} · ${status}`;
+    if (visibleWidth(text) <= budget) return text;
+  }
+  const withoutBar = `${prefix} ${percent} · ${status}`;
+  if (visibleWidth(withoutBar) <= budget) return withoutBar;
+  const compact = `${dim("ctx")} ${percent} · ${compactStatus}`;
+  // If even the compact form cannot fit, let the caller wrap the complete values.
+  return visibleWidth(compact) <= budget ? compact : withoutBar;
+}
+
+function joinSides(left: string, right: string, width: number): string {
+  if (!right) return truncateToWidth(left, width);
+  if (!left) return truncateToWidth(right, width);
+  const gap = width - visibleWidth(left) - visibleWidth(right);
+  return truncateToWidth(left + " ".repeat(Math.max(2, gap)) + right, width);
+}
+
+/** setStatus has no severity metadata: recognize explicit warning/error markers. */
+export function isImportantStatus(text: string): boolean {
+  return /(?:⚠|❌|\b(?:warning|error|failed|failure)\b|警告|错误|失败)/iu.test(label(text));
+}
+
+export function renderExtensionStatuses(statuses: ReadonlyMap<string, string>, theme: Theme, width: number): string[] {
+  if (width <= 0 || statuses.size === 0) return [];
+  const ordinary: string[] = [];
+  const important: string[] = [];
+  for (const [key, value] of statuses) {
+    const text = `${label(key)}: ${label(value)}`;
+    (isImportantStatus(value) ? important : ordinary).push(text);
+  }
+  return [
+    ...important.flatMap((text) => wrapTextWithAnsi(theme.fg("warning", `│ ${text}`), width)),
+    ...ordinary.flatMap((text) => wrapTextWithAnsi(theme.fg("muted", `│ ${text}`), width)),
+  ].map((line) => truncateToWidth(line, width));
+}
+
 function formatWindow(tokens: number | undefined): string {
   if (tokens === undefined || !Number.isFinite(tokens) || tokens <= 0) return "—";
   if (tokens >= 1_000_000) return `${Number((tokens / 1_000_000).toFixed(2))}M`;
-  if (tokens >= 1_000) return `${Number((tokens / 1_000).toFixed(1))}k`;
+  if (tokens >= 1_000) {
+    const thousands = Number((tokens / 1_000).toFixed(1));
+    // Rounding can push 999.95k to "1000k"; promote it to the M step instead.
+    return thousands < 1_000 ? `${thousands}k` : `${Number((tokens / 1_000_000).toFixed(2))}M`;
+  }
   return String(tokens);
 }
 
@@ -172,8 +330,10 @@ export function readSessionUsage(entries: readonly SessionEntry[]): SessionUsage
     if (entry.type === "message" && entry.message.role === "assistant") {
       const { usage } = entry.message;
       addUsage(totals, usage);
+      // Mirrors the built-in footer: the rate comes from the latest assistant message,
+      // and a message with no prompt tokens clears it rather than keeping a stale one.
       const promptTokens = usage.input + usage.cacheRead + usage.cacheWrite;
-      if (promptTokens > 0) totals.cacheHitPercent = (usage.cacheRead / promptTokens) * 100;
+      totals.cacheHitPercent = promptTokens > 0 ? (usage.cacheRead / promptTokens) * 100 : undefined;
     } else if (entry.type === "message" && entry.message.role === "toolResult") {
       if (entry.message.usage) addUsage(totals, entry.message.usage);
     } else if (entry.type === "usage") {
@@ -195,109 +355,71 @@ export function renderFooter(state: FooterSnapshot, theme: Theme, width: number)
   const muted = (text: string) => theme.fg("muted", text);
   const dim = (text: string) => theme.fg("dim", text);
   const separator = dim(SEPARATOR);
-  const flags = PRESETS[state.preset ?? "full"];
 
   const cwd = state.cwd === state.home
     ? "~"
     : state.cwd.startsWith(`${state.home}/`)
       ? `~${state.cwd.slice(state.home.length)}`
       : state.cwd;
-  const chip = state.branch
-    ? ` ${theme.style(` ${label(state.branch)} `, { fg: "accent", bg: "selectedBg" })}`
-    : "";
-  const location = plain(label(cwd)) + chip;
+  const location = (budget: number) => {
+    const branch = state.branch && budget >= 12 ? muted(` [${shortLabel(label(state.branch), Math.min(18, Math.floor(budget / 3)))}]`) : "";
+    const pathBudget = Math.max(0, budget - visibleWidth(branch));
+    const basename = label(cwd).split("/").pop() ?? "";
+    const shortened = pathBudget >= visibleWidth(basename) + 2 ? `…/${basename}` : basename;
+    const path = visibleWidth(label(cwd)) <= pathBudget
+      ? label(cwd)
+      : shortLabel(shortened, pathBudget);
+    return truncateToWidth(plain(path) + branch, Math.max(0, budget));
+  };
 
-  const remaining = typeof state.usedPercent === "number" && Number.isFinite(state.usedPercent)
-    ? Math.max(0, Math.min(100, 100 - state.usedPercent))
-    : undefined;
-  // Same thresholds as the built-in footer: warning past 70% used, error past 90%.
-  const budgetColor = (text: string) => remaining !== undefined && remaining < 10
-    ? theme.fg("error", text)
-    : remaining !== undefined && remaining < 30
-      ? theme.fg("warning", text)
-      : plain(text);
-  const barWidth = width >= 100 ? 14 : width >= 70 ? 10 : 6;
-  // A half-cell endpoint leaves a small gap before the used track.
-  const halves = remaining === undefined ? 0 : Math.floor(remaining * barWidth * 2 / 100);
-  const full = Math.floor(halves / 2);
-  const half = halves % 2;
-  const track = barWidth - full - half;
-  const filled = half
-    ? "━".repeat(full) + "╸"
-    : full > 0 && track > 0
-      ? "━".repeat(full - 1) + "╸"
-      : "━".repeat(full);
+  const contextFor = (budget: number) => renderContext(state, theme, budget);
 
-  const reserve = state.autoCompactReserve;
-  const windowSize = state.window;
-  const bar = budgetColor(filled) + dim("─".repeat(track));
-  const percentage = remaining === undefined ? plain("—") : budgetColor(`${Math.round(remaining)}%`);
-  // Absolute headroom left before auto-compaction triggers is easier to act on than
-  // the percentage: `≈88k →auto`.
-  let headroom = "";
-  if (reserve && windowSize && remaining !== undefined) {
-    const headroomTokens = Math.round((windowSize * remaining) / 100 - reserve);
-    headroom = " " + (headroomTokens > 0 ? muted(`≈${formatWindow(headroomTokens)}`) + " " : "") + dim("→auto");
-  }
-  const context = dim("ctx") + " " + muted(formatWindow(windowSize)) + " " + bar + " " + percentage + headroom;
-
-  // The model block rides the right side of the context line: live activity first
-  // (spinner, running tool, elapsed), then throughput, model, and effort.
+  // Identity stays on row two; live activity can overflow below on narrow panes.
   interface RightPart { key: "activity" | "rate" | "model" | "effort"; text: string }
   const right: RightPart[] = [];
   const activity = state.activity;
-  if (flags.activity && activity) {
+  if (activity) {
     const group = [theme.fg("accent", activity.frame)];
-    if (activity.phase === "tool" && activity.toolName) group.push(theme.fg("toolTitle", label(activity.toolName)));
-    group.push(muted(formatDuration(activity.elapsedMs)));
+    const phaseLabel = activity.phase === "tool"
+      ? (activity.toolCount && activity.toolCount > 1 ? `tools×${activity.toolCount}` : `tool ${label(activity.toolName ?? "tool")}`)
+      : { waiting: "waiting", thinking: "thinking", streaming: "streaming", compacting: "compacting", finishing: "finishing" }[activity.phase];
+    group.push(theme.fg("toolTitle", phaseLabel));
+    group.push(muted(formatDuration(activity.elapsedMs).padStart(6)));
     right.push({ key: "activity", text: group.join(" ") });
   }
-  if (flags.rate && state.rate) {
+  if (state.rate && (activity?.phase === "thinking" || activity?.phase === "streaming")) {
     const rate = `${formatRate(state.rate.tokensPerSecond)} tok/s`;
     right.push({ key: "rate", text: state.rate.estimated ? dim(`~${rate}`) : muted(rate) });
   }
   right.push({ key: "model", text: plain(label(state.model)) });
-  if (flags.effort && state.effort) {
+  if (state.effort) {
     right.push({ key: "effort", text: colorizeEffort(theme, state.effort, label(state.effort)) });
   }
 
   const renderRight = (parts: RightPart[]) => parts.map((part) => part.text).join(separator);
-  let visibleRight = right;
-  while (visibleRight.length > 1 && width - visibleWidth(context) - visibleWidth(renderRight(visibleRight)) < 2) {
-    const lowest = RIGHT_DROP_ORDER.find((key) => visibleRight.some((part) => part.key === key));
-    if (lowest === undefined) break;
-    visibleRight = visibleRight.filter((part) => part.key !== lowest);
-  }
-  const model = renderRight(visibleRight);
 
   // Token totals, cost, and cache stats ride the free right side of the location
   // line, so the context line keeps carrying only the current state. Each part is
   // omitted until there is something to show, matching the built-in footer.
   interface StatsPart { key: "tokens" | "cost" | "cacheHit" | "cache"; text: string }
   const stats: StatsPart[] = [];
-  if (flags.tokens) {
+  {
     const counts = [
       state.input ? muted(`↑${formatWindow(state.input)}`) : "",
       state.output ? muted(`↓${formatWindow(state.output)}`) : "",
     ].filter(Boolean).join(" ");
     if (counts) stats.push({ key: "tokens", text: counts });
   }
-  if (flags.cost && state.cost !== undefined && state.cost > 0) {
-    stats.push({ key: "cost", text: plain(`$${state.cost.toFixed(3)}`) });
+  if (state.cost !== undefined && state.cost > 0) {
+    stats.push({ key: "cost", text: plain(`≈$${state.cost.toFixed(3)}`) });
   }
-  if (flags.cacheHit && state.cacheHitPercent !== undefined) {
-    // A low hit rate is what actually costs money, so it is worth a color.
-    const hit = `ch ${state.cacheHitPercent.toFixed(1)}%`;
-    stats.push({
-      key: "cacheHit",
-      text: state.cacheHitPercent >= 60
-        ? theme.fg("success", hit)
-        : state.cacheHitPercent < 30
-          ? theme.fg("warning", hit)
-          : muted(hit),
-    });
+  // `cacheRead`/`cacheWrite` gate this like the built-in footer: a provider that does
+  // not report caching at all would otherwise show a fabricated 0% hit rate.
+  if (state.cacheHitPercent !== undefined && (state.cacheRead || state.cacheWrite)) {
+    // A cold first request is normal; a single low hit rate is not a warning.
+    stats.push({ key: "cacheHit", text: muted(`cache ${state.cacheHitPercent.toFixed(1)}%`) });
   }
-  if (flags.cache && (state.cacheRead || state.cacheWrite)) {
+  if (state.cacheRead || state.cacheWrite) {
     // Reads are the cheap path, writes are the expensive one (Anthropic bills 1h
     // writes at 2x input). Providers without prompt caching report zero.
     const counts = [
@@ -307,43 +429,42 @@ export function renderFooter(state: FooterSnapshot, theme: Theme, width: number)
     stats.push({ key: "cache", text: counts });
   }
 
-  const renderStats = (parts: StatsPart[]) => parts.map((part) => part.text).join(separator);
-  let visibleStats = stats;
-  while (visibleStats.length > 0 && width - visibleWidth(location) - visibleWidth(renderStats(visibleStats)) < 2) {
-    const lowest = STATS_DROP_ORDER.find((key) => visibleStats.some((part) => part.key === key));
-    if (lowest === undefined) break;
-    visibleStats = visibleStats.filter((part) => part.key !== lowest);
-  }
-  const statsText = renderStats(visibleStats);
+  const statsText = stats.map((part) => part.text).join(separator);
+  const identity = renderRight(right.filter((part) => part.key === "model" || part.key === "effort"));
+  const live = renderRight(right.filter((part) => part.key === "activity" || part.key === "rate"));
+  const allRight = renderRight(right);
+  const overflow: string[] = [];
+  const appendOverflow = (text: string) => overflow.push(...wrapTextWithAnsi(text, width));
+  const locationMinimum = Math.min(18, Math.floor(width / 4));
+  const statsFit = visibleWidth(statsText) + locationMinimum + 2 <= width;
+  if (!statsFit) appendOverflow(statsText);
+  const topStats = statsFit ? statsText : "";
+  const top = joinSides(location(Math.max(0, width - visibleWidth(topStats) - 2)), topStats, width);
 
-  const lines: string[] = [];
-  if (!statsText) {
-    lines.push(truncateToWidth(location, width));
-  } else if (width - visibleWidth(location) - visibleWidth(statsText) >= 2) {
-    lines.push(location + " ".repeat(width - visibleWidth(location) - visibleWidth(statsText)) + statsText);
+  // Keep model and effort on row two, even when idle. Overflow is visible, never
+  // hidden behind a preset/details view. Size ctx against the actual right block.
+  const liveContext = contextFor(width - visibleWidth(allRight) - 2);
+  const idleContext = contextFor(width - visibleWidth(identity) - 2);
+  let bottom: string;
+  if (visibleWidth(liveContext) + visibleWidth(allRight) + 2 <= width) {
+    bottom = joinSides(liveContext, allRight, width);
+  } else if (visibleWidth(idleContext) + visibleWidth(identity) + 2 <= width) {
+    bottom = joinSides(idleContext, identity, width);
+    if (live) appendOverflow(live);
   } else {
-    // In narrow panes keep both fields: location first, stats right-aligned below.
-    lines.push(truncateToWidth(location, width));
-    const fitted = truncateToWidth(statsText, width);
-    lines.push(" ".repeat(Math.max(0, width - visibleWidth(fitted))) + fitted);
+    const identityLines = wrapTextWithAnsi(identity, width);
+    const first = identityLines.shift() ?? "";
+    bottom = " ".repeat(Math.max(0, width - visibleWidth(first))) + first;
+    overflow.push(...identityLines);
+    appendOverflow(contextFor(width));
+    if (live) appendOverflow(live);
   }
-  const gap = width - visibleWidth(context) - visibleWidth(model);
-  if (gap >= 2) {
-    lines.push(context + " ".repeat(gap) + model);
-  } else {
-    // In narrow panes, keep all fields and put the model on the bottom right.
-    lines.push(...wrapTextWithAnsi(context, width).map((line) => truncateToWidth(line, width)));
-    for (const line of wrapTextWithAnsi(model, width)) {
-      const fitted = truncateToWidth(line, width);
-      lines.push(" ".repeat(Math.max(0, width - visibleWidth(fitted))) + fitted);
-    }
-  }
-  return lines;
+  return [top, bottom, ...overflow].map((line) => truncateToWidth(line, width));
 }
 
 export default function minimalStatusline(pi: ExtensionAPI) {
   let enabled = true;
-  let preset = loadPreset();
+  const rateCalibration = loadRateCalibration();
   let refresh: (() => void) | undefined;
   let ticker: ReturnType<typeof setInterval> | undefined;
   // Only the session whose footer is installed may drive the live state; forked
@@ -353,13 +474,12 @@ export default function minimalStatusline(pi: ExtensionAPI) {
   // Live turn state, written by the event handlers and read on every render.
   let turnStartedAt: number | undefined;
   let phase: ActivitySnapshot["phase"] = "waiting";
-  let toolName: string | undefined;
-  let toolStartedAt: number | undefined;
-  let stream: { firstDeltaAt?: number; chars: number; exactTokens?: number } | undefined;
-  let rate: RateSnapshot | undefined;
+  const activeTools = new Map<string, { name: string }>();
+  let compactionStandalone = false;
+  let stream: StreamState | undefined;
 
   const ensureTicker = () => {
-    if (ticker) return;
+    if (ticker || !enabled || !refresh) return;
     ticker = setInterval(() => refresh?.(), 100);
     ticker.unref?.();
   };
@@ -371,26 +491,40 @@ export default function minimalStatusline(pi: ExtensionAPI) {
   function currentActivity(now: number): ActivitySnapshot | undefined {
     if (turnStartedAt === undefined) return undefined;
     return {
-      phase,
-      toolName,
-      elapsedMs: phase === "tool" && toolStartedAt !== undefined ? now - toolStartedAt : now - turnStartedAt,
+      phase: phase === "compacting" ? phase : activeTools.size ? "tool" : phase,
+      toolName: activeTools.values().next().value?.name,
+      toolCount: activeTools.size,
+      elapsedMs: now - turnStartedAt,
       frame: SPINNER_FRAMES[Math.floor(now / 100) % SPINNER_FRAMES.length],
     };
   }
 
   /**
-   * While tokens are arriving the provider has not reported a usage count yet, so the
-   * rate is estimated from streamed text (prefixed with `~`); once the message ends,
-   * the exact `usage.output` over the same window replaces it and stays on screen.
+   * Script estimate with the model's learned residual factors applied separately to
+   * streamed text and tool-call argument JSON.
    */
-  function currentRate(now: number): RateSnapshot | undefined {
+  function calibratedEstimate(model: { provider?: string; id?: string } | undefined, counts: StreamState): number {
+    const calibration = rateCalibration.get(`${model?.provider}/${model?.id}`);
+    return scriptTokenEstimate(counts.text.cjk, counts.text.other) * (calibration?.text ?? 1)
+      + scriptTokenEstimate(counts.tool.cjk, counts.tool.other) * (calibration?.tool ?? 1);
+  }
+
+  /**
+   * While tokens are arriving the provider has not reported a usage count yet, so the
+   * rate is estimated from streamed characters (prefixed with `~`), weighting CJK and
+   * non-CJK separately and applying the model's learned residual factors. Once the
+   * message ends, hide the rate rather than displaying stale throughput.
+   */
+  function currentRate(now: number, model: { provider?: string; id?: string } | undefined): RateSnapshot | undefined {
+    if (activeTools.size || (phase !== "streaming" && phase !== "thinking")) return undefined;
     if (stream?.firstDeltaAt !== undefined && stream.exactTokens === undefined) {
       const seconds = (now - stream.firstDeltaAt) / 1000;
       if (seconds >= 0.35) {
-        return { tokensPerSecond: stream.chars / CHARS_PER_TOKEN / seconds, estimated: true };
+        const tokensPerSecond = calibratedEstimate(model, stream) / seconds;
+        return { tokensPerSecond, estimated: true };
       }
     }
-    return rate;
+    return undefined;
   }
 
   /** Events from other sessions in this process must not touch the visible footer. */
@@ -401,26 +535,27 @@ export default function minimalStatusline(pi: ExtensionAPI) {
   function install(ctx: ExtensionContext) {
     if (ctx.mode !== "tui") return;
     installedSessionId = ctx.sessionManager.getSessionId();
+    stopTicker();
     ctx.ui.setFooter(enabled ? (tui, theme, footerData) => {
       let cachedKey: string | undefined;
       let usage: ContextUsage | undefined;
       let sessionUsage: SessionUsage | undefined;
-      // Read once per install: it only changes when the user edits settings.
-      const compaction = pi.getSettings().compaction;
-      const autoCompactReserve = compaction?.enabled === false
-        ? undefined
-        : (compaction?.reserveTokens ?? DEFAULT_RESERVE_TOKENS);
-      const requestUpdate = () => {
-        cachedKey = undefined;
-        tui.requestRender();
-      };
+      let autoCompactReserve: number | undefined;
+      // Render-only: the cache key below already covers every append that can change
+      // the numbers, so clearing it here would just force the projection rebuild the
+      // activity ticker would otherwise trigger ten times a second.
+      const requestUpdate = () => tui.requestRender();
       refresh = requestUpdate;
+      if (turnStartedAt !== undefined) ensureTicker();
       const unsubscribe = footerData.onBranchChange(requestUpdate);
 
       return {
         dispose() {
           unsubscribe();
-          if (refresh === requestUpdate) refresh = undefined;
+          if (refresh === requestUpdate) {
+            refresh = undefined;
+            stopTicker();
+          }
         },
         invalidate() {}, // Colors and width are resolved afresh on every render.
         render(width: number): string[] {
@@ -431,12 +566,14 @@ export default function minimalStatusline(pi: ExtensionAPI) {
             manager.getSessionId(), manager.getLeafId(),
             model?.provider, model?.id, model?.contextWindow,
           ]);
-          // Avoid rebuilding the long conversation projection on every editor keystroke.
-          // Every append moves the leaf, so the key also covers usage entries that
-          // arrive outside a message (cache_warm, tool results, compaction).
+          // Avoid rebuilding the long conversation projection on every editor keystroke
+          // or activity tick. Every append moves the leaf, so the key also covers usage
+          // entries that arrive outside a message (cache_warm, tool results, compaction),
+          // and the model part re-resolves compaction.modelOverrides on model switches.
           if (key !== cachedKey) {
             usage = ctx.getContextUsage();
             sessionUsage = readSessionUsage(manager.getEntries());
+            autoCompactReserve = resolveAutoCompactReserve(pi.getSettings().compaction, model ?? undefined);
             cachedKey = key;
           }
           const contextWindow = usage?.contextWindow ?? model?.contextWindow;
@@ -456,111 +593,162 @@ export default function minimalStatusline(pi: ExtensionAPI) {
             cacheWrite: sessionUsage?.cacheWrite,
             autoCompactReserve,
             activity: currentActivity(now),
-            rate: currentRate(now),
-            preset,
+            rate: currentRate(now, model),
           }, theme, width);
 
-          // Normally absent; retain warnings/statuses published by other extensions.
-          if (width > 0) {
-            for (const status of footerData.getExtensionStatuses().values()) {
-              const text = theme.fg("dim", "│ ") + theme.fg("muted", stripVTControlCharacters(status));
-              lines.push(...wrapTextWithAnsi(text, width).map((line) => truncateToWidth(line, width)));
-            }
-          }
+          lines.push(...renderExtensionStatuses(footerData.getExtensionStatuses(), theme, width));
           return lines;
         },
       };
     } : undefined);
   }
 
-  pi.on("session_start", (_event, ctx) => install(ctx));
+  const resetLive = () => {
+    turnStartedAt = undefined;
+    activeTools.clear();
+    phase = "waiting";
+    stream = undefined;
+    compactionStandalone = false;
+    stopTicker();
+  };
+  pi.on("session_start", (_event, ctx) => {
+    if (ctx.mode !== "tui") return;
+    resetLive();
+    install(ctx);
+  });
   pi.on("agent_start", (_event, ctx) => {
     if (!owns(ctx)) return;
-    turnStartedAt = Date.now();
+    turnStartedAt ??= Date.now();
     phase = "waiting";
-    toolName = undefined;
-    toolStartedAt = undefined;
     stream = undefined;
-    rate = undefined;
     ensureTicker();
+    refresh?.();
   });
   pi.on("agent_end", (_event, ctx) => {
     if (!owns(ctx)) return;
-    turnStartedAt = undefined;
-    toolName = undefined;
-    toolStartedAt = undefined;
+    phase = "finishing";
     stream = undefined;
-    stopTicker();
     refresh?.();
   });
+  pi.on("agent_settled", (_event, ctx) => {
+    if (!owns(ctx)) return;
+    resetLive();
+    refresh?.();
+  });
+  pi.on("before_provider_request", (_event, ctx) => {
+    if (!owns(ctx)) return;
+    phase = "waiting";
+    refresh?.();
+  });
+  pi.on("session_before_compact", (_event, ctx) => {
+    if (!owns(ctx)) return;
+    compactionStandalone = turnStartedAt === undefined;
+    turnStartedAt ??= Date.now();
+    phase = "compacting";
+    ensureTicker();
+    refresh?.();
+  });
+  const finishCompaction = (_event: unknown, ctx: ExtensionContext) => {
+    if (!owns(ctx)) return;
+    if (compactionStandalone) resetLive();
+    else phase = "waiting";
+    refresh?.();
+  };
+  pi.on("session_compact", finishCompaction);
+  pi.on("session_compact_failed", finishCompaction);
   pi.on("message_start", (event, ctx) => {
     if (!owns(ctx)) return;
-    if (event.message.role === "assistant") stream = { chars: 0 };
+    if (event.message.role === "assistant") {
+      stream = { text: { cjk: 0, other: 0 }, tool: { cjk: 0, other: 0 } };
+      phase = "waiting";
+      refresh?.();
+    }
   });
   pi.on("message_update", (event, ctx) => {
     if (!owns(ctx)) return;
     if (event.message.role !== "assistant") return;
     const delta = event.assistantMessageEvent;
-    if (delta.type !== "text_delta" && delta.type !== "thinking_delta") return;
-    if (!stream) stream = { chars: 0 };
+    if (delta.type !== "text_delta" && delta.type !== "thinking_delta" && delta.type !== "toolcall_delta") return;
+    if (!stream) stream = { text: { cjk: 0, other: 0 }, tool: { cjk: 0, other: 0 } };
     if (stream.firstDeltaAt === undefined) stream.firstDeltaAt = Date.now();
-    stream.chars += delta.delta.length;
-    phase = "streaming";
+    // Count code points, not UTF-16 units, so astral characters match the script weights.
+    const counts = delta.type === "toolcall_delta" ? stream.tool : stream.text;
+    const cjk = countCjkCharacters(delta.delta);
+    counts.cjk += cjk;
+    counts.other += Array.from(delta.delta).length - cjk;
+    phase = delta.type === "thinking_delta" ? "thinking" : "streaming";
     ensureTicker();
   });
   pi.on("tool_execution_start", (event, ctx) => {
     if (!owns(ctx)) return;
-    phase = "tool";
-    toolName = event.toolName;
-    toolStartedAt = Date.now();
+    activeTools.set(event.toolCallId, { name: event.toolName });
     ensureTicker();
+    refresh?.();
   });
-  pi.on("tool_execution_end", (_event, ctx) => {
+  pi.on("tool_execution_end", (event, ctx) => {
     if (!owns(ctx)) return;
-    phase = "waiting";
-    toolName = undefined;
-    toolStartedAt = undefined;
+    activeTools.delete(event.toolCallId);
+    if (!activeTools.size) phase = "waiting";
     refresh?.();
   });
   pi.on("message_end", (event, ctx) => {
     if (!owns(ctx)) return;
     if (event.message.role === "assistant") {
+      phase = "waiting";
       const output = event.message.usage.output;
       const first = stream?.firstDeltaAt;
       if (first !== undefined && output > 0) {
-        const seconds = (Date.now() - first) / 1000;
-        if (seconds > 0.05) rate = { tokensPerSecond: output / seconds, estimated: false };
+        // Proportional allocation is a heuristic, not independently measured text/tool
+        // usage. Preserve the existing calibration format; do not claim exact throughput.
+        const model = ctx.model;
+        if (stream && model) {
+          const textEstimate = scriptTokenEstimate(stream.text.cjk, stream.text.other);
+          const toolEstimate = scriptTokenEstimate(stream.tool.cjk, stream.tool.other);
+          const totalEstimate = textEstimate + toolEstimate;
+          if (totalEstimate >= RATE_CALIBRATION_MIN_TOKENS) {
+            const key = `${model.provider}/${model.id}`;
+            const ratio = output / totalEstimate;
+            const previous = rateCalibration.get(key);
+            const text = updateRateCalibration(previous?.text, ratio * textEstimate, textEstimate);
+            const tool = updateRateCalibration(previous?.tool, ratio * toolEstimate, toolEstimate);
+            if (text !== undefined || tool !== undefined) {
+              rateCalibration.set(key, { text: text ?? previous?.text ?? 1, tool: tool ?? previous?.tool ?? 1 });
+              saveRateCalibration(rateCalibration);
+            }
+          }
+        }
       }
       // Freeze the estimate: no more characters will arrive for this message.
-      stream = { chars: stream?.chars ?? 0, exactTokens: output };
+      stream = {
+        text: stream?.text ?? { cjk: 0, other: 0 },
+        tool: stream?.tool ?? { cjk: 0, other: 0 },
+        exactTokens: output,
+      };
     }
     refresh?.();
   });
-  pi.on("model_select", () => refresh?.());
+  pi.on("model_select", (_event, ctx) => {
+    if (!owns(ctx)) return;
+    stream = undefined;
+    refresh?.();
+  });
   pi.on("thinking_level_select", () => refresh?.());
-  pi.on("session_compact", () => refresh?.());
   pi.on("session_tree", () => refresh?.());
   pi.on("session_shutdown", (_event, ctx) => {
-    stopTicker();
-    if (ctx.mode === "tui" && enabled) ctx.ui.setFooter(undefined);
+    if (!owns(ctx)) return;
+    resetLive();
+    if (enabled) ctx.ui.setFooter(undefined);
     refresh = undefined;
+    installedSessionId = undefined;
   });
 
   pi.registerCommand("statusline", {
-    description: "Switch footer: /statusline custom | default (no argument toggles), preset: full | minimal | cost",
+    description: "Toggle the statusline (custom | default)",
     handler: async (args, ctx) => {
       if (ctx.mode !== "tui") return;
       const choice = args.trim();
-      if (choice === "full" || choice === "minimal" || choice === "cost") {
-        preset = choice;
-        savePreset(preset);
-        enabled = true;
-        install(ctx);
-        ctx.ui.notify(`Statusline preset: ${preset}`, "info");
-        return;
-      }
       if (choice && choice !== "custom" && choice !== "default") {
-        ctx.ui.notify("Usage: /statusline custom | default | full | minimal | cost", "info");
+        ctx.ui.notify("Usage: /statusline [custom | default]", "info");
         return;
       }
       enabled = choice ? choice === "custom" : !enabled;
