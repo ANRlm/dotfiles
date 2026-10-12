@@ -13,7 +13,7 @@ Apple Silicon macOS 的个人配置，通过符号链接部署到各应用的配
 | [helix/](helix/) | 主题、编辑行为、诊断和快捷键 |
 | [herdr/](herdr/) | 界面、通知、快捷键、automatic-rename 插件配置及 firstmate 短标签插件 |
 | [lazygit/](lazygit/) | 差异渲染器（Delta）配置 |
-| [pi/](pi/) | 对话滚动快捷键与自定义状态栏扩展 |
+| [pi/](pi/) | 自定义状态栏扩展 |
 | [starship/](starship/) | 提示符及各模块的符号 |
 | [tmux/](tmux/) | 终端、窗口、快捷键及 TPM 插件 |
 | [yazi/](yazi/) | 文件管理、预览、快捷键及插件清单 |
@@ -43,14 +43,13 @@ Pi、cmux 和 lazygit 使用**文件级链接**，不要链接整个配置目录
 
 ```fish
 mkdir -p ~/.pi/agent/extensions ~/.config/cmux "$HOME/Library/Application Support/com.cmuxterm.app" "$HOME/Library/Application Support/lazygit"
-ln -s ~/dotfiles/pi/keybindings.json ~/.pi/agent/keybindings.json
 ln -s ~/dotfiles/pi/extensions/minimal-statusline.ts ~/.pi/agent/extensions/minimal-statusline.ts
 ln -s ~/dotfiles/cmux/cmux.json ~/.config/cmux/cmux.json
 ln -s ~/dotfiles/cmux/config.ghostty "$HOME/Library/Application Support/com.cmuxterm.app/config.ghostty"
 ln -s ~/dotfiles/lazygit/config.yml "$HOME/Library/Application Support/lazygit/config.yml"
 ```
 
-`cmux/config.ghostty` 是 cmux 专用配置，与 `ghostty/config.ghostty` 分开管理；不要互相覆盖。Pi 的 `settings.json`（默认模型、主题等）、`models.json`、`auth.json`、会话、模型缓存、其他扩展和 skills，以及 cmux 和 lazygit（`state.yml`、PR 缓存）的运行数据留在本机。本仓库仅部署 Pi 快捷键和 `minimal-statusline.ts`，不链接整个扩展目录。新机器需单独执行 Pi 的 `/login` 并设置模型等偏好。
+`cmux/config.ghostty` 是 cmux 专用配置，与 `ghostty/config.ghostty` 分开管理；不要互相覆盖。Pi 的 `models.json`、`settings.json`（默认模型、主题等）、`auth.json`、会话、模型缓存、其他扩展和 skills，以及 cmux 和 lazygit（`state.yml`、PR 缓存）的运行数据留在本机。本仓库仅部署 Pi 的 `minimal-statusline.ts`，不链接整个扩展目录。新机器需单独执行 Pi 的 `/login` 并设置模型等偏好。
 
 Git 配置包含个人姓名和邮箱，使用前请检查 [git/config](git/config)。Lazygit 不读取 `core.pager`，其 Delta 渲染器须在 [lazygit/config.yml](lazygit/config.yml) 中单独配置；该文件还关闭了 Diff 视图的自动换行——Delta 只在 side-by-side 模式下自行折行，lazygit 折行时续行从第 0 列开始，会压掉 Delta 的行号栏。
 
@@ -83,7 +82,7 @@ tmux 首次启动时会自动安装 TPM 及声明的插件。Fish 的 fzf 键位
 | `ts` | 重新加载 tmux 配置 |
 | `u` | 更新全局工具、应用、Agent skill 与插件及 Herdr / tmux / Yazi 插件，并执行清理 |
 
-Pi 全屏模式下，`Option+K/J` 向上／下滚动一行，修改配置后在 Pi 中运行 `/reload`。cmux 中，`Option+H/L` 切换上一个／下一个 Tab，修改配置后执行 `cmux reload-config`。cmux 不拦截 `Option+J/K`，它们仅在 Pi 内绑定。
+Pi 使用默认快捷键，可在 Pi 中运行 `/hotkeys` 查看。cmux 中，`Option+H/L` 切换上一个／下一个 Tab，修改配置后执行 `cmux reload-config`。
 
 ### Pi 状态栏
 
@@ -115,14 +114,6 @@ ctx 根据右侧实际占用调整：先把条形从 14 列缩到 10／6 列，�
 - 其他扩展状态全部显示，长文本按终端宽度换行，显式 warning/error/警告等标记优先。外部扩展原文不翻译。状态 API 没有结构化严重级别，标记识别只是启发式。
 - `/statusline default` 临时恢复默认状态栏，`/statusline custom` 切回；不带参数切换；`/reload` 或重启后默认启用自定义状态栏。
 
-#### 验证
-
-```sh
-node --test pi/tests/statusline.test.mjs
-```
-
-测试自动寻找本机 Pi 安装，也可通过 `PI_PACKAGE_DIR` 指定 `@earendil-works/pi-coding-agent` 的安装目录；不需为 dotfiles 安装依赖，测试配置和校准写入临时目录，不修改真实用户设置。覆盖深浅主题、窄宽屏、ctx 剩余口径／阈值／未知值／自适应宽度、第二行模型布局、英文活动、全部扩展状态、并行工具、会话隔离、压缩失败、旧配置兼容和开关。
-
 ### 其他工具
 
 默认编辑器为 Helix（`hx`）。普通模式下，`Space+w` 保存、`Space+q` 退出；`Tab` / `Shift-Tab` 跳到父语法节点末尾 / 开头，选择模式下扩展选区。使用 `:config-reload` 重新加载配置。
@@ -135,8 +126,8 @@ tmux 的前缀键为 `Ctrl-A`：随后按 `=` / `-` 分屏，`h/j/k/l` 选择窗
 
 `u` 更新 Homebrew、npm 全局包、Agent skill 与插件（见 [AGENT-TOOLS.md](AGENT-TOOLS.md)）、Mac App Store 应用，以及已安装的 Herdr、tmux 和 Yazi 插件，清理 Homebrew、pnpm、uv 缓存并运行 Mole 清理。它会把本机新装的软件追加到 `~/dotfiles/Brewfile`，因此仓库需放在 `~/dotfiles`。
 
-更新统一使用 `u`，不需要参数。tmux 插件仅执行 Git 快进更新，Yazi 更新失败最多尝试三次；某项失败会继续执行其他独立步骤，最终返回失败状态。`u` 不会拉取本仓库，配置同步需自行执行 Git 操作。
+更新统一使用 `u`，不需要参数。Agent skill 更新后会自动补齐 Claude 配置目录中的共享 skill 链接，遇到同名冲突会报告失败而不覆盖；Codex 和 Pi 继续原生读取 `~/.agents/skills`，不添加重复链接。部署、手动同步与离线检查见 [AGENT-TOOLS.md](AGENT-TOOLS.md)。tmux 插件仅执行 Git 快进更新，Yazi 更新失败最多尝试三次；某项失败会继续执行其他独立步骤，最终返回失败状态。`u` 不会拉取本仓库，配置同步需自行执行 Git 操作。
 
 配置按功能分组，标题沿用 `fish/config.fish` 的 `# ── 类别 ──…` 样式；Lua 使用 `--` 注释符。
 
-Brewfile 是完整软件清单，本机只装其中一部分：`u` 只追加 `brew bundle dump` 中新出现的条目（放在同类条目末尾），从不删除本机没装的条目；npm 全局包不记录。卸载软件后需手动删除对应行。各工具下载的插件、Fish 运行状态及 herdr 会话、日志和 socket 已由 `.gitignore` 排除；herdr 插件的配置（`herdr/plugins/config/`）纳入版本管理。`pi/` 和 `cmux/` 采用 `.gitignore` 白名单，仅允许 Pi 快捷键、状态栏扩展与回归测试及两份 cmux 配置；新增配置时先检查是否含凭证，再显式放行。
+Brewfile 是完整软件清单，本机只装其中一部分：`u` 只追加 `brew bundle dump` 中新出现的条目（放在同类条目末尾），从不删除本机没装的条目；npm 全局包不记录。卸载软件后需手动删除对应行。各工具下载的插件、Fish 运行状态及 herdr 会话、日志和 socket 已由 `.gitignore` 排除；herdr 插件的配置（`herdr/plugins/config/`）纳入版本管理。`pi/` 和 `cmux/` 采用 `.gitignore` 白名单，仅允许 Pi 状态栏扩展及两份 cmux 配置；新增配置时先检查是否含凭证，再显式放行。
