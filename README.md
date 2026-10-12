@@ -11,7 +11,7 @@ Apple Silicon macOS 的个人配置，通过符号链接部署到各应用的配
 | [ghostty/](ghostty/) | 字体、主题、窗口和剪贴板 |
 | [git/](git/) | 用户信息、Delta、同步策略及全局忽略规则 |
 | [helix/](helix/) | 主题、编辑行为、诊断和快捷键 |
-| [herdr/](herdr/) | 界面、通知、快捷键、automatic-rename 插件配置及 firstmate 短标签插件 |
+| [herdr/](herdr/) | 界面、通知、快捷键、automatic-rename 插件配置及 firstmate 短标签、侧栏短标题两个本地插件 |
 | [lazygit/](lazygit/) | 差异渲染器（Delta）配置 |
 | [pi/](pi/) | 自定义状态栏扩展 |
 | [starship/](starship/) | 提示符及各模块的符号 |
@@ -79,7 +79,7 @@ python3 ~/.config/herdr/plugins/local/sidebar-short-title/short_title.py
 
 刷新按插件与 Herdr socket 串行执行，锁文件位于本机 `~/.cache/herdr/plugin-locks/`；退出或报错会释放锁。刷新途中已关闭的 pane/workspace 会被跳过，其他错误仍会报告。
 
-Herdr 的 Agent 面板按项目分组，每项两行：加粗的短任务名与普通字重的 Agent 类型、状态与项目；Spaces 下保留分支信息。`sidebar-short-title` 优先显示原生 pane 名，与分屏边框共用稳定任务别名；未命名时，去掉终端标题中重复的项目上下文。显示长度按中英文宽度限制为 18 列，为同一行的 Agent 类型留出空间；完整终端标题不变。用 `herdr pane rename <pane-id> <短任务名>` 设置别名，`herdr pane rename <pane-id> --clear` 恢复自动标题。短标题随启动、Agent 状态和焦点等事件刷新，也可运行上面的命令立即刷新。
+Herdr 的 Agent 面板按项目分组，每项两行：第一行为状态圆点、加粗的短任务名与普通字重的 Agent 类型，第二行为状态、项目与机器名；Spaces 下保留分支信息。`sidebar-short-title` 优先显示原生 pane 名，与分屏边框共用稳定任务别名；未命名时，去掉终端标题中重复的项目上下文。显示长度按中英文宽度限制为 18 列，为同一行的 Agent 类型留出空间；完整终端标题不变。用 `herdr pane rename <pane-id> <短任务名>` 设置别名，`herdr pane rename <pane-id> --clear` 恢复自动标题。短标题随启动、Agent 状态和焦点等事件刷新，也可运行上面的命令立即刷新。
 
 Tab 命名保留 `qu8n/herdr-automatic-rename`：它会保留首次见到的自定义名称，适合 Firstmate 使用的 `firstmate` / `fm-*` 标签。未启用 `kryptamine/herdr-auto-title`，其当前实现会在首次轮询时接管未记录手动锁定的 Tab 和 pane 名称。
 
