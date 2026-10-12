@@ -36,21 +36,27 @@ status_indicators = "dots"
 
 [ui.sidebar.agents]
 row_gap = 0
+# Three rows: task title; status and agent; machine and project.
+# Herdr 0.9.3 rules cannot rewrite text; separators remain the native " · ".
+# Harness, machine, and project names are bold and dim; colors follow the theme.
+# Native token foregrounds can differ; do not override them with fixed RGB.
 rows = [
-  ["state_icon", { token = "$sidebar_title", fg = "#ffffff", bold = true, dim = false }, { token = "agent", bold = false, dim = false }],
-  ["state_text", { token = "workspace", dim = true, rules = [
+  ["state_icon", { token = "$sidebar_title", fg = "#ffffff", bold = true, dim = false }],
+  ["state_text", { token = "agent", bold = true, dim = true }],
+  [{ token = "machine", bold = true, dim = true }, { token = "workspace", bold = true, dim = true, rules = [
     { starts_with = "└ ", hide = true },
-  ] }, { token = "$short", dim = true }, { token = "machine", dim = true }],
+  ] }, { token = "$short", bold = true, dim = true }],
 ]
 
-# Hierarchy by weight only (no hardcoded colors, so any theme works): top-level
-# bold; firstmate's "└ task · p:<token>" children show $short ("└ task", from
+# Top-level and Firstmate child names are bold, with theme-native colors.
+# Firstmate's "└ task · p:<token>" children show $short ("└ task", from
 # plugins/local/fm-short-label) so the token doesn't eat the width.
+# $short retains Herdr's custom-token color; it cannot inherit workspace color.
 [ui.sidebar.spaces]
 rows = [
   ["state_icon", { token = "workspace", bold = true, rules = [
     { starts_with = "└ ", hide = true },
-  ] }, "$short"],
+  ] }, { token = "$short", bold = true }],
   ["branch", "git_status"],
 ]
 

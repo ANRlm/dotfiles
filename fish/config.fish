@@ -43,6 +43,7 @@ end
 
 # Establish tool precedence before fnm selects the project's Node.
 fish_add_path --move --prepend --path "$HOME/.local/bin" /opt/homebrew/bin /usr/local/bin
+functions -q claude; and functions -e claude
 
 if command -q fnm
     if not fnm default >/dev/null 2>&1
@@ -62,8 +63,6 @@ end
 if command -q starship
     starship init fish --print-full-init | source
 end
-
-functions -q claude; and functions -e claude
 
 # ── Abbreviations: General ────────────────────────────────────────────
 

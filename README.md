@@ -79,7 +79,7 @@ python3 ~/.config/herdr/plugins/local/sidebar-short-title/short_title.py
 
 刷新按插件与 Herdr socket 串行执行，锁文件位于本机 `~/.cache/herdr/plugin-locks/`；退出或报错会释放锁。刷新途中已关闭的 pane/workspace 会被跳过，其他错误仍会报告。
 
-Herdr 的 Agent 面板按项目分组，每项两行：第一行为状态圆点、加粗的短任务名与普通字重的 Agent 类型，第二行为状态、项目与机器名；Spaces 下保留分支信息。`sidebar-short-title` 优先显示原生 pane 名，与分屏边框共用稳定任务别名；未命名时，去掉终端标题中重复的项目上下文。显示长度按中英文宽度限制为 18 列，为同一行的 Agent 类型留出空间；完整终端标题不变。用 `herdr pane rename <pane-id> <短任务名>` 设置别名，`herdr pane rename <pane-id> --clear` 恢复自动标题。短标题随启动、Agent 状态和焦点等事件刷新，也可运行上面的命令立即刷新。
+Herdr 的 Agent 面板按项目分组，每项三行：第一行为状态圆点与加粗的短任务名；第二行为状态与加粗的 Agent 名称（如 `pi`、`claude`）；第三行为机器名（本地为 `Local`，远端为主机名）与项目。Harness 名称、本地及远端机器名、项目名（包括 FM 的 `$short`）统一使用 `bold = true, dim = true`，不设置固定前景色，颜色跟随主题。原生字段的基础颜色和选中态仍由 Herdr 决定，因此字重与弱化等级一致不代表完全同色。状态圆点、状态颜色与选中背景保持不变。布局保留原生 ` · ` 分隔；Spaces 下保留分支信息，普通工作区名与 FM 子工作区的 `$short` 均显式加粗。`$short` 仍继承 Herdr 的自定义字段主题色，不能仅靠现有配置继承 `workspace` 的基础颜色，因此 FM 子工作区与普通工作区仍可能有色差。`sidebar-short-title` 优先显示原生 pane 名，与分屏边框共用稳定任务别名；未命名时，去掉终端标题中重复的项目上下文。短标题显示长度按中英文宽度限制为 18 列；完整终端标题不变。用 `herdr pane rename <pane-id> <短任务名>` 设置别名，`herdr pane rename <pane-id> --clear` 恢复自动标题。短标题随启动、Agent 状态和焦点等事件刷新，也可运行上面的命令立即刷新。
 
 Tab 命名保留 `qu8n/herdr-automatic-rename`：它会保留首次见到的自定义名称，适合 Firstmate 使用的 `firstmate` / `fm-*` 标签。未启用 `kryptamine/herdr-auto-title`，其当前实现会在首次轮询时接管未记录手动锁定的 Tab 和 pane 名称。
 
