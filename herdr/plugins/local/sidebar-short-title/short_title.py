@@ -36,6 +36,8 @@ def compact_title(pane, workspace):
     if pane.get("label"):
         return fit_title(" ".join(pane["label"].split()))
     title = " ".join((pane.get("terminal_title_stripped") or "").split())
+    # pi titles are "π - <session> - <cwd>" or "π - <cwd>".
+    title = re.sub(r"^π - ", "", title)
     label = re.sub(r" · p:[A-Za-z0-9_-]{22}$", "", workspace)
     label = re.sub(r"^(?:└ |2ndmate-)", "", label)
     names = {workspace, label}
@@ -45,7 +47,7 @@ def compact_title(pane, workspace):
     for name in sorted(filter(None, names), key=len, reverse=True):
         title = re.sub(r"^" + re.escape(name) + r"(?:\.inbox)?(?:\s+|\s*[:：|·]\s*)",
                        "", title, flags=re.IGNORECASE)
-        title = re.sub(r"\s+[|·]\s+" + re.escape(name) + r"$", "", title,
+        title = re.sub(r"\s+[|·-]\s+" + re.escape(name) + r"$", "", title,
                        flags=re.IGNORECASE)
     return fit_title(title)
 
