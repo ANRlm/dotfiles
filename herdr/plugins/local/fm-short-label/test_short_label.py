@@ -17,6 +17,8 @@ kind, action, *args = sys.argv[1:]
 if [kind, action] == ["api", "snapshot"]:
     print(json.dumps({"result": {"snapshot": state}}))
 elif action == "report-metadata":
+    with open(os.environ["SHORT_LABEL_TEST_LOG"], "a") as log:
+        log.write(" ".join(sys.argv[1:4]) + "\\n")
     assert args[1:3] == ["--source", "fm-short-label"]
     objects = state["workspaces" if kind == "workspace" else "panes"]
     item = next(x for x in objects if x[kind + "_id"] == args[0])
@@ -49,14 +51,17 @@ def main():
                                "tokens": {"short": "stale", "other": "keep"}})
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "state.json"
+        log = Path(tmp) / "writes.log"
         mock = Path(tmp) / "herdr"
         mock.write_text(MOCK)
         mock.chmod(0o755)
         env = dict(os.environ, HERDR_BIN_PATH=str(mock), SHORT_LABEL_TEST_STATE=str(path),
+                   SHORT_LABEL_TEST_LOG=str(log),
                    HOME=tmp, HERDR_SOCKET_PATH=str(Path(tmp) / "test.sock"))
 
         def run():
             path.write_text(json.dumps(state))
+            log.write_text("")
             subprocess.run(["bash", str(PLUGIN / "short-label.sh")], env=env, check=True)
             return json.loads(path.read_text())
 
@@ -66,6 +71,12 @@ def main():
                 assert item["tokens"].get("short") == short, item
                 assert item["tokens"]["other"] == "keep"
         assert run() == state
+        assert log.read_text() == ""
+
+        state["panes"].append({"pane_id": "w0:p2", "workspace_id": "w0", "tokens": {}})
+        state = run()
+        assert state["panes"][-1]["tokens"]["short"] == expected[0]
+        assert log.read_text() == "pane report-metadata w0:p2\n"
 
         state["workspaces"][0]["label"] = "renamed normal"
         state["panes"][2]["workspace_id"] = "w3"
@@ -74,7 +85,7 @@ def main():
         assert "short" not in state["workspaces"][0]["tokens"]
         assert "short" not in state["panes"][0]["tokens"]
         assert "short" not in state["panes"][2]["tokens"]
-    print("PASS: labels, malformed suffixes, escaping, cleanup, pane moves, idempotence")
+    print("PASS: labels, malformed suffixes, escaping, cleanup, pane moves, idempotence, skipped no-op writes")
 
 
 if __name__ == "__main__":

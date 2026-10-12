@@ -21,10 +21,12 @@ def main():
             # Match the sidebar rule; unknown suffix formats remain visible.
             short = re.sub(r" · p:[A-Za-z0-9_-]{22}$", "", label) if label.startswith("└ ") else ""
             target = workspace["workspace_id"]
-            if not report_metadata(herdr, "workspace", target, source, "short", short):
+            if (workspace.get("tokens") or {}).get("short", "") != short and not report_metadata(
+                    herdr, "workspace", target, source, "short", short):
                 continue
             for pane in panes.get(target, []):
-                report_metadata(herdr, "pane", pane["pane_id"], source, "short", short)
+                if (pane.get("tokens") or {}).get("short", "") != short:
+                    report_metadata(herdr, "pane", pane["pane_id"], source, "short", short)
 
 
 if __name__ == "__main__":
