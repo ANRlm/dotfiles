@@ -28,6 +28,9 @@ herdr/release-notes.json
 !/pi/extensions/
 /pi/extensions/*
 !/pi/extensions/minimal-statusline.ts
+!/pi/tests/
+/pi/tests/*
+!/pi/tests/statusline.test.mjs
 /cmux/*
 !/cmux/cmux.json
 !/cmux/config.ghostty

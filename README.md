@@ -126,13 +126,15 @@ ctx 根据右侧实际占用调整：先把条形从 14 列缩到 10／6 列，�
 #### 统计口径与命令
 
 - `≈$` 是基于模型价格配置和已上报用量的会话估算，包含历史分支、工具及压缩等记录，不是服务商账单。未上报的用量无法计入。
-- 流式 `~tok/s` 沿用中英文字符权重和已有模型校准文件（`~/.pi/agent/statusline-rate.json`），仅在思考／生成时显示，结束后隐藏，避免旧速率误导。混合文本／工具样本的校准属于启发式，不能独立测出两类误差，也不是服务端精确吞吐量。
+- 流式 `~tok/s` 沿用中英文字符权重，兼容读取旧模型校准文件（`~/.pi/agent/statusline-rate.json`）；新估算按模型独立写入 `statusline-rate.json.d/` 并原子替换，避免不同模型的并发会话互相覆盖。同一模型的并发估算保留最后完成的写入。速率仅在思考／生成时显示，结束后隐藏；混合文本／工具样本的校准属于启发式，不能独立测出两类误差，也不是服务端精确吞吐量。
 - 其他扩展状态全部显示，长文本按终端宽度换行，显式 warning/error/警告等标记优先。外部扩展原文不翻译。状态 API 没有结构化严重级别，标记识别只是启发式。
 - `/statusline default` 临时恢复默认状态栏，`/statusline custom` 切回；不带参数切换；`/reload` 或重启后默认启用自定义状态栏。
 
 ### 其他工具
 
 默认编辑器为 Helix（`hx`）。普通模式下，`Space+w` 保存、`Space+q` 退出；`Tab` / `Shift-Tab` 跳到父语法节点末尾 / 开头，选择模式下扩展选区。使用 `:config-reload` 重新加载配置。
+
+Ghostty 对终端程序读取系统剪贴板的请求会询问确认。Git 全局规则忽略真实 `.env` 配置，但允许提交不含凭证的 `.env.example` 和 `.env.template`。
 
 tmux 的前缀键为 `Ctrl-A`：随后按 `=` / `-` 分屏，`h/j/k/l` 选择窗格，`r` 进入调整大小模式，再按 `h/j/k/l` 调整，`q` 或 `Escape` 退出该模式。
 
@@ -146,4 +148,12 @@ tmux 的前缀键为 `Ctrl-A`：随后按 `=` / `-` 分屏，`h/j/k/l` 选择窗
 
 配置按功能分组，标题沿用 `fish/config.fish` 的 `# ── 类别 ──…` 样式；Lua 使用 `--` 注释符。
 
-Brewfile 是完整软件清单，本机只装其中一部分：`u` 只追加 `brew bundle dump` 中新出现的条目（放在同类条目末尾），从不删除本机没装的条目；npm 全局包不记录。卸载软件后需手动删除对应行。各工具下载的插件、Fish 运行状态及 herdr 会话、日志和 socket 已由 `.gitignore` 排除；herdr 插件的配置（`herdr/plugins/config/`）纳入版本管理。`pi/` 和 `cmux/` 采用 `.gitignore` 白名单，仅允许 Pi 状态栏扩展及两份 cmux 配置；新增配置时先检查是否含凭证，再显式放行。
+离线回归检查（临时目录与 mock，不执行真实更新或清理；Pi 测试使用已安装的 Pi 包）：
+
+```sh
+python3 fish/tests/runtime.test.py
+python3 fish/tests/sync-skills.test.py
+node --test pi/tests/statusline.test.mjs
+```
+
+Brewfile 是完整软件清单，本机只装其中一部分：`u` 只追加 `brew bundle dump` 中新出现的条目（放在同类条目末尾），从不删除本机没装的条目；npm 全局包不记录。卸载软件后需手动删除对应行。各工具下载的插件、Fish 运行状态及 herdr 会话、日志和 socket 已由 `.gitignore` 排除；herdr 插件的配置（`herdr/plugins/config/`）纳入版本管理。`pi/` 和 `cmux/` 采用 `.gitignore` 白名单，仅允许 Pi 状态栏扩展、对应离线测试及两份 cmux 配置；新增配置时先检查是否含凭证，再显式放行。

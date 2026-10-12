@@ -35,4 +35,4 @@ window-height           = 45
 # ── Mouse & Clipboard ─────────────────────────────────────────────────
 
 mouse-hide-while-typing = true
-clipboard-read = allow
+clipboard-read = ask

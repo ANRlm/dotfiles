@@ -45,6 +45,16 @@ function __u_run --no-scope-shadowing --argument-names label
     return $status_code
 end
 
+function __u_plugin_list --argument-names tool
+    set -l json ($tool plugin list --json); or return
+    switch $tool
+        case claude
+            printf '%s\n' $json | jq -sr 'if length != 1 or (.[0] | type) != "array" then error("Expected one plugin array") else .[0] end | [.[] | select(.id | endswith("@skills-dir") | not) | .id] | unique[]'
+        case herdr
+            printf '%s\n' $json | jq -sr 'if length != 1 or (.[0].result.plugins | type) != "array" then error("Expected one plugin array") else .[0].result.plugins end | [.[].source | select(.kind == "github") | "\(.owner)/\(.repo)"] | unique[]'
+    end
+end
+
 function __u_brewfile_merge --argument-names brewfile
     # Add newly installed entries only; this machine stays leaner than the list.
     # npm globals stay out of the list.
@@ -138,8 +148,13 @@ function u --description "Update global tools, applications and plugins"
     __u_run "TokenHub skills updated" thcli +connect --target $HOME/.agents/skills </dev/null
     __u_run "Claude skill links synced" __u_sync_skills
     if __u_run "Claude marketplaces updated" claude plugin marketplace update
-        for plugin in (claude plugin list --json | jq -r '[.[] | select(.id | endswith("@skills-dir") | not) | .id] | unique[]')
-            __u_run "Claude plugin $plugin updated" claude plugin update $plugin
+        set -l plugins (__u_plugin_list claude)
+        if test $status -eq 0
+            for plugin in $plugins
+                __u_run "Claude plugin $plugin updated" claude plugin update $plugin
+            end
+        else
+            __u_run "Claude plugin list read" false
         end
     end
     __u_run "Codex marketplaces upgraded" codex plugin marketplace upgrade
@@ -173,8 +188,13 @@ function u --description "Update global tools, applications and plugins"
 
     __u_section Herdr
     # Reinstalling a GitHub plugin moves it to the latest commit and keeps its config.
-    for repo in (herdr plugin list --json | jq -r '.result.plugins[].source | select(.kind == "github") | "\(.owner)/\(.repo)"')
-        __u_run "$repo updated" herdr plugin install $repo -y
+    set -l repos (__u_plugin_list herdr)
+    if test $status -eq 0
+        for repo in $repos
+            __u_run "$repo updated" herdr plugin install $repo -y
+        end
+    else
+        __u_run "Herdr plugin list read" false
     end
 
     # ── Yazi ──────────────────────────────────────────────────────────

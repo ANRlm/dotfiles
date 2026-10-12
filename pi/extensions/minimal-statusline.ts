@@ -1,4 +1,5 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { createHash, randomUUID } from "node:crypto";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { stripVTControlCharacters } from "node:util";
@@ -67,7 +68,7 @@ export function updateRateCalibration(
   return previous + weight * (ratio - previous);
 }
 
-export function loadRateCalibration(file: string = RATE_CALIBRATION_FILE): Map<string, RateCalibration> {
+function loadCalibrationFile(file: string): Map<string, RateCalibration> {
   try {
     const raw: unknown = JSON.parse(readFileSync(file, "utf8"));
     const entries = new Map<string, RateCalibration>();
@@ -91,12 +92,34 @@ export function loadRateCalibration(file: string = RATE_CALIBRATION_FILE): Map<s
   }
 }
 
-export function saveRateCalibration(entries: Map<string, RateCalibration>, file: string = RATE_CALIBRATION_FILE): void {
+export function loadRateCalibration(file: string = RATE_CALIBRATION_FILE): Map<string, RateCalibration> {
+  const entries = loadCalibrationFile(file);
   try {
-    mkdirSync(dirname(file), { recursive: true });
-    writeFileSync(file, `${JSON.stringify(Object.fromEntries(entries), null, 2)}\n`);
+    for (const name of readdirSync(`${file}.d`)) {
+      if (!name.endsWith(".json")) continue;
+      for (const [model, calibration] of loadCalibrationFile(join(`${file}.d`, name))) {
+        entries.set(model, calibration);
+      }
+    }
+  } catch {
+    // Older installations only have the single calibration file.
+  }
+  return entries;
+}
+
+export function saveRateCalibration(model: string, calibration: RateCalibration, file: string = RATE_CALIBRATION_FILE): void {
+  const target = join(`${file}.d`, `${createHash("sha256").update(model).digest("hex")}.json`);
+  const temporary = `${target}.${randomUUID()}.tmp`;
+  try {
+    mkdirSync(dirname(target), { recursive: true });
+    // Each model owns a file, so a stale session cannot overwrite other models.
+    // shortcut: same-model writers keep the last estimate; serialize samples if exact aggregation is needed.
+    writeFileSync(temporary, `${JSON.stringify({ [model]: calibration })}\n`, { mode: 0o600 });
+    renameSync(temporary, target);
   } catch {
     // A failed write only means the calibration is relearned in the next session.
+  } finally {
+    try { rmSync(temporary, { force: true }); } catch {}
   }
 }
 
@@ -542,7 +565,6 @@ export default function minimalStatusline(pi: ExtensionAPI) {
       let cachedKey: string | undefined;
       let usage: ContextUsage | undefined;
       let sessionUsage: SessionUsage | undefined;
-      let autoCompactReserve: number | undefined;
       // Render-only: the cache key below already covers every append that can change
       // the numbers, so clearing it here would just force the projection rebuild the
       // activity ticker would otherwise trigger ten times a second.
@@ -571,11 +593,10 @@ export default function minimalStatusline(pi: ExtensionAPI) {
           // Avoid rebuilding the long conversation projection on every editor keystroke
           // or activity tick. Every append moves the leaf, so the key also covers usage
           // entries that arrive outside a message (cache_warm, tool results, compaction),
-          // and the model part re-resolves compaction.modelOverrides on model switches.
+          // and the model part also covers context-window changes.
           if (key !== cachedKey) {
             usage = ctx.getContextUsage();
             sessionUsage = readSessionUsage(manager.getEntries());
-            autoCompactReserve = resolveAutoCompactReserve(pi.getSettings().compaction, model ?? undefined);
             cachedKey = key;
           }
           const contextWindow = usage?.contextWindow ?? model?.contextWindow;
@@ -593,7 +614,7 @@ export default function minimalStatusline(pi: ExtensionAPI) {
             cacheHitPercent: sessionUsage?.cacheHitPercent,
             cacheRead: sessionUsage?.cacheRead,
             cacheWrite: sessionUsage?.cacheWrite,
-            autoCompactReserve,
+            autoCompactReserve: resolveAutoCompactReserve(pi.getSettings().compaction, model ?? undefined),
             activity: currentActivity(now),
             rate: currentRate(now, model),
           }, theme, width);
@@ -714,8 +735,9 @@ export default function minimalStatusline(pi: ExtensionAPI) {
             const text = updateRateCalibration(previous?.text, ratio * textEstimate, textEstimate);
             const tool = updateRateCalibration(previous?.tool, ratio * toolEstimate, toolEstimate);
             if (text !== undefined || tool !== undefined) {
-              rateCalibration.set(key, { text: text ?? previous?.text ?? 1, tool: tool ?? previous?.tool ?? 1 });
-              saveRateCalibration(rateCalibration);
+              const calibration = { text: text ?? previous?.text ?? 1, tool: tool ?? previous?.tool ?? 1 };
+              rateCalibration.set(key, calibration);
+              saveRateCalibration(key, calibration);
             }
           }
         }
