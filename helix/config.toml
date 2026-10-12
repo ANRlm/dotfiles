@@ -1,6 +1,6 @@
 # ── Theme ─────────────────────────────────────────────────────────────
 
-theme = "adwaita-dark"
+theme = "tokyonight"
 
 [editor]
 

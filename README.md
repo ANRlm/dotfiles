@@ -65,7 +65,23 @@ chsh -s (command -v fish)
 ya pkg install
 herdr plugin install qu8n/herdr-automatic-rename
 herdr plugin link ~/dotfiles/herdr/plugins/local/fm-short-label
+herdr plugin link ~/dotfiles/herdr/plugins/local/sidebar-short-title
 ```
+
+两个本地 Herdr 插件都需要 Python 3，并共用 `herdr/plugins/local/metadata_refresh.py`；`herdr-automatic-rename` 还需要 Bash 和 jq。部署时保留整个 `herdr/plugins/local/` 目录结构，不要只复制某个插件子目录。
+
+SSH 远端运行 Herdr server 时，需要在**远端**部署这两个本地插件并执行上述两条 `herdr plugin link`。`fm-short-label` 提供 FM 子工作区的 `$short`，`sidebar-short-title` 提供 Agent 的 `$sidebar_title`，缺少任一个都会缺失相应显示名称。首次 link 或重新启用插件不会运行 startup hook；在每个目标 Herdr 会话的 pane 内执行以下命令，立即补齐元数据：
+
+```sh
+bash ~/.config/herdr/plugins/local/fm-short-label/short-label.sh
+python3 ~/.config/herdr/plugins/local/sidebar-short-title/short_title.py
+```
+
+刷新按插件与 Herdr socket 串行执行，锁文件位于本机 `~/.cache/herdr/plugin-locks/`；退出或报错会释放锁。刷新途中已关闭的 pane/workspace 会被跳过，其他错误仍会报告。
+
+Herdr 的 Agent 面板按项目分组，每项两行：加粗的短任务名与普通字重的 Agent 类型、状态与项目；Spaces 下保留分支信息。`sidebar-short-title` 优先显示原生 pane 名，与分屏边框共用稳定任务别名；未命名时，去掉终端标题中重复的项目上下文。显示长度按中英文宽度限制为 18 列，为同一行的 Agent 类型留出空间；完整终端标题不变。用 `herdr pane rename <pane-id> <短任务名>` 设置别名，`herdr pane rename <pane-id> --clear` 恢复自动标题。短标题随启动、Agent 状态和焦点等事件刷新，也可运行上面的命令立即刷新。
+
+Tab 命名保留 `qu8n/herdr-automatic-rename`：它会保留首次见到的自定义名称，适合 Firstmate 使用的 `firstmate` / `fm-*` 标签。未启用 `kryptamine/herdr-auto-title`，其当前实现会在首次轮询时接管未记录手动锁定的 Tab 和 pane 名称。
 
 tmux 首次启动时会自动安装 TPM 及声明的插件。Fish 的 fzf 键位由 `fzf --fish` 加载。
 

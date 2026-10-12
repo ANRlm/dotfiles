@@ -10,6 +10,7 @@ fish/completions/
 herdr/plugins/github/
 herdr/plugins.json
 herdr/.plugins.lock
+herdr/plugins/local/**/__pycache__/
 
 # ── Runtime State ─────────────────────────────────────────────────────
 

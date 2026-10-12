@@ -3,13 +3,12 @@ onboarding = false
 # ── Theme ─────────────────────────────────────────────────────────────
 
 [theme]
-name = "rose-pine"
+name = "tokyo-night"
 auto_switch = false
 
-# Rose Pine highlight-med; the built-in active row is too close to the sidebar bg.
-# Remove or update this when changing theme.name.
+# Keep separators visible through the terminal palette, without pinning an RGB color.
 [theme.custom]
-active_row_bg = "#403d52"
+surface_dim = "darkgray"
 
 # ── UI ────────────────────────────────────────────────────────────────
 
@@ -17,48 +16,42 @@ active_row_bg = "#403d52"
 # Sidebar
 sidebar_width = 32
 sidebar_min_width = 20
-sidebar_max_width = 34
-sidebar_collapsed_mode = "hidden"
+sidebar_max_width = 38
+sidebar_collapsed_mode = "compact"
 
 # Tabs & window
 prompt_new_tab_name = false
 hide_tab_bar_when_single_tab = false
-window_title = "{workspace} · {tab}"
+window_title = "{hostname} · {workspace} · {tab}"
 
 # Panes
 pane_borders = "auto"
+pane_gaps = true
+pane_outer_borders = true
 show_agent_labels_on_pane_borders = true
 
 # Agents
-agent_panel_sort = "priority"
-status_indicators = "symbols"
+agent_panel_sort = "spaces"
+status_indicators = "dots"
 
 [ui.sidebar.agents]
 row_gap = 0
 rows = [
-  ["state_icon", { token = "workspace", bold = true, rules = [
-    { contains = " · p:", hide = true },
-  ] }, "$short"],
-  # firstmate's tab names just repeat the workspace name; keep real titles only.
-  # Tab first so it lines up regardless of agent name length.
-  [{ token = "tab", rules = [
-    { starts_with = "fm-", hide = true },
-    { equals = "firstmate", hide = true },
-  ] }, "agent"],
+  ["state_icon", { token = "$sidebar_title", fg = "#ffffff", bold = true, dim = false }, { token = "agent", bold = false, dim = false }],
+  ["state_text", { token = "workspace", dim = true, rules = [
+    { starts_with = "└ ", hide = true },
+  ] }, { token = "$short", dim = true }, { token = "machine", dim = true }],
 ]
 
 # Hierarchy by weight only (no hardcoded colors, so any theme works): top-level
 # bold; firstmate's "└ task · p:<token>" children show $short ("└ task", from
-# plugins/local/fm-short-label) so the token doesn't eat the width. Default branches hidden.
+# plugins/local/fm-short-label) so the token doesn't eat the width.
 [ui.sidebar.spaces]
 rows = [
   ["state_icon", { token = "workspace", bold = true, rules = [
-    { contains = " · p:", hide = true },
+    { starts_with = "└ ", hide = true },
   ] }, "$short"],
-  [{ token = "branch", rules = [
-    { equals = "main", hide = true },
-    { equals = "master", hide = true },
-  ] }, "git_status"],
+  ["branch", "git_status"],
 ]
 
 # ── Notifications ─────────────────────────────────────────────────────
