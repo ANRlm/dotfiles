@@ -41,8 +41,7 @@ def compact_title(pane, workspace):
     names = {workspace, label}
     for key in ("cwd", "foreground_cwd"):
         if pane.get(key):
-            directory = Path(pane[key])
-            names.update((directory.name, directory.parent.name))
+            names.add(Path(pane[key]).name)
     for name in sorted(filter(None, names), key=len, reverse=True):
         title = re.sub(r"^" + re.escape(name) + r"(?:\.inbox)?(?:\s+|\s*[:：|·]\s*)",
                        "", title, flags=re.IGNORECASE)

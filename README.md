@@ -68,7 +68,7 @@ herdr plugin link ~/dotfiles/herdr/plugins/local/fm-short-label
 herdr plugin link ~/dotfiles/herdr/plugins/local/sidebar-short-title
 ```
 
-两个本地 Herdr 插件都需要 Python 3，并共用 `herdr/plugins/local/metadata_refresh.py`；`herdr-automatic-rename` 还需要 Bash 和 jq。部署时保留整个 `herdr/plugins/local/` 目录结构，不要只复制某个插件子目录。
+两个本地 Herdr 插件都需要 Python 3，并共用 `herdr/plugins/local/metadata_refresh.py`；`herdr-automatic-rename` 还需要 Bash 和 jq。部署时保留整个 `herdr/plugins/local/` 目录结构，不要只复制某个插件子目录；只同步这些插件目录及共享的 `metadata_refresh.py`，不要复制凭证、Herdr 会话、socket、日志或 `~/.cache/herdr/plugin-locks/` 锁文件等运行态。
 
 SSH 远端运行 Herdr server 时，需要在**远端**部署这两个本地插件并执行上述两条 `herdr plugin link`。`fm-short-label` 提供 FM 子工作区的 `$short`，`sidebar-short-title` 提供 Agent 的 `$sidebar_title`，缺少任一个都会缺失相应显示名称。首次 link 或重新启用插件不会运行 startup hook；在每个目标 Herdr 会话的 pane 内执行以下命令，立即补齐元数据：
 

@@ -22,9 +22,16 @@ def test():
     ]
     for title, workspace, expected in examples:
         actual = compact_title({"terminal_title_stripped": title,
-                                "cwd": "/Users/test/dotfiles/herdr"}, workspace)
+                                "cwd": "/Users/test/dotfiles"}, workspace)
         assert actual == expected, (actual, expected)
         assert columns(actual) <= 18
+
+    for title, cwd in [("Users migration", "/Users/anrlm"),
+                       ("test failures", "/src/proj/test/unit")]:
+        for key in ("cwd", "foreground_cwd"):
+            assert compact_title({"terminal_title_stripped": title, key: cwd}, "proj") == title
+    assert compact_title({"terminal_title_stripped": "unit: flaky parser",
+                          "foreground_cwd": "/src/proj/test/unit"}, "proj") == "flaky parser"
 
     named = {"label": "Herdr配置", "terminal_title_stripped": "old task title"}
     assert compact_title(named, "Herdr配置") == "Herdr配置"
@@ -52,7 +59,7 @@ def test():
         assert run.call_count == 2
         assert run.call_args_list[0].args[0][-2:] == ["--token", "sidebar_title=task"]
         assert run.call_args_list[1].args[0][-2:] == ["--clear-token", "sidebar_title"]
-    print("PASS: stable pane aliases, fallback, context removal, CJK widths, refresh and cleanup")
+    print("PASS: stable pane aliases, fallback, context removal, generic parents kept, CJK widths, refresh and cleanup")
 
 
 if __name__ == "__main__":
