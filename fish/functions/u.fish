@@ -75,6 +75,35 @@ function __u_brewfile_merge --argument-names brewfile
     printf '%s\n' $lines >$brewfile
 end
 
+function __u_sync_skills
+    set -l shared "$HOME/.agents/skills"
+    test -d "$shared"; or return 1
+    set -l profile "$HOME/.claude"
+    if set -q CLAUDE_CONFIG_DIR; and test -n "$CLAUDE_CONFIG_DIR"
+        set profile "$CLAUDE_CONFIG_DIR"
+    end
+    set -l target "$profile/skills"
+    mkdir -p "$target"; or return
+    # Follow local skill links and discover scoped packages such as @tencent-adm.
+    set -l manifests (find -L "$shared" -type f -name SKILL.md -print); or return
+    set -l failed 0
+    for manifest in $manifests
+        set -l source (path dirname "$manifest")
+        set -l link "$target/"(path basename "$source")
+        if test -e "$link"; or test -L "$link"
+            set -l resolved (path resolve "$link")
+            set -l expected (path resolve "$source")
+            if not test -L "$link"; or test "$resolved" != "$expected"
+                echo "  Skill link conflict: $link (expected $source)" >&2
+                set failed 1
+            end
+        else
+            ln -s "$source" "$link"; or set failed 1
+        end
+    end
+    return $failed
+end
+
 function u --description "Update global tools, applications and plugins"
     if set -q argv[1]
         echo "Usage: u" >&2
@@ -103,13 +132,13 @@ function u --description "Update global tools, applications and plugins"
     # ── Agent skills & plugins ────────────────────────────────────────
 
     # Shared skills live in ~/.agents/skills: Codex and Pi read it directly,
-    # Claude Code reads the symlinks `npx skills` keeps in its profile.
+    # Claude Code reads per-skill symlinks in CLAUDE_CONFIG_DIR.
     __u_section "Agent skills & plugins"
     __u_run "Shared skills updated" npx -y skills update -g -y
-    # shortcut: thcli links no new skill into Claude's profile; link it by hand if TokenHub adds one.
     __u_run "TokenHub skills updated" thcli +connect --target $HOME/.agents/skills </dev/null
+    __u_run "Claude skill links synced" __u_sync_skills
     if __u_run "Claude marketplaces updated" claude plugin marketplace update
-        for plugin in (claude plugin list --json | jq -r '.[] | select(.id | endswith("@skills-dir") | not) | .id')
+        for plugin in (claude plugin list --json | jq -r '[.[] | select(.id | endswith("@skills-dir") | not) | .id] | unique[]')
             __u_run "Claude plugin $plugin updated" claude plugin update $plugin
         end
     end

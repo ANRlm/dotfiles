@@ -14,7 +14,7 @@
 ## 前置条件
 
 1. 已按 [README](README.md) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。Brewfile 已包含 `claude-code@latest`、`codex`、`pi-coding-agent`、`node`、`rtk`、`aliyun-cli`。若缺 `tccli`，补装 `brew install tccli`。
-2. `jq` 可用（`u` 更新 Claude 插件时需要）。
+2. `jq` 可用（`u` 更新 Claude 插件时需要），当前 Shell 已加载 `fish/config.fish` 中的 `CLAUDE_CONFIG_DIR`。
 
 ## Skill
 
@@ -26,18 +26,27 @@
 | lark skills | 飞书官方 | `npx skills add https://open.feishu.cn/lark-cli/skills/regular --skill '*' -g -a claude-code -a codex -a pi -y` | 依赖 lark-cli，见下文 |
 | 阿里云 CLI / AgentLoop | GitHub `aliyun/alibabacloud-aiops-skills` | `npx skills add aliyun/alibabacloud-aiops-skills --skill alibabacloud-cli-guidance --skill alibabacloud-agentloop-management --full-depth -g -a claude-code -a codex -a pi -y` | 依赖 aliyun-cli |
 | herdr | GitHub `herdrdev/herdr` | `npx skills add herdrdev/herdr --skill herdr -g -a claude-code -a codex -a pi -y` | |
-| TokenHub（thcli-*，12 个） | thcli 自带 | `thcli +connect --target ~/.agents/skills` | 不经过 `npx skills`；不会给 Claude 建链接，需手动补，见下文 |
+| TokenHub（thcli-*，12 个） | thcli 自带 | `thcli +connect --target ~/.agents/skills` | 不经过 `npx skills`；由 `u` 补齐 Claude 链接，见下文 |
 | 腾讯云 API（tcapi） | ClawHub `@tencent-adm/tencentcloud-api-skill` | 从 [ClawHub](https://clawhub.ai/user/tencent-adm) 安装到 `~/.agents/skills/@tencent-adm/tencentcloud-api-skill` | 官方只在 ClawHub 发布；GitHub 上的同名仓库是非官方翻译版，不要用。依赖 tccli |
-| cua-driver | Cua Driver 自带 | 安装 Cua Driver 后自动生成于 `~/.cua-driver/skills/cua-driver` | **只给 Claude Code**，见下文 |
+| cua-driver | Cua Driver 独立 skill 包 | 实体位于 `~/.cua-driver/skills/cua-driver`；二进制更新不会自动刷新 skill 包 | **只给 Claude Code**，见下文；不要直接运行会给其他 Agent 建链接的 `cua-driver skills install/update` |
 
-不经过 `npx skills` 的 skill，需要手动给 Claude 建链接。路径相对 `$CLAUDE_CONFIG_DIR/skills`：
+共享目录中的 skill（包括 thcli、tcapi、no-mistakes 和本地 skill 链接）由 `u` 自动补齐 Claude 链接。只同步链接、不更新其他工具时，在 Fish 中运行：
 
-```text
-thcli-<名称>          -> ../../../.agents/skills/thcli-<名称>               （12 个 thcli skill 各一个）
-tencentcloud-api-skill -> ~/.agents/skills/@tencent-adm/tencentcloud-api-skill
-cua-driver            -> ~/.cua-driver/skills/cua-driver
-no-mistakes           -> ../../../.agents/skills/no-mistakes                 （仅在装了 no-mistakes 时）
+```fish
+source ~/dotfiles/fish/functions/u.fish
+__u_sync_skills
 ```
+
+同步会递归发现 `SKILL.md`，支持 `@tencent-adm/tencentcloud-api-skill` 等作用域目录；保留指向同一实体的现有链接。遇到同名目录、指向不同实体的链接或坏链接时，报告冲突并返回失败，由本人确认后处理，不覆盖用户文件。Codex 和 Pi 的 skill 目录保持不变。
+
+`cua-driver` 不属于共享目录，按本机的 Claude-only 约定单独链接：
+
+```fish
+mkdir -p "$CLAUDE_CONFIG_DIR/skills"
+ln -s ~/.cua-driver/skills/cua-driver "$CLAUDE_CONFIG_DIR/skills/cua-driver"
+```
+
+若链接已存在，先核验目标，避免重复创建。
 
 ## 插件与 MCP
 
@@ -77,8 +86,9 @@ no-mistakes           -> ../../../.agents/skills/no-mistakes                 （
 
 运行 `u`。它的 "Agent skills & plugins" 一节依次执行：
 - `npx skills update -g -y`
-- `thcli +connect`
-- Claude 插件市场更新和各插件更新
+- `thcli +connect --target ~/.agents/skills`（固定写入共享目录）
+- 同步共享 skill 到 `$CLAUDE_CONFIG_DIR/skills`，补齐新 skill 的链接
+- Claude 插件市场更新和各插件更新（同一插件的多个 scope 去重）
 - `codex plugin marketplace upgrade`
 - `pi update --extensions`（Pi 扩展包）
 - `cua-driver update --apply`
@@ -89,7 +99,9 @@ no-mistakes           -> ../../../.agents/skills/no-mistakes                 （
 不在 `u` 里的几项：
 - **Firstmate**：在 Firstmate 会话里执行 `/updatefirstmate`，它会同时更新所有二副。
 - **no-mistakes 本体**：用 `no-mistakes update`，它会重启检查服务，需在空闲时手动执行。
-- **tcapi skill**：没有 ClawHub 命令行，需要更新时重新从 ClawHub 安装。
+- **tcapi skill**：需要更新时重新从官方 ClawHub 来源安装；不能把 `npx skills update` 成功视为它已更新。
+- **Cua Driver skill 包**：独立于二进制更新；刷新时保留 Claude-only 链接约定。
+- 上游删除的 skill：`npx skills update -g -y` 非交互运行会保留本机副本并告警，确认不再需要后再删除。
 
 ## 部署后检查
 
@@ -98,4 +110,13 @@ no-mistakes           -> ../../../.agents/skills/no-mistakes                 （
 - `~/.codex/skills` 和 `~/.pi/agent/skills` 中没有指向 `~/.agents/skills` 的链接（Codex 自带的 `.system/` 除外）。
 - `claude plugin list` 只有 ponytail 和 context7，没有 mattpocock；`~/.codex/config.toml` 中没有 `mattpocock` 市场或插件。
 - `claude mcp list` 中 `cua-computer-use` 显示已连接。
-- 重启各 Agent 会话后，确认能看到新 skill。
+- `lark-cli --version`、`thcli --version`、`tccli --version`、`rtk --version` 均能运行；安装 npm 包成功不等于其二进制已可用。
+- `pi list` 确认 Pi 扩展包；Pi 中 `/reload` 后检查 skill 命令。带 `disable-model-invocation: true` 的 skill 仅手动调用，不出现在模型的自动选择清单中，这不代表未加载。
+- 重启 Claude Code、Codex 会话，确认新 skill 和插件生效；钩子信任、登录和系统权限仍由本人确认。
+
+链接同步的离线回归测试（只操作临时目录，不触发工具更新）：
+
+```sh
+fish --no-config --no-execute fish/functions/u.fish
+python3 fish/tests/sync-skills.test.py
+```
