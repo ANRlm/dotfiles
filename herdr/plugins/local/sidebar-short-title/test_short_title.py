@@ -62,8 +62,13 @@ def test():
          "terminal_title_stripped": "task", "tokens": {"sidebar_title": "task"}},
         {"pane_id": "w1:p5", "workspace_id": "w1", "tab_id": "w1:t3", "agent": "claude",
          "terminal_title_stripped": "task", "tokens": {"sidebar_title": "task"}},
+        {"pane_id": "w1:p6", "workspace_id": "w1", "tab_id": "w1:t4", "agent": "claude",
+         "terminal_title_stripped": "first", "tokens": {"sidebar_title": "first"}},
+        {"pane_id": "w1:p7", "workspace_id": "w1", "tab_id": "w1:t4", "agent": "codex",
+         "terminal_title_stripped": "second", "tokens": {"sidebar_title": "second"}},
     ]
-    tabs = [{"tab_id": "w1:t2", "label": "renamed"}, {"tab_id": "w1:t3", "label": "auto"}]
+    tabs = [{"tab_id": "w1:t2", "label": "renamed"}, {"tab_id": "w1:t3", "label": "auto"},
+            {"tab_id": "w1:t4", "label": "shared"}]
     response = json.dumps({"result": {"snapshot": {
         "workspaces": [{"workspace_id": "w1", "label": "project"}], "panes": panes, "tabs": tabs}}})
     with tempfile.TemporaryDirectory() as tmp, \
@@ -75,6 +80,7 @@ def test():
         state.mkdir()
         (state / "state.json").write_text(json.dumps({
             "w1:t2": {"auto": "", "enabled": False}, "w1:t3": {"auto": "auto", "enabled": True},
+            "w1:t4": {"auto": "", "enabled": False},
             "ws:w1": {"auto": "", "enabled": False}}))
         main()
         assert run.call_count == 3
@@ -83,7 +89,7 @@ def test():
         assert run.call_args_list[2].args[0][-2:] == ["--token", "sidebar_title=renamed"]
         (state / "state.json").write_text("not json")
         assert manual_tab_ids() == set()
-    print("PASS: stable pane aliases, fallback, context removal, generic parents kept, CJK widths, manual tab names, refresh and cleanup")
+    print("PASS: stable pane aliases, fallback, context removal, generic parents kept, CJK widths, manual tab names unless shared by agents, refresh and cleanup")
 
 
 if __name__ == "__main__":

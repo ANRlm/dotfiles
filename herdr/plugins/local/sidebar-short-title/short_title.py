@@ -77,7 +77,10 @@ def main():
     with session_snapshot(herdr, source) as snapshot:
         labels = {w["workspace_id"]: w["label"] for w in snapshot["workspaces"]}
         manual = manual_tab_ids()
-        tabs = {t["tab_id"]: t["label"] for t in snapshot.get("tabs", []) if t["tab_id"] in manual}
+        agent_tabs = [p.get("tab_id") for p in snapshot["panes"] if p.get("agent")]
+        # A tab name shared by several agents cannot tell them apart.
+        tabs = {t["tab_id"]: t["label"] for t in snapshot.get("tabs", [])
+                if t["tab_id"] in manual and agent_tabs.count(t["tab_id"]) == 1}
         for pane in snapshot["panes"]:
             title = compact_title(pane, labels.get(pane["workspace_id"], ""),
                                   tabs.get(pane.get("tab_id"), "")) if pane.get("agent") else ""
