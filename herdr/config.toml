@@ -4,7 +4,6 @@ onboarding = false
 
 [theme]
 name = "rose-pine"
-auto_switch = false
 
 # Every fixed color in this file comes from the Rose Pine palette (Herdr's
 # rose-pine slots in src/app/state.rs, or Rose Pine's own names). When switching
@@ -34,25 +33,15 @@ version_check = false
 sidebar_width = 32
 sidebar_min_width = 20
 sidebar_max_width = 38
-sidebar_collapsed_mode = "compact"
 
 # Tabs & window
 prompt_new_tab_name = false
-hide_tab_bar_when_single_tab = false
 window_title = "{hostname} · {workspace} · {tab}"
 
 # Panes
-pane_borders = "auto"
-pane_gaps = true
-pane_outer_borders = true
 show_agent_labels_on_pane_borders = true
 
-# Agents
-agent_panel_sort = "spaces"
-status_indicators = "dots"
-
 [ui.sidebar.agents]
-row_gap = 0
 # Three rows: task title; machine and project; agent (the state icon shows status).
 # Herdr 0.9.3 rules cannot rewrite text; separators remain the native " · ".
 # Harness, machine, and project names are bold (no dim).
@@ -102,8 +91,7 @@ split_vertical = "prefix+="
 previous_agent = "prefix+up"
 next_agent = "prefix+down"
 
-# Tabs & workspaces
-switch_tab = "prefix+1..9"
+# Workspaces
 switch_workspace = "prefix+shift+1..9"
 
 [keys.indexed]
