@@ -21,6 +21,7 @@ herdr/*.sock
 herdr/*.sock.agent
 herdr/session.json
 herdr/session-snapshots/
+herdr/sessions/
 herdr/release-notes.json
 
 # ── Pi & cmux (only reviewed config files) ─────────────────────────────
