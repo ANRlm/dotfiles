@@ -8,7 +8,7 @@
 
 - **共享目录**：所有 skill 实体只放在 `~/.agents/skills`。
 - **Codex 和 Pi** 原生读取共享目录。`~/.codex/skills` 和 `~/.pi/agent/skills` 保持原样，不建指向共享目录的链接，否则同一个 skill 会加载两次。
-- **Claude Code** 只读取 `$CLAUDE_CONFIG_DIR/skills`，需要给每个 skill 建一个符号链接。`fish/config.fish` 从 `~/.config/claudecode-cchost/default-profile` 读取 profile 名（本机为 `default`），把 `CLAUDE_CONFIG_DIR` 设为 `~/.claude-profiles/<profile>`；该文件缺失或内容为 `legacy` 时不设置，Claude 使用 `~/.claude`。
+- **Claude Code** 只读取 `$CLAUDE_CONFIG_DIR/skills`，需要给每个 skill 建一个符号链接。`CLAUDE_CONFIG_DIR` 由 `fish/config.fish` 设置，本机为 `~/.claude-profiles/default`；未设置时 Claude 使用 `~/.claude`。
 - **安装方式**：skill 一律用 `npx skills add <来源> -g -a claude-code -a codex -a pi -y` 安装。它把内容放进共享目录，给 Claude 建链接，并写入 `~/.agents/.skill-lock.json`，之后由 `u` 统一更新。插件市场只用于带钩子的 ponytail 和 Claude 官方插件 context7。
 - **cua-driver** 只给 Claude Code 使用，skill 实体放在共享目录之外。
 
