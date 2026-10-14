@@ -5,31 +5,9 @@ import os
 from pathlib import Path
 import re
 import sys
-import unicodedata
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from metadata_refresh import report_metadata, session_snapshot
-
-
-MAX_COLUMNS = 18
-
-
-def columns(text):
-    # shortcut: emoji sequences are counted conservatively; use grapheme widths if needed.
-    return sum(0 if unicodedata.category(c) in {"Mn", "Me", "Cf"}
-               else 2 if unicodedata.east_asian_width(c) in {"W", "F"} else 1
-               for c in text)
-
-
-def fit_title(title):
-    if columns(title) <= MAX_COLUMNS:
-        return title
-    result = ""
-    for character in title:
-        if columns(result + character) > MAX_COLUMNS - 1:
-            break
-        result += character
-    return result.rstrip() + "…"
 
 
 def manual_tab_ids():
@@ -48,12 +26,13 @@ def manual_tab_ids():
 
 
 def compact_title(pane, workspace, tab_label=""):
+    # Herdr truncates by display width to the sidebar's current width.
     # A native pane name is an explicit task alias, shared with the pane border.
     if pane.get("label"):
-        return fit_title(" ".join(pane["label"].split()))
+        return " ".join(pane["label"].split())
     # A manual tab name is the next alias.
     if tab_label.strip():
-        return fit_title(" ".join(tab_label.split()))
+        return " ".join(tab_label.split())
     title = " ".join((pane.get("terminal_title_stripped") or "").split())
     # pi titles are "π - <session> - <cwd>" or "π - <cwd>".
     title = re.sub(r"^π - ", "", title)
@@ -68,7 +47,7 @@ def compact_title(pane, workspace, tab_label=""):
                        "", title, flags=re.IGNORECASE)
         title = re.sub(r"\s+[|·-]\s+" + re.escape(name) + r"$", "", title,
                        flags=re.IGNORECASE)
-    return fit_title(title)
+    return title
 
 
 def main():

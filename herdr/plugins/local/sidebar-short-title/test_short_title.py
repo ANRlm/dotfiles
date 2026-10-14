@@ -5,30 +5,27 @@ from pathlib import Path
 import tempfile
 from unittest.mock import patch
 
-from short_title import columns, compact_title, main, manual_tab_ids
+from short_title import compact_title, main, manual_tab_ids
 
 
 def test():
     examples = [
         ("icsuper-mate.inbox 指令消息处理", "2ndmate-icsuper-mate", "指令消息处理"),
         ("lighthouser-mate 收件箱消息处理", "2ndmate-lighthouser-mate", "收件箱消息处理"),
-        ("读取配置并列出优化建议 | dotfiles", "firstmate", "读取配置并列出优…"),
+        ("读取配置并列出优化建议 | dotfiles", "firstmate", "读取配置并列出优化建议"),
         ("API gateway timeout", "api", "gateway timeout"),
         ("APIary work", "api", "APIary work"),
         ("π - fix-auth - dotfiles", "firstmate", "fix-auth"),
         ("π - dotfiles", "firstmate", "dotfiles"),
         ("deploy-dotfiles", "firstmate", "deploy-dotfiles"),
         ("", "firstmate", ""),
-        ("中文" * 20, "firstmate", "中文中文中文中文…"),
-        ("a" * 18, "firstmate", "a" * 18),
-        ("a" * 19, "firstmate", "a" * 17 + "…"),
-        ("e\u0301" * 18, "firstmate", "e\u0301" * 18),
+        ("中文" * 20, "firstmate", "中文" * 20),
+        ("fm-lighthouser-mate", "firstmate", "fm-lighthouser-mate"),
     ]
     for title, workspace, expected in examples:
         actual = compact_title({"terminal_title_stripped": title,
                                 "cwd": "/Users/test/dotfiles"}, workspace)
         assert actual == expected, (actual, expected)
-        assert columns(actual) <= 18
 
     for title, cwd in [("Users migration", "/Users/anrlm"),
                        ("test failures", "/src/proj/test/unit")]:
@@ -42,9 +39,9 @@ def test():
     named["terminal_title_stripped"] = "a completely different title"
     assert compact_title(named, "Herdr配置") == "Herdr配置"
     named["label"] = ""
-    assert compact_title(named, "project") == "a completely diff…"
-    named["label"] = "中文" * 20
-    assert compact_title(named, "project") == "中文中文中文中文…"
+    assert compact_title(named, "project") == "a completely different title"
+    named["label"] = " 中文  任务 "
+    assert compact_title(named, "project") == "中文 任务"
     named["label"] = "pane alias"
     assert compact_title(named, "project", "multica路由") == "pane alias"
     named["label"] = None
@@ -89,7 +86,7 @@ def test():
         assert run.call_args_list[2].args[0][-2:] == ["--token", "sidebar_title=renamed"]
         (state / "state.json").write_text("not json")
         assert manual_tab_ids() == set()
-    print("PASS: stable pane aliases, fallback, context removal, generic parents kept, CJK widths, manual tab names unless shared by agents, refresh and cleanup")
+    print("PASS: stable pane aliases, fallback, context removal, generic parents kept, untruncated titles, manual tab names unless shared by agents, refresh and cleanup")
 
 
 if __name__ == "__main__":
