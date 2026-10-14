@@ -34,3 +34,8 @@ command = ["python3", "worktree_label.py"]
 [[events]]
 on = "workspace.focused"
 command = ["python3", "worktree_label.py"]
+
+# Whether the branch is shown depends on the workspace name.
+[[events]]
+on = "workspace.renamed"
+command = ["python3", "worktree_label.py"]

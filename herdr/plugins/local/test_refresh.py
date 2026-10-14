@@ -62,7 +62,7 @@ def check(command, token, gone_id, failure):
         mock.write_text(MOCK)
         mock.chmod(0o755)
         env = dict(os.environ, HERDR_BIN_PATH=str(mock), HERDR_SOCKET_PATH=str(root / "session.sock"),
-                   HOME=tmp, REFRESH_TEST_DIR=tmp, PYTHONDONTWRITEBYTECODE="1")
+                   HOME=tmp, XDG_STATE_HOME=tmp, REFRESH_TEST_DIR=tmp, PYTHONDONTWRITEBYTECODE="1")
         old = subprocess.Popen(command, env=dict(env, REFRESH_TEST_RUN="old"), stderr=subprocess.PIPE)
         new = None
         try:
@@ -106,7 +106,7 @@ def check_session_isolation(command):
         mock = root / "herdr"
         mock.write_text(MOCK)
         mock.chmod(0o755)
-        env = dict(os.environ, HERDR_BIN_PATH=str(mock), HOME=tmp, REFRESH_TEST_DIR=tmp,
+        env = dict(os.environ, HERDR_BIN_PATH=str(mock), HOME=tmp, XDG_STATE_HOME=tmp, REFRESH_TEST_DIR=tmp,
                    PYTHONDONTWRITEBYTECODE="1")
         old = subprocess.Popen(command, env=dict(env, REFRESH_TEST_RUN="old",
                                HERDR_SOCKET_PATH=str(root / "first.sock")), stderr=subprocess.PIPE)

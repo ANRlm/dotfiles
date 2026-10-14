@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+import time
 
 
 PLUGIN = Path(__file__).resolve().parent
@@ -18,6 +19,9 @@ kind, action, *args = sys.argv[1:]
 if [kind, action] == ["api", "snapshot"]:
     print(json.dumps({"result": {"snapshot": state}}))
 elif [kind, action] == ["workspace", "report-metadata"]:
+    if args[0] == os.environ.get("WORKTREE_TEST_FAIL"):
+        print(json.dumps({"error": {"code": "permission_denied"}}), file=sys.stderr)
+        sys.exit(1)
     with open(os.environ["WORKTREE_TEST_LOG"], "a") as log:
         log.write(args[0] + "\\n")
     assert args[1:3] == ["--source", "worktree-label"]
@@ -35,6 +39,8 @@ else:
 
 
 def main():
+    # Keep the user's global and system git config (hooks, signing) out of the test repos.
+    os.environ.update(GIT_CONFIG_GLOBAL="/dev/null", GIT_CONFIG_NOSYSTEM="1")
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(os.path.realpath(tmp))
         repo, task, detached, plain = tmp / "erp-admin", tmp / "wt/1/task", tmp / "wt/2/home", tmp / "plain"
@@ -113,14 +119,35 @@ def main():
         state = run()
         assert tokens("w2") == (wt, "*1")
 
-        # --watch stops at the first failed refresh instead of outliving the server.
+        # One failing workspace still lets the rest update, and the run reports the failure.
+        for workspace in state["workspaces"]:
+            workspace["tokens"] = {}
+        path.write_text(json.dumps(state))
+        failed = subprocess.run(["python3", str(PLUGIN / "worktree_label.py")], capture_output=True,
+                                env=dict(env, WORKTREE_TEST_FAIL="w1"), text=True)
+        assert failed.returncode == 1 and "permission_denied" in failed.stderr
+        state = json.loads(path.read_text())
+        assert tokens("w1") == (None, None) and tokens("w6") == (wt + " · fm/task", "*1")
+
+        # --watch survives refresh errors but exits once the process that started it is gone.
         path.write_text("not json")
-        watch = subprocess.run(["python3", str(PLUGIN / "worktree_label.py"), "--watch"],
-                               env=env, capture_output=True, timeout=10)
-        assert watch.returncode != 0
+        starter = subprocess.run(["sh", "-c", 'python3 "$0" --watch >/dev/null 2>&1 & echo $!; sleep 1',
+                                  str(PLUGIN / "worktree_label.py")], env=env, capture_output=True,
+                                 text=True, check=True)
+        pid = int(starter.stdout)
+        deadline = time.monotonic() + 10
+        while time.monotonic() < deadline:
+            try:
+                os.kill(pid, 0)
+            except ProcessLookupError:
+                break
+            time.sleep(.2)
+        else:
+            os.kill(pid, 9)
+            raise AssertionError("--watch outlived its parent")
     print("PASS: worktree child, task-named branch, ahead/behind, uncommitted count, no upstream, "
           "shell-covered branch, detached dirty/clean, main clone, non-git, agent priority, "
-          "idempotence, watch exits on failure")
+          "idempotence, per-workspace failure, watch exits with its parent")
 
 if __name__ == "__main__":
     main()

@@ -11,7 +11,7 @@ Apple Silicon macOS 的个人配置，用符号链接部署到各应用的配置
 | [ghostty/](ghostty/) | 字体、主题、窗口和剪贴板 |
 | [git/](git/) | 用户信息、Delta、同步策略及全局忽略规则 |
 | [helix/](helix/) | 主题、编辑行为、诊断和快捷键 |
-| [herdr/](herdr/) | 界面、侧栏布局、通知、快捷键、automatic-rename 插件配置及两个本地插件 |
+| [herdr/](herdr/) | 界面、侧栏布局、通知、快捷键、automatic-rename 插件配置及三个本地插件 |
 | [lazygit/](lazygit/) | Delta 差异渲染配置 |
 | [pi/](pi/) | 自定义状态栏扩展 |
 | [starship/](starship/) | 提示符及各模块的符号 |
@@ -154,7 +154,8 @@ Spaces 面板每项两行：工作区名（Firstmate 子工作区同样显示 `$
 - `$worktree`：Nerd Font 分支图标加仓库名，如 ` erp-admin`。shell 不在该 worktree 里时附上 worktree 的实际分支；分支名末段已出现在工作区名中时省略，如 Firstmate 的 `fm/<task>`。
 - `$worktree_status`：与 upstream 相比非零的 `↑N ↓N`（shell 不在 worktree 内、且不是 detached HEAD 时），以及未提交文件数 `*N`（`git status --porcelain` 的行数）。`*N` 表示改了未提交，`↑N` 表示提交了未推送。
 - shell 本身就在一个干净的 detached worktree 里（Secondmate 的 home）时什么都不显示；Firstmate 子任务在建分支前或 scout 任务仍显示仓库名。
-- 除事件外，startup hook 以 `--watch` 常驻，每 20 秒刷新一次，第一次刷新失败（通常是 server 退出）即结束。首次 link 后要等下次 server 启动才开始轮询。
+- 除事件外，startup hook 以 `--watch` 常驻，每 20 秒刷新一次；单次失败只记日志，启动它的 server 进程退出（停止、崩溃或 handoff）后随之退出。首次 link 后要等下次 server 启动才开始轮询。
+- 所有 git 和 herdr 调用都有 10 秒超时，单个工作区出错不影响其他工作区；卡住的命令不会一直占着锁，挤占 Herdr 所有插件共用的 32 个并发名额。
 
 #### 插件部署与刷新
 

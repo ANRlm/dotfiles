@@ -5,11 +5,18 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+import traceback
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from metadata_refresh import report_metadata, session_snapshot
+from metadata_refresh import TIMEOUT, report_metadata, session_snapshot
 
 ICON = "\uf418"  # Nerd Font nf-oct-git_branch; the sidebar fonts are Nerd Fonts.
+
+
+def git(directory, *args):
+    # Raises TimeoutExpired on a hung checkout (network drive, slow hook); the caller skips it.
+    return subprocess.run(["git", "--no-optional-locks", "-C", directory, *args], capture_output=True,
+                          text=True, errors="replace", timeout=TIMEOUT)
 
 
 def worktree_tokens(pane, workspace_label=""):
@@ -19,12 +26,13 @@ def worktree_tokens(pane, workspace_label=""):
     directory = pane.get("foreground_cwd") or pane.get("cwd")
     if not directory:
         return "", ""
-    result = subprocess.run(["git", "-C", directory, "rev-parse", "--path-format=absolute",
-                             "--git-dir", "--git-common-dir", "--show-toplevel",
-                             "--abbrev-ref", "HEAD"], capture_output=True, text=True)
-    if result.returncode:
+    result = git(directory, "rev-parse", "--path-format=absolute", "--git-dir", "--git-common-dir",
+                 "--show-toplevel", "--abbrev-ref", "HEAD")
+    lines = result.stdout.splitlines()
+    # A newline inside a path would shift the fields; show nothing rather than garbage.
+    if result.returncode or len(lines) != 4:
         return "", ""
-    git_dir, common, top, branch = result.stdout.splitlines()
+    git_dir, common, top, branch = lines
     if git_dir == common:
         return "", ""
     name = Path(common).name
@@ -36,16 +44,14 @@ def worktree_tokens(pane, workspace_label=""):
         # Firstmate's fm/<task> branch repeats the task name already in the title.
         if branch.rsplit("/", 1)[-1] not in workspace_label:
             label += " · " + branch
-        counts = subprocess.run(["git", "-C", directory, "rev-list", "--left-right", "--count",
-                                 "@{upstream}...HEAD"], capture_output=True, text=True)
-        if counts.returncode == 0:
+        counts = git(directory, "rev-list", "--left-right", "--count", "@{upstream}...HEAD")
+        if counts.returncode == 0 and len(counts.stdout.split()) == 2:
             behind, ahead = counts.stdout.split()
             status += ["↑" + ahead] if ahead != "0" else []
             status += ["↓" + behind] if behind != "0" else []
     # Herdr has no uncommitted-changes token, so this applies to every worktree.
-    # Never take index.lock in a worktree where the agent may be committing.
-    changes = subprocess.run(["git", "--no-optional-locks", "-C", directory, "status", "--porcelain"],
-                             capture_output=True, text=True)
+    # --no-optional-locks keeps git from taking index.lock while the agent commits.
+    changes = git(directory, "status", "--porcelain")
     changed = len(changes.stdout.splitlines()) if changes.returncode == 0 else 0
     status += ["*" + str(changed)] if changed else []
     # A clean detached checkout the shell itself lives in (a secondmate home) says nothing;
@@ -56,30 +62,45 @@ def worktree_tokens(pane, workspace_label=""):
 
 
 def refresh(herdr):
+    """Refresh every workspace; return False if any of them failed."""
     source = "worktree-label"
+    ok = True
     with session_snapshot(herdr, source) as snapshot:
         for workspace in snapshot["workspaces"]:
             target = workspace["workspace_id"]
-            panes = [p for p in snapshot["panes"] if p["workspace_id"] == target]
-            panes.sort(key=lambda p: not p.get("agent"))
-            values = worktree_tokens(panes[0], workspace.get("label", "")) if panes else ("", "")
-            tokens = workspace.get("tokens") or {}
-            for token, value in zip(("worktree", "worktree_status"), values):
-                if tokens.get(token, "") != value and not report_metadata(
-                        herdr, "workspace", target, source, token, value):
-                    break
+            # One broken workspace must not stop the others from updating.
+            try:
+                panes = [p for p in snapshot["panes"] if p["workspace_id"] == target]
+                panes.sort(key=lambda p: not p.get("agent"))
+                values = worktree_tokens(panes[0], workspace.get("label", "")) if panes else ("", "")
+                tokens = workspace.get("tokens") or {}
+                for token, value in zip(("worktree", "worktree_status"), values):
+                    if tokens.get(token, "") != value and not report_metadata(
+                            herdr, "workspace", target, source, token, value):
+                        break
+            except Exception:
+                ok = False
+                sys.stderr.write("workspace " + target + ":\n" + traceback.format_exc())
+    return ok
 
 
 def main():
     herdr = os.environ.get("HERDR_BIN_PATH", "herdr")
     if sys.argv[1:] != ["--watch"]:
-        return refresh(herdr)
+        sys.exit(0 if refresh(herdr) else 1)
     # Agents can work for long stretches without a Herdr event, so poll as well.
-    # The first failed refresh (normally the server going away) ends the loop,
-    # so no orphan survives the server.
-    while True:
-        refresh(herdr)
-        time.sleep(20)
+    # Herdr does not reap plugin children, and a restarted server reuses the socket, so
+    # tie the loop to the server that started it: when that parent exits, so does the loop.
+    parent = os.getppid()
+    while parent != 1:  # Already orphaned: the server is gone.
+        try:
+            refresh(herdr)
+        except Exception:
+            traceback.print_exc()
+        for _ in range(20):
+            if os.getppid() != parent:
+                return
+            time.sleep(1)
 
 
 if __name__ == "__main__":
