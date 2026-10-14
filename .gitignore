@@ -8,6 +8,7 @@ yazi/plugins/
 yazi/flavors/
 fish/completions/
 herdr/plugins/github/
+herdr/plugins/.locks/
 herdr/plugins.json
 herdr/.plugins.lock
 herdr/plugins/local/**/__pycache__/
