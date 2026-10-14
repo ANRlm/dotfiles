@@ -3,12 +3,27 @@ onboarding = false
 # ── Theme ─────────────────────────────────────────────────────────────
 
 [theme]
-name = "tokyo-night"
+name = "rose-pine"
 auto_switch = false
 
-# Keep separators visible through the terminal palette, without pinning an RGB color.
+# Every fixed color in this file comes from the Rose Pine palette (Herdr's
+# rose-pine slots in src/app/state.rs, or Rose Pine's own names). When switching
+# theme, replace these values:
+#   text           #e0def4   task titles
+#   subtext0       #c8c5dc   Firstmate $short, matching unfocused workspace names
+#   overlay1       #908caa   agent names (Rose Pine "subtle")
+#   teal           #9ccfd8   remote machine names (Rose Pine "foam"; blue/pine is too dark)
+#   highlight_med  #403d52   separators (surface_dim)
+
+# rose-pine's surface_dim (#26233a) barely differs from the panel background.
 [theme.custom]
-surface_dim = "darkgray"
+surface_dim = "#403d52"
+
+# ── Updates ───────────────────────────────────────────────────────────
+
+# Homebrew handles upgrades; the in-app check keeps failing to fetch.
+[update]
+version_check = false
 
 # ── UI ────────────────────────────────────────────────────────────────
 
@@ -36,27 +51,32 @@ status_indicators = "dots"
 
 [ui.sidebar.agents]
 row_gap = 0
-# Three rows: task title; status and agent; machine and project.
+# Three rows: task title; machine and project; agent (the state icon shows status).
 # Herdr 0.9.3 rules cannot rewrite text; separators remain the native " · ".
-# Harness, machine, and project names are bold and dim; colors follow the theme.
-# Native token foregrounds can differ; do not override them with fixed RGB.
+# Harness, machine, and project names are bold (no dim).
+# "Local" is hidden: fewer native " · " separators, and remote hosts stand out.
+# Machine, agent, and custom tokens default to overlay0, shared with headers and
+# borders, so they take palette colors listed under [theme]. An fg also drops
+# Herdr's focused-row variant, so workspace keeps its native text/subtext0.
 rows = [
-  ["state_icon", { token = "$sidebar_title", fg = "#ffffff", bold = true, dim = false }],
-  ["state_text", { token = "agent", bold = true, dim = true }],
-  [{ token = "machine", bold = true, dim = true }, { token = "workspace", bold = true, dim = true, rules = [
+  ["state_icon", { token = "$sidebar_title", fg = "#e0def4", bold = true }],
+  [{ token = "machine", fg = "#9ccfd8", bold = true, rules = [
+    { equals = "Local", hide = true },
+  ] }, { token = "workspace", bold = true, rules = [
     { starts_with = "└ ", hide = true },
-  ] }, { token = "$short", bold = true, dim = true }],
+  ] }, { token = "$short", fg = "#c8c5dc", bold = true }],
+  [{ token = "agent", fg = "#908caa", bold = true }],
 ]
 
 # Top-level and Firstmate child names are bold, with theme-native colors.
 # Firstmate's "└ task · p:<token>" children show $short ("└ task", from
 # plugins/local/fm-short-label) so the token doesn't eat the width.
-# $short retains Herdr's custom-token color; it cannot inherit workspace color.
+# $short takes subtext0, the unfocused workspace color (custom tokens default to overlay1).
 [ui.sidebar.spaces]
 rows = [
   ["state_icon", { token = "workspace", bold = true, rules = [
     { starts_with = "└ ", hide = true },
-  ] }, { token = "$short", bold = true }],
+  ] }, { token = "$short", fg = "#c8c5dc", bold = true }],
   ["branch", "git_status"],
 ]
 
@@ -80,3 +100,7 @@ next_agent = "prefix+down"
 # Tabs & workspaces
 switch_tab = "prefix+1..9"
 switch_workspace = "prefix+shift+1..9"
+
+[keys.indexed]
+# alt+1..9 focuses sidebar agent rows; Ghostty sends Option as Alt.
+agents = "alt"
