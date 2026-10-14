@@ -50,8 +50,6 @@ function __u_plugin_list --argument-names tool
     switch $tool
         case claude
             printf '%s\n' $json | jq -sr 'if length != 1 or (.[0] | type) != "array" then error("Expected one plugin array") else .[0] end | [.[] | select(.id | endswith("@skills-dir") | not) | .id] | unique[]'
-        case herdr
-            printf '%s\n' $json | jq -sr 'if length != 1 or (.[0].result.plugins | type) != "array" then error("Expected one plugin array") else .[0].result.plugins end | [.[].source | select(.kind == "github") | "\(.owner)/\(.repo)"] | unique[]'
     end
 end
 
@@ -187,15 +185,8 @@ function u --description "Update global tools, applications and plugins"
     # ── Herdr ─────────────────────────────────────────────────────────
 
     __u_section Herdr
-    # Reinstalling a GitHub plugin moves it to the latest commit and keeps its config.
-    set -l repos (__u_plugin_list herdr)
-    if test $status -eq 0
-        for repo in $repos
-            __u_run "$repo updated" herdr plugin install $repo -y
-        end
-    else
-        __u_run "Herdr plugin list read" false
-    end
+    # Bulk update keeps each install's ref and config and skips linked plugins.
+    __u_run "Herdr plugins updated" herdr plugin update -y
 
     # ── Yazi ──────────────────────────────────────────────────────────
 

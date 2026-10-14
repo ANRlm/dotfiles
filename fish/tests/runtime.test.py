@@ -21,12 +21,7 @@ function claude
     return 0
 end
 function herdr
-    if test "$argv[2]" = list
-        printf '%s\n' "$HERDR_LIST"
-        return $HERDR_EXIT
-    end
-    echo "UPDATED herdr $argv[3]"
-    return 0
+    echo "HERDR $argv"
 end
 u
 '''
@@ -39,31 +34,28 @@ class RuntimeTests(unittest.TestCase):
         self.home = Path(temp.name)
         self.env = dict(os.environ, HOME=temp.name, XDG_CONFIG_HOME=temp.name + '/config',
                         TERM='xterm-256color', AUDIT_ROOT=str(ROOT),
-                        CLAUDE_LIST='[]', CLAUDE_EXIT='0',
-                        HERDR_LIST='{"result":{"plugins":[]}}', HERDR_EXIT='0')
+                        CLAUDE_LIST='[]', CLAUDE_EXIT='0')
 
     def update(self, **overrides):
         return subprocess.run(['fish', '--no-config', '-c', UPDATE_SCRIPT],
                               env={**self.env, **overrides}, capture_output=True, text=True, timeout=20)
 
     def test_plugin_query_and_parse_failures_reach_final_status(self):
-        for tool in ('CLAUDE', 'HERDR'):
-            for overrides in ({tool + '_EXIT': '42'}, {tool + '_LIST': '{broken'},
-                              {tool + '_LIST': ''}, {tool + '_LIST': '{}'},
-                              {tool + '_LIST': 'null'}):
-                with self.subTest(overrides=overrides):
-                    result = self.update(**overrides)
-                    self.assertNotEqual(result.returncode, 0, result.stdout)
-                    self.assertIn('1 failure(s)', result.stdout)
-                    self.assertNotIn('All updated', result.stdout)
+        for overrides in ({'CLAUDE_EXIT': '42'}, {'CLAUDE_LIST': '{broken'},
+                          {'CLAUDE_LIST': ''}, {'CLAUDE_LIST': '{}'},
+                          {'CLAUDE_LIST': 'null'}):
+            with self.subTest(overrides=overrides):
+                result = self.update(**overrides)
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertIn('1 failure(s)', result.stdout)
+                self.assertNotIn('All updated', result.stdout)
 
     def test_empty_lists_succeed_and_plugins_are_deduplicated(self):
         self.assertEqual(self.update().returncode, 0)
-        result = self.update(CLAUDE_LIST='[{"id":"a@market"},{"id":"a@market"},{"id":"local@skills-dir"}]',
-                             HERDR_LIST='{"result":{"plugins":[{"source":{"kind":"github","owner":"a","repo":"b"}},{"source":{"kind":"local"}}]}}')
+        result = self.update(CLAUDE_LIST='[{"id":"a@market"},{"id":"a@market"},{"id":"local@skills-dir"}]')
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.count('UPDATED claude a@market'), 1)
-        self.assertEqual(result.stdout.count('UPDATED herdr a/b'), 1)
+        self.assertEqual(result.stdout.count('HERDR plugin update -y'), 1)
         self.assertNotIn('UPDATED claude local', result.stdout)
 
     def test_fnm_node_remains_first_after_config_initialization(self):

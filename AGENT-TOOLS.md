@@ -16,7 +16,7 @@
 
 1. 已按 [README](README.md) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。Brewfile 已包含 `claude-code@latest`、`codex`、`pi-coding-agent`、`node`、`rtk`、`aliyun-cli` 和 `tccli`。
 2. 当前 Shell 是加载了 `fish/config.fish` 的 Fish。
-3. `jq` 可用（macOS 自带 `/usr/bin/jq`）：`u` 用它解析 Claude 和 Herdr 的插件列表。
+3. `jq` 可用（macOS 自带 `/usr/bin/jq`）：`u` 用它解析 Claude 的插件列表。
 
 **完成标准**：`command -v claude codex pi node rtk aliyun tccli jq` 每项都有输出；`echo $CLAUDE_CONFIG_DIR` 输出上面约定的目录。
 

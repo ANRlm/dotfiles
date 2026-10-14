@@ -203,7 +203,7 @@ ctx 显示剩余量，例如 `ctx 108k/200k ━━━━━━━╸────
 - **Homebrew**：更新、升级、清理依赖和缓存，并把本机新装的软件追加到 Brewfile。
 - **Node**：更新 npm 全局包，清理 pnpm store。
 - **Agent skill 与插件**：见 [AGENT-TOOLS.md](AGENT-TOOLS.md#更新)。
-- **其他**：清理 uv 缓存，更新 Mac App Store 应用，用 Git 快进更新 tmux 插件，重装 Herdr 的 GitHub 插件到最新提交（保留配置），更新 Yazi 插件（最多尝试三次），最后运行 Mole 清理。
+- **其他**：清理 uv 缓存，更新 Mac App Store 应用，用 Git 快进更新 tmux 插件，用 `herdr plugin update` 更新 Herdr 的 GitHub 插件（保留安装时的 ref 和配置），更新 Yazi 插件（最多尝试三次），最后运行 Mole 清理。
 
 某一步失败时会继续执行其余步骤，结束时返回失败状态。`u` 不会拉取本仓库，配置同步需要自己执行 Git 操作。
 
