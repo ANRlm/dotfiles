@@ -13,6 +13,8 @@ auto_switch = false
 #   subtext0       #c8c5dc   Firstmate $short, matching unfocused workspace names
 #   overlay1       #908caa   agent names (Rose Pine "subtle")
 #   teal           #9ccfd8   remote machine names (Rose Pine "foam"; blue/pine is too dark)
+#   rose           #ebbcba   $worktree repo names (Rose Pine "rose")
+#   gold           #f6c177   $worktree_status ahead/behind and uncommitted counts (Rose Pine "gold")
 #   highlight_med  #403d52   separators (surface_dim)
 
 # rose-pine's surface_dim (#26233a) barely differs from the panel background.
@@ -72,12 +74,15 @@ rows = [
 # Firstmate's "└ task · p:<token>" children show $short ("└ task", from
 # plugins/local/fm-short-label) so the token doesn't eat the width.
 # $short takes subtext0, the unfocused workspace color (custom tokens default to overlay1).
+# branch and git_status follow the shell's cwd (a Firstmate task's main clone), so the agent's
+# linked worktree ($worktree and $worktree_status, from plugins/local/worktree-label) leads the row.
 [ui.sidebar.spaces]
 rows = [
   ["state_icon", { token = "workspace", bold = true, rules = [
     { starts_with = "└ ", hide = true },
   ] }, { token = "$short", fg = "#c8c5dc", bold = true }],
-  ["branch", "git_status"],
+  [{ token = "$worktree", fg = "#ebbcba" }, { token = "$worktree_status", fg = "#f6c177" },
+   "branch", "git_status"],
 ]
 
 # ── Notifications ─────────────────────────────────────────────────────

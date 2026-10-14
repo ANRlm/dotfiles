@@ -64,6 +64,7 @@ ya pkg install
 herdr plugin install qu8n/herdr-automatic-rename
 herdr plugin link ~/dotfiles/herdr/plugins/local/fm-short-label
 herdr plugin link ~/dotfiles/herdr/plugins/local/sidebar-short-title
+herdr plugin link ~/dotfiles/herdr/plugins/local/worktree-label
 ```
 
 tmux 首次启动时会自动安装 TPM 及声明的插件。
@@ -134,7 +135,7 @@ Agent 面板按项目分组，状态只用第一行的圆点表示：
 - 分隔符同样改成固定颜色，因为 Rose Pine 原本的 `surface_dim` 几乎与面板背景同色。Herdr 0.9.3 不能修改分隔符本身，同一行的多个字段之间仍是原生的 ` · `。
 - 色值及其用途集中列在 [herdr/config.toml](herdr/config.toml) 的 `[theme]` 下，换主题时按该列表替换。
 
-Spaces 面板每项两行：工作区名（Firstmate 子工作区同样显示 `$short`）、分支与 Git 状态。
+Spaces 面板每项两行：工作区名（Firstmate 子工作区同样显示 `$short`）、分支与 Git 状态。Agent 在 Git linked worktree 中工作时，第二行以 worktree 信息开头（玫瑰色仓库名、金色状态），Herdr 自带的分支和 Git 状态排在后面，宽度不够时先截掉它们，如 ` erp-admin · *3 · master`。
 
 #### 短任务名
 
@@ -148,19 +149,27 @@ Spaces 面板每项两行：工作区名（Firstmate 子工作区同样显示 `$
 
 `fm-short-label` 插件处理 Firstmate 子工作区：其名称形如 `└ task · p:<token>`，插件把去掉 token 的 `└ task` 作为 `$short` 发布，不改动工作区或 tab 的实际名称。
 
+`worktree-label` 插件按工作区内 Agent pane（没有则取第一个 pane）的前台目录，在其位于 linked worktree 时发布两个 token。Herdr 的 `branch` 和 `git_status` 取 shell 的 cwd，Firstmate 子任务的 shell 停在主 clone，所以它们描述的是主 clone 而不是任务，因此排在 worktree 信息之后。
+
+- `$worktree`：Nerd Font 分支图标加仓库名，如 ` erp-admin`。shell 不在该 worktree 里时附上 worktree 的实际分支；分支名末段已出现在工作区名中时省略，如 Firstmate 的 `fm/<task>`。
+- `$worktree_status`：与 upstream 相比非零的 `↑N ↓N`（shell 不在 worktree 内、且不是 detached HEAD 时），以及未提交文件数 `*N`（`git status --porcelain` 的行数）。`*N` 表示改了未提交，`↑N` 表示提交了未推送。
+- shell 本身就在一个干净的 detached worktree 里（Secondmate 的 home）时什么都不显示；Firstmate 子任务在建分支前或 scout 任务仍显示仓库名。
+- 除事件外，startup hook 以 `--watch` 常驻，每 20 秒刷新一次，第一次刷新失败（通常是 server 退出）即结束。首次 link 后要等下次 server 启动才开始轮询。
+
 #### 插件部署与刷新
 
-- 两个本地插件都需要 Python 3，并共用 `herdr/plugins/local/metadata_refresh.py`。部署时保留整个 `herdr/plugins/local/` 目录结构，只同步插件目录和这个共享文件；凭证、Herdr 会话、socket、日志和锁文件等运行态留在原机器。
+- 三个本地插件都需要 Python 3（`worktree-label` 另需 Git 2.31+），并共用 `herdr/plugins/local/metadata_refresh.py`。部署时保留整个 `herdr/plugins/local/` 目录结构，只同步插件目录和这个共享文件；凭证、Herdr 会话、socket、日志和锁文件等运行态留在原机器。
 - `herdr-automatic-rename` 需要 Bash 和 jq。它保留首次见到的自定义 tab 名，适合 Firstmate 使用的 `firstmate` / `fm-*` 标签。本机不使用 `kryptamine/herdr-auto-title`：它首次轮询时就会接管未记录手动锁定的 tab 和 pane 名称。
 - 首次 link 或重新启用插件时不会运行 startup hook。在每个目标 Herdr 会话的 pane 内执行以下命令，立即补齐元数据：
 
   ```sh
   bash ~/.config/herdr/plugins/local/fm-short-label/short-label.sh
   python3 ~/.config/herdr/plugins/local/sidebar-short-title/short_title.py
+  python3 ~/.config/herdr/plugins/local/worktree-label/worktree_label.py
   ```
 
 - 刷新按插件和 Herdr socket 串行执行，锁文件位于运行插件的机器上的 `~/.cache/herdr/plugin-locks/`，进程退出或报错时释放。刷新途中关闭的 pane 或工作区会被跳过，其他错误照常报告。
-- 通过 SSH 在远端运行 Herdr server 时，两个本地插件要部署在**远端**，并在远端执行上面两条 `herdr plugin link`。缺少 `fm-short-label` 就没有 `$short`，缺少 `sidebar-short-title` 就没有短任务名；远端未安装 `herdr-automatic-rename` 时，侧栏不会采用手动 tab 名。
+- 通过 SSH 在远端运行 Herdr server 时，三个本地插件要部署在**远端**，并在远端执行上面三条 `herdr plugin link`。缺少 `fm-short-label` 就没有 `$short`，缺少 `sidebar-short-title` 就没有短任务名，缺少 `worktree-label` 就没有 worktree 信息；远端未安装 `herdr-automatic-rename` 时，侧栏不会采用手动 tab 名。
 
 ### Pi 状态栏
 
@@ -228,4 +237,5 @@ python3 fish/tests/sync-skills.test.py
 python3 herdr/plugins/local/test_refresh.py
 python3 herdr/plugins/local/fm-short-label/test_short_label.py
 python3 herdr/plugins/local/sidebar-short-title/test_short_title.py
+python3 herdr/plugins/local/worktree-label/test_worktree_label.py
 ```
