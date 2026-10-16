@@ -30,8 +30,9 @@
 | lark-cli | `npm install -g @larksuite/cli` | 登录命令见 lark-shared skill |
 | thcli（TokenHub） | `npm install -g tencent-tokenhub-cli` | `thcli auth login` |
 | Cua Driver | `curl -fsSL https://cua.ai/driver/install.sh \| bash` | `cua-driver permissions grant`，授予辅助功能和屏幕录制权限 |
+| ego lite | 从 [官网](https://lite.ego.app/) 下载安装 `ego lite.app` | 在应用中完成首次引导，它会把 `ego-browser` 命令注册到 `~/.local/bin` |
 
-**完成标准**：`rtk --version`、`aliyun version`、`tccli --version`、`lark-cli --version`、`thcli --version`、`cua-driver --version` 都能运行（npm 安装成功不代表二进制已在 PATH 中）；需要本人执行的首次配置均已确认完成。
+**完成标准**：`rtk --version`、`aliyun version`、`tccli --version`、`lark-cli --version`、`thcli --version`、`cua-driver --version` 都能运行，`command -v ego-browser` 有输出（npm 安装成功不代表二进制已在 PATH 中）；需要本人执行的首次配置均已确认完成。
 
 ## 3. Skill
 
@@ -43,6 +44,7 @@
 | lark skills | `npx skills add https://open.feishu.cn/lark-cli/skills/regular --skill '*' -g -a claude-code -a codex -a pi -y` | 飞书官方，依赖 lark-cli |
 | 阿里云 CLI / AgentLoop | `npx skills add aliyun/alibabacloud-aiops-skills --skill alibabacloud-cli-guidance --skill alibabacloud-agentloop-management --full-depth -g -a claude-code -a codex -a pi -y` | 依赖 aliyun-cli |
 | herdr | `npx skills add herdrdev/herdr --skill herdr -g -a claude-code -a codex -a pi -y` | |
+| ego-browser | `npx skills add citrolabs/ego-lite -g -a claude-code -a codex -a pi -y` | 浏览器自动化，依赖 ego lite 应用 |
 | TokenHub（`thcli-*`） | `thcli +connect --target ~/.agents/skills` | thcli 自带，不经过 `npx skills` |
 | 腾讯云 API（tcapi） | 从 [ClawHub](https://clawhub.ai/user/tencent-adm) 安装 `@tencent-adm/tencentcloud-api-skill` 到 `~/.agents/skills/@tencent-adm/tencentcloud-api-skill` | 官方只在 ClawHub 发布，GitHub 上的同名仓库是非官方翻译版。依赖 tccli |
 | cua-driver | Cua Driver 的独立 skill 包，实体位于 `~/.cua-driver/skills/cua-driver` | 只给 Claude Code，链接方式见下文 |
