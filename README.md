@@ -1,12 +1,11 @@
 # dotfiles
 
-Apple Silicon macOS 的个人配置，用符号链接部署到各应用的配置位置。Ghostty、Helix 和 Herdr 统一使用 Rose Pine 主题；cmux 单独使用 Lovelace。
+Apple Silicon macOS 的个人配置，用符号链接部署到各应用的配置位置。Ghostty、Helix 和 Herdr 统一使用 Rose Pine 主题。
 
 ## 目录
 
 | 目录 / 文件 | 内容 |
 | --- | --- |
-| [cmux/](cmux/) | 应用设置、Tab 快捷键及 cmux 专用终端配置 |
 | [fish/](fish/) | 环境变量、PATH、工具集成、缩写、辅助函数、`u` 更新函数及离线测试 |
 | [ghostty/](ghostty/) | 字体、主题、窗口和剪贴板 |
 | [git/](git/) | 用户信息、Delta、同步策略及全局忽略规则 |
@@ -45,17 +44,13 @@ end
 ln -s ~/dotfiles/herdr/plugins/config/herdr-automatic-rename ~/.config/herdr-automatic-rename
 ```
 
-Pi、cmux 和 lazygit 只链接单个文件，凭证、会话和缓存留在本机目录中：
+Pi 和 lazygit 只链接单个文件，凭证、会话和缓存留在本机目录中：
 
 ```fish
-mkdir -p ~/.pi/agent/extensions ~/.config/cmux "$HOME/Library/Application Support/com.cmuxterm.app" "$HOME/Library/Application Support/lazygit"
+mkdir -p ~/.pi/agent/extensions "$HOME/Library/Application Support/lazygit"
 ln -s ~/dotfiles/pi/extensions/minimal-statusline.ts ~/.pi/agent/extensions/minimal-statusline.ts
-ln -s ~/dotfiles/cmux/cmux.json ~/.config/cmux/cmux.json
-ln -s ~/dotfiles/cmux/config.ghostty "$HOME/Library/Application Support/com.cmuxterm.app/config.ghostty"
 ln -s ~/dotfiles/lazygit/config.yml "$HOME/Library/Application Support/lazygit/config.yml"
 ```
-
-`cmux/config.ghostty` 只给 cmux 用，与 `ghostty/config.ghostty` 各自独立。
 
 ### 3. 安装插件
 
@@ -100,7 +95,6 @@ tmux 首次启动时会自动安装 TPM 及声明的插件。
 - **Ghostty**：Option 作为 Alt 发送；终端程序读取系统剪贴板时会询问确认。
 - **Helix**（默认编辑器 `hx`）：普通模式下 `Space+w` 保存、`Space+q` 退出；`Tab` / `Shift-Tab` 跳到父语法节点末尾 / 开头，选择模式下改为扩展选区。复制默认写入系统剪贴板。`:config-reload` 重新加载配置。
 - **tmux**：前缀键 `Ctrl-A`，之后按 `=` / `-` 分屏，`h/j/k/l` 选择窗格，`r` 进入调整大小模式（`h/j/k/l` 调整，`q` 或 `Escape` 退出），`R` 重新加载配置。复制模式使用 vi 键位，`y` 复制到系统剪贴板。
-- **cmux**：`Option+H/L` 切换到上一个 / 下一个 Tab，修改配置后执行 `cmux reload-config`。
 - **lazygit**：lazygit 不读取 `core.pager`，Delta 在 [lazygit/config.yml](lazygit/config.yml) 中单独配置。Diff 视图关闭了自动换行：lazygit 折行时续行从第 0 列开始，会覆盖 Delta 的行号栏。
 - **Git**：全局规则忽略 `.env`、`.env.*`、`*.key`、`*.pem` 等凭证文件，但允许提交不含凭证的 `.env.example` 和 `.env.template`。
 - **Pi**：使用默认快捷键，在 Pi 中运行 `/hotkeys` 查看。
@@ -224,7 +218,7 @@ Brewfile 是完整软件清单，本机只装其中一部分。`u` 只追加 `br
 ### 版本管理范围
 
 - `.gitignore` 排除各工具下载的插件、Fish 运行状态，以及 Herdr 的会话、日志和 socket；Herdr 插件配置（`herdr/plugins/config/`）纳入版本管理。
-- `pi/` 和 `cmux/` 采用白名单，只放行 Pi 状态栏扩展和两份 cmux 配置。Pi 状态栏的测试（`pi/tests/`）只留在本机。新增配置时先检查是否含凭证，再在 `.gitignore` 中显式放行。
+- `pi/` 采用白名单，只放行 Pi 状态栏扩展。Pi 状态栏的测试（`pi/tests/`）只留在本机。新增配置时先检查是否含凭证，再在 `.gitignore` 中显式放行。
 - 配置文件按功能分组，分组标题沿用 `fish/config.fish` 的 `# ── 类别 ──…` 样式；Lua 文件使用 `--` 注释符。
 
 ### 离线测试

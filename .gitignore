@@ -24,12 +24,9 @@ herdr/session-snapshots/
 herdr/sessions/
 herdr/release-notes.json
 
-# ── Pi & cmux (only reviewed config files) ─────────────────────────────
+# ── Pi (only reviewed config files) ─────────────────────────────
 
 /pi/*
 !/pi/extensions/
 /pi/extensions/*
 !/pi/extensions/minimal-statusline.ts
-/cmux/*
-!/cmux/cmux.json
-!/cmux/config.ghostty
