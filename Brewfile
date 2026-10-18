@@ -1,6 +1,8 @@
 tap "oven-sh/bun", trusted: true
 tap "tencentcloud/tccli"
 tap "tw93/tap", trusted: true
+tap "multica-ai/tap"
+tap "stablyai/orca"
 brew "aliyun-cli"
 brew "bash"
 brew "bat"
@@ -33,6 +35,8 @@ brew "yazi"
 brew "zoxide"
 brew "oven-sh/bun/bun", trusted: true
 brew "tencentcloud/tccli/tccli", trusted: true
+brew "ffmpeg"
+brew "multica-ai/tap/multica", trusted: true
 cask "chatgpt"
 cask "claude-code@latest"
 cask "codex"
@@ -53,6 +57,10 @@ cask "typora"
 cask "upscayl"
 cask "visual-studio-code"
 cask "zed"
+cask "betterdisplay"
+cask "deepseek-harness"
+cask "grok-build"
+cask "stablyai/orca/orca", trusted: true
 mas "QQ", id: 451108668
 mas "WPS Office", id: 1443749478
 mas "微信", id: 836500024
