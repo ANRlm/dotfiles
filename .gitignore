@@ -7,7 +7,7 @@ tmux/plugins/
 yazi/plugins/
 yazi/flavors/
 fish/completions/
-herdr/plugins/github/
+herdr/plugins/github-installations/
 herdr/plugins/.locks/
 herdr/plugins.json
 herdr/.plugins.lock
