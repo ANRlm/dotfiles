@@ -168,7 +168,12 @@ function u --description "Update global tools, applications and plugins"
     # ── Mac App Store ─────────────────────────────────────────────────
 
     __u_section "Mac App Store"
-    __u_run "MAS updated" mas update
+    # The Brewfile lists more than this machine installs.
+    if type -q mas
+        __u_run "MAS updated" mas update
+    else
+        echo "  mas not installed, skipped"
+    end
 
     # ── Tmux / TPM ────────────────────────────────────────────────────
 
@@ -196,7 +201,8 @@ function u --description "Update global tools, applications and plugins"
     # ── Mole ──────────────────────────────────────────────────────────
 
     __u_section Mole
-    __u_run "Mole cleaned" mo clean </dev/null
+    # Piped so Mole skips its clear-screen and keeps earlier results visible.
+    __u_run "Mole cleaned" bash -o pipefail -c 'mo clean </dev/null | cat'
 
     # ── Done ──────────────────────────────────────────────────────────
 
