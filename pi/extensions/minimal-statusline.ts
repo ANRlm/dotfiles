@@ -135,10 +135,9 @@ export interface ActivitySnapshot {
   frame: string;
 }
 
+/** Live output rate, always estimated from streamed text length. */
 export interface RateSnapshot {
   tokensPerSecond: number;
-  /** True while tokens are still arriving and the count is derived from text length. */
-  estimated: boolean;
 }
 
 /** Code-point counts of the characters streamed for one message part. */
@@ -147,14 +146,20 @@ interface StreamCounts {
   other: number;
 }
 
-/** Accumulated streamed characters of the in-flight assistant message. */
-interface StreamState {
-  firstDeltaAt?: number;
+interface PartCounts {
   /** Streamed prose and thinking. */
   text: StreamCounts;
   /** Streamed tool-call argument JSON. */
   tool: StreamCounts;
-  exactTokens?: number;
+}
+
+const emptyCounts = (): PartCounts => ({ text: { cjk: 0, other: 0 }, tool: { cjk: 0, other: 0 } });
+
+/** Accumulated streamed characters of the in-flight assistant message. */
+interface StreamState extends PartCounts {
+  firstDeltaAt?: number;
+  /** The first delta, which arrived at `firstDeltaAt` and so took no measured time. */
+  head?: PartCounts;
 }
 
 /**
@@ -414,7 +419,7 @@ export function renderFooter(state: FooterSnapshot, theme: Theme, width: number)
   }
   if (state.rate && (activity?.phase === "thinking" || activity?.phase === "streaming")) {
     const rate = `${formatRate(state.rate.tokensPerSecond)} tok/s`;
-    right.push({ key: "rate", text: state.rate.estimated ? dim(`~${rate}`) : muted(rate) });
+    right.push({ key: "rate", text: dim(`~${rate}`) });
   }
   right.push({ key: "model", text: plain(label(state.model)) });
   if (state.effort) {
@@ -528,7 +533,7 @@ export default function minimalStatusline(pi: ExtensionAPI) {
    * Script estimate with the model's learned residual factors applied separately to
    * streamed text and tool-call argument JSON.
    */
-  function calibratedEstimate(model: { provider?: string; id?: string } | undefined, counts: StreamState): number {
+  function calibratedEstimate(model: { provider?: string; id?: string } | undefined, counts: PartCounts): number {
     const calibration = rateCalibration.get(`${model?.provider}/${model?.id}`);
     return scriptTokenEstimate(counts.text.cjk, counts.text.other) * (calibration?.text ?? 1)
       + scriptTokenEstimate(counts.tool.cjk, counts.tool.other) * (calibration?.tool ?? 1);
@@ -537,19 +542,16 @@ export default function minimalStatusline(pi: ExtensionAPI) {
   /**
    * While tokens are arriving the provider has not reported a usage count yet, so the
    * rate is estimated from streamed characters (prefixed with `~`), weighting CJK and
-   * non-CJK separately and applying the model's learned residual factors. Once the
-   * message ends, hide the rate rather than displaying stale throughput.
+   * non-CJK separately and applying the model's learned residual factors. The clock
+   * starts at the first delta, so that delta's tokens are left out of the count. Once
+   * the message ends, hide the rate rather than displaying stale throughput.
    */
   function currentRate(now: number, model: { provider?: string; id?: string } | undefined): RateSnapshot | undefined {
     if (activeTools.size || (phase !== "streaming" && phase !== "thinking")) return undefined;
-    if (stream?.firstDeltaAt !== undefined && stream.exactTokens === undefined) {
-      const seconds = (now - stream.firstDeltaAt) / 1000;
-      if (seconds >= 0.35) {
-        const tokensPerSecond = calibratedEstimate(model, stream) / seconds;
-        return { tokensPerSecond, estimated: true };
-      }
-    }
-    return undefined;
+    if (stream?.firstDeltaAt === undefined || !stream.head) return undefined;
+    const seconds = (now - stream.firstDeltaAt) / 1000;
+    const tokens = calibratedEstimate(model, stream) - calibratedEstimate(model, stream.head);
+    return seconds >= 0.35 && tokens > 0 ? { tokensPerSecond: tokens / seconds } : undefined;
   }
 
   /** Events from other sessions in this process must not touch the visible footer. */
@@ -682,7 +684,7 @@ export default function minimalStatusline(pi: ExtensionAPI) {
   pi.on("message_start", (event, ctx) => {
     if (!owns(ctx)) return;
     if (event.message.role === "assistant") {
-      stream = { text: { cjk: 0, other: 0 }, tool: { cjk: 0, other: 0 } };
+      stream = emptyCounts();
       phase = "waiting";
       refresh?.();
     }
@@ -692,13 +694,18 @@ export default function minimalStatusline(pi: ExtensionAPI) {
     if (event.message.role !== "assistant") return;
     const delta = event.assistantMessageEvent;
     if (delta.type !== "text_delta" && delta.type !== "thinking_delta" && delta.type !== "toolcall_delta") return;
-    if (!stream) stream = { text: { cjk: 0, other: 0 }, tool: { cjk: 0, other: 0 } };
-    if (stream.firstDeltaAt === undefined) stream.firstDeltaAt = Date.now();
+    if (!stream) stream = emptyCounts();
     // Count code points, not UTF-16 units, so astral characters match the script weights.
-    const counts = delta.type === "toolcall_delta" ? stream.tool : stream.text;
+    const part = delta.type === "toolcall_delta" ? "tool" : "text";
     const cjk = countCjkCharacters(delta.delta);
-    counts.cjk += cjk;
-    counts.other += Array.from(delta.delta).length - cjk;
+    const other = Array.from(delta.delta).length - cjk;
+    stream[part].cjk += cjk;
+    stream[part].other += other;
+    if (stream.firstDeltaAt === undefined) {
+      stream.firstDeltaAt = Date.now();
+      stream.head = emptyCounts();
+      stream.head[part] = { cjk, other };
+    }
     phase = delta.type === "thinking_delta" ? "thinking" : "streaming";
     ensureTicker();
   });
@@ -742,12 +749,8 @@ export default function minimalStatusline(pi: ExtensionAPI) {
           }
         }
       }
-      // Freeze the estimate: no more characters will arrive for this message.
-      stream = {
-        text: stream?.text ?? { cjk: 0, other: 0 },
-        tool: stream?.tool ?? { cjk: 0, other: 0 },
-        exactTokens: output,
-      };
+      // No more characters will arrive for this message.
+      stream = undefined;
     }
     refresh?.();
   });
