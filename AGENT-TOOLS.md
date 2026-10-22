@@ -120,7 +120,6 @@ test -e "$CLAUDE_CONFIG_DIR/skills/cua-driver"; or ln -s ~/.cua-driver/skills/cu
 - `codex plugin marketplace upgrade`
 - `pi update --extensions`
 - `cua-driver update --apply`
-- `treehouse update`
 
 lark-cli、thcli 和 Firstmate 依赖的 `*-axi` 工具由 `u` 的 Node 一节随 npm 全局包更新，其余命令行工具随 Homebrew 更新。
 

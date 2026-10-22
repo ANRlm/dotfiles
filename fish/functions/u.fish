@@ -158,7 +158,6 @@ function u --description "Update global tools, applications and plugins"
     __u_run "Codex marketplaces upgraded" codex plugin marketplace upgrade
     __u_run "Pi packages updated" pi update --extensions
     __u_run "Cua Driver updated" cua-driver update --apply
-    __u_run "treehouse updated" treehouse update
 
     # ── Python (uv) ───────────────────────────────────────────────────
 

@@ -9,7 +9,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 UPDATE_SCRIPT = r'''
 source "$AUDIT_ROOT/fish/functions/u.fish"
-for name in brew env pnpm npx thcli codex pi cua-driver treehouse uv mas git ya mo __u_brewfile_merge __u_sync_skills
+for name in brew env pnpm npx thcli codex pi cua-driver uv mas git ya mo __u_brewfile_merge __u_sync_skills
     eval "function $name; return 0; end"
 end
 function claude
