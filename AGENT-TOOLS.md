@@ -31,7 +31,7 @@
 | --- | --- | --- |
 | aliyun-cli | Brewfile | `aliyun configure` |
 | tccli | Brewfile | `tccli auth login` |
-| Orca | Brewfile | 在应用中安装自带的 `orca` 命令行和 skill，不需要另外部署 |
+| Orca | Brewfile（tap `stablyai/orca`） | 在应用中安装自带的 `orca` 命令行和 skill，不需要另外部署 |
 | lark-cli | `npm install -g @larksuite/cli` | 登录命令见 lark-shared skill |
 | thcli（TokenHub） | `npm install -g tencent-tokenhub-cli` | `thcli auth login` |
 | Cua Driver | `curl -fsSL https://cua.ai/driver/install.sh \| bash` | `cua-driver permissions grant`，授予辅助功能和屏幕录制权限 |
