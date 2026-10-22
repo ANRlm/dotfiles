@@ -14,17 +14,16 @@
 
 ## 1. 前置条件
 
-1. 已按 [README](README.md) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。Brewfile 已包含 `claude-code@latest`、`codex`、`pi-coding-agent`、`node`、`rtk`、`aliyun-cli` 和 `tccli`。
+1. 已按 [README](README.md) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。Brewfile 已包含 `claude-code@latest`、`codex`、`pi-coding-agent`、`node`、`aliyun-cli` 和 `tccli`。
 2. 当前 Shell 是加载了 `fish/config.fish` 的 Fish。
 3. `jq` 可用（macOS 自带 `/usr/bin/jq`）：`u` 用它解析 Claude 的插件列表。
 
-**完成标准**：`command -v claude codex pi node rtk aliyun tccli jq` 每项都有输出；`echo $CLAUDE_CONFIG_DIR` 输出上面约定的目录。
+**完成标准**：`command -v claude codex pi node aliyun tccli jq` 每项都有输出；`echo $CLAUDE_CONFIG_DIR` 输出上面约定的目录。
 
 ## 2. 命令行工具
 
 | 工具 | 安装 | 首次配置（本人执行） |
 | --- | --- | --- |
-| rtk | Brewfile | 每个 Agent 装一次钩子：`rtk init -g`（Claude Code）、`rtk init -g --codex`（Codex）、`rtk init -g --agent pi`（Pi）；用 `rtk init --show` 检查 |
 | aliyun-cli | Brewfile | `aliyun configure` |
 | tccli | Brewfile | `tccli auth login` |
 | lark-cli | `npm install -g @larksuite/cli` | 登录命令见 lark-shared skill |
@@ -32,7 +31,7 @@
 | Cua Driver | `curl -fsSL https://cua.ai/driver/install.sh \| bash` | `cua-driver permissions grant`，授予辅助功能和屏幕录制权限 |
 | ego lite | 从 [官网](https://lite.ego.app/) 下载安装 `ego lite.app` | 在应用中完成首次引导，它会把 `ego-browser` 命令注册到 `~/.local/bin` |
 
-**完成标准**：`rtk --version`、`aliyun version`、`tccli --version`、`lark-cli --version`、`thcli --version`、`cua-driver --version` 都能运行，`command -v ego-browser` 有输出（npm 安装成功不代表二进制已在 PATH 中）；需要本人执行的首次配置均已确认完成。
+**完成标准**：`aliyun version`、`tccli --version`、`lark-cli --version`、`thcli --version`、`cua-driver --version` 都能运行，`command -v ego-browser` 有输出（npm 安装成功不代表二进制已在 PATH 中）；需要本人执行的首次配置均已确认完成。
 
 ## 3. Skill
 
