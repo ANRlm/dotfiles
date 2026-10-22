@@ -61,6 +61,8 @@ cask "betterdisplay"
 cask "deepseek-harness"
 cask "grok-build"
 cask "stablyai/orca/orca", trusted: true
+cask "otty"
+cask "tailscale-app"
 mas "QQ", id: 451108668
 mas "WPS Office", id: 1443749478
 mas "微信", id: 836500024
