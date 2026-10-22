@@ -34,7 +34,6 @@ brew "yazi"
 brew "zoxide"
 brew "oven-sh/bun/bun", trusted: true
 brew "tencentcloud/tccli/tccli", trusted: true
-brew "ffmpeg"
 brew "multica-ai/tap/multica", trusted: true
 cask "chatgpt"
 cask "claude-code@latest"
@@ -57,7 +56,6 @@ cask "upscayl"
 cask "visual-studio-code"
 cask "zed"
 cask "betterdisplay"
-cask "deepseek-harness"
 cask "grok-build"
 cask "stablyai/orca/orca", trusted: true
 cask "otty"
