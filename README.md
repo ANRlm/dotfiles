@@ -17,7 +17,7 @@ Apple Silicon macOS 的个人配置，用符号链接部署到各应用的配置
 | [tmux/](tmux/) | 终端、窗口、快捷键及 TPM 插件 |
 | [yazi/](yazi/) | 文件管理、预览、快捷键及插件清单 |
 | [Brewfile](Brewfile) | Homebrew、Cask 和 Mac App Store 软件清单 |
-| [AGENT-TOOLS.md](AGENT-TOOLS.md) | Claude Code、Codex、Pi 的 skill、插件、配套命令行工具及 Firstmate 部署清单 |
+| [AGENT-TOOLS.md](AGENT-TOOLS.md) | Claude Code、Codex、Pi、Grok 的 skill、插件、配套命令行工具及 Firstmate 部署清单 |
 
 ## 安装
 

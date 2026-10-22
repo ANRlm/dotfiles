@@ -1,24 +1,25 @@
 # Agent 工具部署清单
 
-本文件供新机器上的 Agent 读取后部署 Claude Code、Codex、Pi 的 skill、插件和配套命令行工具。按步骤顺序执行，每一步满足「完成标准」后再进入下一步。
+本文件供新机器上的 Agent 读取后部署 Claude Code、Codex、Pi、Grok 的 skill、插件和配套命令行工具。按步骤顺序执行，每一步满足「完成标准」后再进入下一步。
 
 需要登录、密钥或系统授权的操作由本人执行：Agent 给出完整命令，等待本人确认已完成，凭据不经过 Agent。
 
 ## 约定
 
 - **共享目录**：所有 skill 实体只放在 `~/.agents/skills`。
-- **Codex 和 Pi** 原生读取共享目录。`~/.codex/skills` 和 `~/.pi/agent/skills` 保持原样，不建指向共享目录的链接，否则同一个 skill 会加载两次。
+- **Codex、Pi 和 Grok** 原生读取共享目录。`~/.codex/skills`、`~/.pi/agent/skills` 和 `~/.grok/skills` 保持原样，不建指向共享目录的链接，否则同一个 skill 会加载两次。ego lite 应用自己在 `~/.grok/skills` 放的 `ego-browser` 链接与共享目录中的同名，Grok 按名称去重，保留不动。
+- **Grok** 的 Claude 兼容层只扫描固定的 `~/.claude/skills`，不读 `$CLAUDE_CONFIG_DIR`，因此看不到 Claude 的 skill 链接（包括 cua-driver）和插件。
 - **Claude Code** 只读取 `$CLAUDE_CONFIG_DIR/skills`，需要给每个 skill 建一个符号链接。`CLAUDE_CONFIG_DIR` 由 `fish/config.fish` 设置，本机为 `~/.claude-profiles/default`；未设置时 Claude 使用 `~/.claude`。
 - **安装方式**：skill 一律用 `npx skills add <来源> -g -a claude-code -a codex -a pi -y` 安装。它把内容放进共享目录，给 Claude 建链接，并写入 `~/.agents/.skill-lock.json`，之后由 `u` 统一更新。插件市场只用于带钩子的 ponytail 和 Claude 官方插件 context7。
 - **cua-driver** 只给 Claude Code 使用，skill 实体放在共享目录之外。
 
 ## 1. 前置条件
 
-1. 已按 [README](README.md) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。Brewfile 已包含 `claude-code@latest`、`codex`、`pi-coding-agent`、`node`、`aliyun-cli` 和 `tccli`。
+1. 已按 [README](README.md) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。Brewfile 已包含 `claude-code@latest`、`codex`、`pi-coding-agent`、`grok-build`（命令为 `grok`）、`node`、`aliyun-cli` 和 `tccli`。
 2. 当前 Shell 是加载了 `fish/config.fish` 的 Fish。
 3. `jq` 可用（macOS 自带 `/usr/bin/jq`）：`u` 用它解析 Claude 的插件列表。
 
-**完成标准**：`command -v claude codex pi node aliyun tccli jq` 每项都有输出；`echo $CLAUDE_CONFIG_DIR` 输出上面约定的目录。
+**完成标准**：`command -v claude codex pi grok node aliyun tccli jq` 每项都有输出；`echo $CLAUDE_CONFIG_DIR` 输出上面约定的目录。
 
 ## 2. 命令行工具
 
@@ -70,7 +71,8 @@ test -e "$CLAUDE_CONFIG_DIR/skills/cua-driver"; or ln -s ~/.cua-driver/skills/cu
 - `~/.agents/skills/@tencent-adm/tencentcloud-api-skill/.clawhub/origin.json` 中 `ownerHandle` 为 `tencent-adm`。
 - `__u_sync_skills` 返回 0；共享目录中的每个 skill 在 `$CLAUDE_CONFIG_DIR/skills` 都有同名链接，且没有坏链接。
 - `$CLAUDE_CONFIG_DIR/skills/cua-driver` 指向 `~/.cua-driver/skills/cua-driver`；cua-driver 不出现在 Codex 和 Pi 的 skill 目录中。
-- `~/.codex/skills` 和 `~/.pi/agent/skills` 中没有指向 `~/.agents/skills` 的链接（Codex 自带的 `.system/` 不算）。
+- `~/.codex/skills`、`~/.pi/agent/skills` 和 `~/.grok/skills` 中没有指向 `~/.agents/skills` 的链接（Codex 自带的 `.system/` 和 ego lite 的 `ego-browser` 不算）。
+- 在 Git 仓库之外运行 `grok inspect`，Skills 一节列出共享目录中的全部 skill，且没有 cua-driver。
 
 ## 4. 插件与 MCP
 
@@ -80,11 +82,14 @@ test -e "$CLAUDE_CONFIG_DIR/skills/cua-driver"; or ln -s ~/.cua-driver/skills/cu
 | context7 | `claude plugin install context7@claude-plugins-official` | — | 自带文档查询 MCP |
 | Cua Driver MCP | `claude mcp add --scope user cua-computer-use -- ~/.local/bin/cua-driver mcp` | — | 只给 Claude Code |
 
+Grok 不装插件和 MCP。
+
 **完成标准**：
 
 - `claude plugin list` 只有 ponytail 和 context7。
 - `~/.codex/config.toml` 中没有 `mattpocock` 市场或插件。
 - `claude mcp list` 中 `cua-computer-use` 显示已连接。
+- `grok inspect` 的 Plugins 和 MCP Servers 两节均为 None。
 
 ## 5. Firstmate
 
@@ -105,9 +110,9 @@ test -e "$CLAUDE_CONFIG_DIR/skills/cua-driver"; or ln -s ~/.cua-driver/skills/cu
 
 ## 6. 收尾
 
-重启 Claude Code 和 Codex 会话，确认新 skill 和插件已生效。在 Pi 中执行 `/reload` 后检查 skill 命令，并用 `pi list` 确认 Pi 扩展包。带 `disable-model-invocation: true` 的 skill 只能手动调用，不会出现在模型的自动选择清单中，这不代表未加载。
+重启 Claude Code、Codex 和 Grok 会话，确认新 skill 和插件已生效。在 Pi 中执行 `/reload` 后检查 skill 命令，并用 `pi list` 确认 Pi 扩展包。带 `disable-model-invocation: true` 的 skill 只能手动调用，不会出现在模型的自动选择清单中，这不代表未加载。
 
-**完成标准**：三个 Agent 都能看到上面安装的 skill；钩子信任、登录和系统权限均已由本人确认。
+**完成标准**：四个 Agent 都能看到上面安装的 skill；钩子信任、登录和系统权限均已由本人确认。
 
 ## 更新
 
