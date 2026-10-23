@@ -19,25 +19,24 @@
 
 ## 1. 前置条件
 
-1. 已按 [README](README.md) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。Brewfile 已包含 `claude-code@latest`、`codex`、`pi-coding-agent`、`grok-build`（命令为 `grok`）、`node`、`aliyun-cli`、`tccli` 和 Orca 应用。
+1. 已按 [README](README.md) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。
 2. 当前 Shell 是加载了 `fish/config.fish` 的 Fish。
 3. `jq` 可用（macOS 自带 `/usr/bin/jq`）：`u` 用它解析 Claude 的插件列表。
 
 **完成标准**：`command -v claude codex pi grok node aliyun tccli jq` 每项都有输出；`echo $CLAUDE_CONFIG_DIR` 输出上面约定的目录。
 
-## 2. 命令行工具与应用
+## 2. Skill 依赖的工具
 
 | 工具 | 安装 | 首次配置（本人执行） |
 | --- | --- | --- |
-| aliyun-cli | Brewfile | `aliyun configure` |
-| tccli | Brewfile | `tccli auth login` |
-| Orca | Brewfile（tap `stablyai/orca`） | 在应用中安装自带的 `orca` 命令行和 skill，不需要另外部署 |
+| aliyun-cli | Brewfile（阿里云 skill 依赖） | `aliyun configure` |
+| tccli | Brewfile（tcapi 依赖） | `tccli auth login` |
 | lark-cli | `npm install -g @larksuite/cli` | 登录命令见 lark-shared skill |
 | thcli（TokenHub） | `npm install -g tencent-tokenhub-cli` | `thcli auth login` |
 | Cua Driver | `curl -fsSL https://cua.ai/driver/install.sh \| bash` | `cua-driver permissions grant`，授予辅助功能和屏幕录制权限 |
 | ego lite | 从 [官网](https://lite.ego.app/) 下载安装 `ego lite.app` | 在应用中完成首次引导，它会把 `ego-browser` 命令注册到 `~/.local/bin` |
 
-**完成标准**：`aliyun version`、`tccli --version`、`lark-cli --version`、`thcli --version`、`cua-driver --version` 都能运行，`command -v orca ego-browser` 每项都有输出（npm 安装成功不代表二进制已在 PATH 中）；需要本人执行的首次配置均已确认完成。
+**完成标准**：`aliyun version`、`tccli --version`、`lark-cli --version`、`thcli --version`、`cua-driver --version` 都能运行，`command -v ego-browser` 有输出（npm 安装成功不代表二进制已在 PATH 中）；需要本人执行的首次配置均已确认完成。
 
 ## 3. Skill
 
@@ -68,7 +67,7 @@ npx skills add citrolabs/ego-lite -g -a claude-code -a codex -a pi -y
 
 ### 3.3 给 Claude 建链接
 
-共享目录中的 skill（包括 thcli、tcapi、Orca、no-mistakes 等不经过 `npx skills` 的）靠这一步补齐 Claude 链接。在 Fish 中运行：
+共享目录中的 skill（包括 thcli、tcapi、no-mistakes 等不经过 `npx skills` 的）靠这一步补齐 Claude 链接。在 Fish 中运行：
 
 ```fish
 source ~/dotfiles/fish/functions/u.fish
@@ -150,7 +149,7 @@ Codex 装完 ponytail 后，由本人在 Codex 的 `/hooks` 中信任它的两�
 6. `pi update --extensions`
 7. `cua-driver update --apply`
 
-lark-cli、thcli 和 Firstmate 依赖的 `*-axi` 工具由 `u` 的 Node 一节随 npm 全局包更新，Brewfile 中的工具（包括 Orca）随 Homebrew 更新。
+lark-cli、thcli 和 Firstmate 依赖的 `*-axi` 工具由 `u` 的 Node 一节随 npm 全局包更新。
 
 以下几项需要手动更新：
 
