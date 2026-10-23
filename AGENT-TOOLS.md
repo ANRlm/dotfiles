@@ -15,7 +15,6 @@
 | Claude Code | 只读取 `$CLAUDE_CONFIG_DIR/skills` | 每个 skill 需要一个指向共享目录的符号链接。`CLAUDE_CONFIG_DIR` 由 `fish/config.fish` 设置，本机为 `~/.claude-profiles/default`；未设置时 Claude 使用 `~/.claude` |
 
 - **安装方式**：skill 一律用 `npx skills add <来源> -g -a claude-code -a codex -a pi -y` 安装。它把内容放进共享目录，给 Claude 建链接，并写入 `~/.agents/.skill-lock.json`，之后由 `u` 统一更新。插件市场只用于带钩子的 ponytail 和 Claude 官方插件 context7。
-- **例外**：cua-driver 只给 Claude Code 使用，skill 实体放在共享目录之外。
 
 ## 1. 前置条件
 
@@ -33,10 +32,9 @@
 | tccli | Brewfile（tcapi 依赖） | `tccli auth login` |
 | lark-cli | `npm install -g @larksuite/cli` | 登录命令见 lark-shared skill |
 | thcli（TokenHub） | `npm install -g tencent-tokenhub-cli` | `thcli auth login` |
-| Cua Driver | `curl -fsSL https://cua.ai/driver/install.sh \| bash` | `cua-driver permissions grant`，授予辅助功能和屏幕录制权限 |
 | ego lite | 从 [官网](https://lite.ego.app/) 下载安装 `ego lite.app` | 在应用中完成首次引导，它会把 `ego-browser` 命令注册到 `~/.local/bin` |
 
-**完成标准**：`aliyun version`、`tccli --version`、`lark-cli --version`、`thcli --version`、`cua-driver --version` 都能运行，`command -v ego-browser` 有输出（npm 安装成功不代表二进制已在 PATH 中）；需要本人执行的首次配置均已确认完成。
+**完成标准**：`aliyun version`、`tccli --version`、`lark-cli --version`、`thcli --version` 都能运行，`command -v ego-browser` 有输出（npm 安装成功不代表二进制已在 PATH 中）；需要本人执行的首次配置均已确认完成。
 
 ## 3. Skill
 
@@ -63,7 +61,6 @@ npx skills add citrolabs/ego-lite -g -a claude-code -a codex -a pi -y
 | --- | --- | --- |
 | TokenHub（`thcli-*`） | `thcli +connect --target ~/.agents/skills` | thcli 自带 |
 | 腾讯云 API（tcapi） | 从 [ClawHub](https://clawhub.ai/user/tencent-adm) 安装 `@tencent-adm/tencentcloud-api-skill` 到 `~/.agents/skills/@tencent-adm/tencentcloud-api-skill` | 官方只在 ClawHub 发布，GitHub 上的同名仓库是非官方翻译版。依赖 tccli |
-| cua-driver | Cua Driver 自带，实体位于 `~/.cua-driver/skills/cua-driver` | 只链接给 Claude Code，见 3.3 |
 
 ### 3.3 给 Claude 建链接
 
@@ -76,21 +73,13 @@ __u_sync_skills
 
 `__u_sync_skills` 递归查找 `SKILL.md`，支持 `@tencent-adm/...` 这类作用域目录，已有的指向同一实体的链接保持不变。遇到同名目录、指向其他位置的链接或坏链接时，它报告冲突并返回失败，不覆盖任何文件；把冲突列给本人确认后再处理。
 
-cua-driver 单独链接。`cua-driver skills install/update` 会同时给其他 Agent 建链接，所以改用：
-
-```fish
-mkdir -p "$CLAUDE_CONFIG_DIR/skills"
-test -e "$CLAUDE_CONFIG_DIR/skills/cua-driver"; or ln -s ~/.cua-driver/skills/cua-driver "$CLAUDE_CONFIG_DIR/skills/cua-driver"
-```
-
 **完成标准**：
 
 - `npx skills ls -g` 列出 3.1 中安装的所有 skill。
 - `~/.agents/skills/@tencent-adm/tencentcloud-api-skill/.clawhub/origin.json` 中 `ownerHandle` 为 `tencent-adm`。
 - `__u_sync_skills` 返回 0；共享目录中的每个 skill 在 `$CLAUDE_CONFIG_DIR/skills` 都有同名链接，且没有坏链接。
-- `$CLAUDE_CONFIG_DIR/skills/cua-driver` 指向 `~/.cua-driver/skills/cua-driver`；cua-driver 不出现在 Codex 和 Pi 的 skill 目录中。
 - `~/.codex/skills`、`~/.pi/agent/skills` 和 `~/.grok/skills` 中没有指向 `~/.agents/skills` 的链接（Codex 自带的 `.system/` 和 ego lite 的 `ego-browser` 不算）。
-- 在 Git 仓库之外运行 `grok inspect`，Skills 一节列出共享目录中的全部 skill，且没有 cua-driver。
+- 在 Git 仓库之外运行 `grok inspect`，Skills 一节列出共享目录中的全部 skill。
 
 ## 4. 插件与 MCP
 
@@ -100,7 +89,6 @@ test -e "$CLAUDE_CONFIG_DIR/skills/cua-driver"; or ln -s ~/.cua-driver/skills/cu
 | --- | --- | --- | --- |
 | ponytail | `claude plugin marketplace add DietrichGebert/ponytail`，再 `claude plugin install ponytail@ponytail` | `codex plugin marketplace add DietrichGebert/ponytail`，再 `codex plugin add ponytail@ponytail` | 常驻模式依赖会话启动钩子，因此装成插件 |
 | context7 | `claude plugin install context7@claude-plugins-official` | — | 自带文档查询 MCP |
-| Cua Driver MCP | `claude mcp add --scope user cua-computer-use -- ~/.local/bin/cua-driver mcp` | — | 只给 Claude Code |
 
 Codex 装完 ponytail 后，由本人在 Codex 的 `/hooks` 中信任它的两个生命周期钩子，并新开会话。
 
@@ -108,7 +96,6 @@ Codex 装完 ponytail 后，由本人在 Codex 的 `/hooks` 中信任它的两�
 
 - `claude plugin list` 只有 ponytail 和 context7。
 - `~/.codex/config.toml` 中没有 `mattpocock` 市场或插件。
-- `claude mcp list` 中 `cua-computer-use` 显示已连接。
 - `grok inspect` 的 Plugins 和 MCP Servers 两节均为 None。
 
 ## 5. Firstmate
@@ -147,7 +134,6 @@ Codex 装完 ponytail 后，由本人在 Codex 的 `/hooks` 中信任它的两�
 4. 更新 Claude 插件市场和已安装的插件
 5. `codex plugin marketplace upgrade`
 6. `pi update --extensions`
-7. `cua-driver update --apply`
 
 lark-cli、thcli 和 Firstmate 依赖的 `*-axi` 工具由 `u` 的 Node 一节随 npm 全局包更新。
 
@@ -156,7 +142,6 @@ lark-cli、thcli 和 Firstmate 依赖的 `*-axi` 工具由 `u` 的 Node 一节�
 - **Firstmate**：在 Firstmate 会话中执行 `/updatefirstmate`，会同时更新所有二副。
 - **no-mistakes 本体**：`no-mistakes update` 会重启检查服务，在空闲时执行。
 - **tcapi**：重新从 ClawHub 官方来源安装；`npx skills update` 不更新它。
-- **cua-driver skill 包**：`cua-driver update --apply` 只更新二进制，不刷新 skill 包；刷新后确认链接仍只在 Claude 中。
 - **上游已删除的 skill**：`npx skills update -g -y` 会保留本机副本并告警，确认不再需要后再删除。
 
 修改 `__u_sync_skills` 后运行 `python3 fish/tests/sync-skills.test.py`，它只操作临时目录；完整的离线测试列表见 [README](README.md#离线测试)。
