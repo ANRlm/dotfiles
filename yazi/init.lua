@@ -1,8 +1,8 @@
 -- ── Appearance: Borders ──────────────────────────────────────────────
 
 require("full-border"):setup({
-	-- Available values: ui.Border.PLAIN, ROUNDED, DOUBLE, THICK, QUADRANT_INSIDE, QUADRANT_OUTSIDE
-	type = ui.Border.PLAIN,
+	-- Available values: "plain", "rounded"
+	set = "plain",
 })
 
 -- ── Git ──────────────────────────────────────────────────────────────
