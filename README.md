@@ -12,6 +12,7 @@ Apple Silicon macOS 的个人配置，用符号链接部署到各应用的配置
 | [helix/](helix/) | 主题、编辑行为、诊断和快捷键 |
 | [herdr/](herdr/) | 界面、侧栏布局、通知、快捷键、automatic-rename 插件配置及三个本地插件 |
 | [lazygit/](lazygit/) | Delta 差异渲染配置 |
+| [mise/](mise/) | 全局设置：读取项目的 `.node-version` / `.nvmrc` |
 | [pi/](pi/) | 自定义状态栏扩展 |
 | [starship/](starship/) | 提示符及各模块的符号 |
 | [tmux/](tmux/) | 终端、窗口、快捷键及 TPM 插件 |
@@ -38,7 +39,7 @@ brew bundle --file=~/dotfiles/Brewfile
 
 ```fish
 mkdir -p ~/.config
-for dir in fish ghostty git helix herdr starship tmux yazi
+for dir in fish ghostty git helix herdr mise starship tmux yazi
     ln -s ~/dotfiles/$dir ~/.config/$dir
 end
 ln -s ~/dotfiles/herdr/plugins/config/herdr-automatic-rename ~/.config/herdr-automatic-rename
@@ -88,7 +89,7 @@ tmux 首次启动时会自动安装 TPM 及声明的插件。
 
 `claude` 展开为 `claude --allow-dangerously-skip-permissions`。Homebrew（`b*`）、tmux（`t*`）、eza（`el`、`et`）等其余缩写见 [fish/config.fish](fish/config.fish)。
 
-全局 Node 和 pnpm 由 Homebrew 管理。进入项目时，fnm 按 `.node-version` 或 `.nvmrc` 切换 Node；版本未安装时运行 `fnm use --install-if-missing`。
+全局 Node 和 pnpm 由 Homebrew 管理。进入项目时，mise 按 `.node-version` 或 `.nvmrc` 切换 Node（只在交互式 Shell 中生效）；版本未安装时在项目目录运行 `mise install`。pnpm 按项目 `package.json` 的 `packageManager` 字段切换版本。
 
 ### 终端与编辑器
 

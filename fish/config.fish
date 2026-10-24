@@ -41,15 +41,13 @@ end
 
 # ── Interactive Integrations ──────────────────────────────────────────
 
-# Establish tool precedence before fnm selects the project's Node.
+# Establish tool precedence before mise selects the project's runtimes.
 fish_add_path --move --prepend --path "$HOME/.local/bin" /opt/homebrew/bin /usr/local/bin
+
 functions -q claude; and functions -e claude
 
-if command -q fnm
-    if not fnm default >/dev/null 2>&1
-        fnm default system
-    end
-    fnm env --use-on-cd --corepack-enabled --version-file-strategy recursive --resolve-engines=false --log-level quiet --shell fish | source
+if command -q mise
+    mise activate fish | source
 end
 
 if test -f ~/.orbstack/shell/init2.fish

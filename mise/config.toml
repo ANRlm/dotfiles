@@ -1,0 +1,3 @@
+[settings]
+# Projects pin Node in .node-version / .nvmrc; without a pin, Homebrew's node stays on PATH.
+idiomatic_version_file_enable_tools = ["node"]

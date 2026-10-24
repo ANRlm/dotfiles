@@ -58,15 +58,15 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(result.stdout.count('HERDR plugin update -y'), 1)
         self.assertNotIn('UPDATED claude local', result.stdout)
 
-    def test_fnm_node_remains_first_after_config_initialization(self):
-        node = self.home / 'fnm/bin/node'
+    def test_mise_node_remains_first_after_config_initialization(self):
+        node = self.home / 'mise/bin/node'
         node.parent.mkdir(parents=True)
         node.write_text('#!/bin/sh\necho selected-project-node\n')
         node.chmod(0o755)
         script = r'''
-function fnm
-    if test "$argv[1]" = env
-        echo 'set -gx PATH "$HOME/fnm/bin" $PATH'
+function mise
+    if test "$argv[1]" = activate
+        echo 'set -gx PATH "$HOME/mise/bin" $PATH'
     end
     return 0
 end
