@@ -14,16 +14,17 @@
 | Grok | 原生读取共享目录 | `~/.grok/skills` 同样不建链接；ego lite 应用自己放在这里的 `ego-browser` 链接与共享目录同名，Grok 按名称去重，保留不动。它的 Claude 兼容层只扫描固定的 `~/.claude/skills`，看不到 Claude 的 skill 链接和插件 |
 | Claude Code | 只读取 `$CLAUDE_CONFIG_DIR/skills` | 每个 skill 需要一个指向共享目录的符号链接。`CLAUDE_CONFIG_DIR` 由 `fish/config.fish` 设置，本机为 `~/.claude-profiles/default`；未设置时 Claude 使用 `~/.claude` |
 
-- **安装方式**：skill 一律用 `npx skills add <来源> -g -a claude-code -a codex -a pi -y` 安装。它把内容放进共享目录，给 Claude 建链接，并写入 `~/.agents/.skill-lock.json`，之后由 `u` 统一更新。插件市场只用于带钩子的 ponytail 和 Claude 官方插件 context7；Pi 和 Grok 的 ponytail 分别用 `pi install`、`grok plugin install` 安装，见第 4 节。
+- **安装方式**：skill 一律用 `npx skills add <来源> -g -a claude-code -a codex -a pi -y` 安装。它把内容放进共享目录，给 Claude 建链接，并写入 `~/.agents/.skill-lock.json`，之后由 `u` 统一更新。只有需要钩子或 MCP 的才装成插件，见第 4 节。
 - **四个 Agent 必装**：[ponytail](https://github.com/DietrichGebert/ponytail)（第 4 节）和 [mattpocock/skills](https://github.com/mattpocock/skills) 的全部 skill（3.1 节）。上游新增 skill 时，`u` 会自动补装。
+- **Grok 配置目录**：`grok` 命令必须走 `~/.local/bin/grok` 包装脚本，它把 `GROK_HOME` 指向 `~/.grok-profiles/default`，插件和启用状态写在那里。
 
 ## 1. 前置条件
 
-1. 已按 [README](README.md) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。
+1. 已按 [AGENTS.md](AGENTS.md#部署) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。
 2. 当前 Shell 是加载了 `fish/config.fish` 的 Fish。
 3. `jq` 可用（macOS 自带 `/usr/bin/jq`）：`u` 用它解析 Claude 的插件列表。
 
-**完成标准**：`command -v claude codex pi grok node aliyun tccli jq` 每项都有输出；`echo $CLAUDE_CONFIG_DIR` 输出上面约定的目录。
+**完成标准**：`command -v claude codex pi grok node aliyun tccli jq` 每项都有输出，其中 `grok` 为 `~/.local/bin/grok`；`echo $CLAUDE_CONFIG_DIR` 输出上面约定的目录。
 
 ## 2. Skill 依赖的工具
 
@@ -65,7 +66,7 @@ npx skills add citrolabs/ego-lite -g -a claude-code -a codex -a pi -y
 
 ### 3.3 给 Claude 建链接
 
-共享目录中的 skill（包括 thcli、tcapi、no-mistakes 等不经过 `npx skills` 的）靠这一步补齐 Claude 链接。在 Fish 中运行：
+共享目录中的 skill（包括 thcli、tcapi 等不经过 `npx skills` 的）靠这一步补齐 Claude 链接。在 Fish 中运行：
 
 ```fish
 source ~/dotfiles/fish/functions/u.fish
@@ -93,7 +94,7 @@ ponytail 四个 Agent 都装，context7 只给 Claude Code 装，Grok 不装 MCP
 
 Codex 装完 ponytail 后，由本人在 Codex 的 `/hooks` 中信任它的两个生命周期钩子，并新开会话。
 
-Grok 的 ponytail 只有 skill，不常驻：Grok 的会话启动钩子无法注入指令，靠模型按描述自动调用或手动 `/ponytail`。`grok` 命令必须走 `~/.local/bin/grok` 包装脚本，它把 `GROK_HOME` 指向 `~/.grok-profiles/default`，插件和启用状态写在那里。
+Grok 的 ponytail 只有 skill，不常驻：Grok 的会话启动钩子无法注入指令，靠模型按描述自动调用或手动 `/ponytail`。
 
 **完成标准**：
 
@@ -111,13 +112,14 @@ Grok 的 ponytail 只有 skill，不常驻：Grok 的会话启动钩子无法注
    - 同一时间只运行一个主会话；要换一个 Agent 当主会话，先退出原来的。
    - 首次启动时，项目目录的信任提示由本人确认；用 Pi 时，还要信任仓库自带的扩展。
 3. **依赖**：首次启动时，Firstmate 会列出缺少的工具和安装命令，经本人同意后安装：
-   - `treehouse` 和 `no-mistakes`：官方 curl 安装器；
+   - `treehouse`：官方 curl 安装器；
+   - `no-mistakes`：本机不使用，提示安装时拒绝，项目登记为 `direct-PR` 或 `local-only` 模式；
    - `gh-axi`、`tasks-axi`、`quota-axi`、`chrome-devtools-axi`、`lavish-axi`：`npm install -g`。
 
    上游建议的 `<工具> setup hooks` 会改动各 Agent 的全局设置，本机没有执行；需要时由本人决定。
 4. **私有数据**：`~/firstmate` 下的 `data/`、`config/`、`projects/`、`state/` 被它自己的 Git 忽略，不随 dotfiles 迁移，其中包括项目登记、二副（工作区在 `~/.treehouse`）和本机配置。新机器上在 Firstmate 会话里重新登记项目、重新创建二副。
 
-**完成标准**：Firstmate 主会话在 Herdr 中启动，依赖检查不再报告缺少的工具。
+**完成标准**：Firstmate 主会话在 Herdr 中启动，依赖检查除 `no-mistakes` 外不再报告缺少的工具。
 
 ## 6. 收尾
 
@@ -146,8 +148,7 @@ lark-cli、thcli 和 Firstmate 依赖的 `*-axi` 工具由 `u` 的 Node 一节�
 以下几项需要手动更新：
 
 - **Firstmate**：在 Firstmate 会话中执行 `/updatefirstmate`，会同时更新所有二副。
-- **no-mistakes 本体**：`no-mistakes update` 会重启检查服务，在空闲时执行。
 - **tcapi**：重新从 ClawHub 官方来源安装；`npx skills update` 不更新它。
 - **上游已删除的 skill**：`npx skills update -g -y` 会保留本机副本并告警，确认不再需要后再删除。
 
-修改 `__u_sync_skills` 后运行 `python3 fish/tests/sync-skills.test.py`，它只操作临时目录；完整的离线测试列表见 [README](README.md#离线测试)。
+修改 `__u_sync_skills` 后运行 `python3 fish/tests/sync-skills.test.py`，它只操作临时目录；完整的离线测试列表见 [AGENTS.md](AGENTS.md#离线测试)。
