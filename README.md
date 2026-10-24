@@ -1,6 +1,6 @@
 # dotfiles
 
-我的 macOS（Apple Silicon）配置：Fish、Ghostty、Helix、tmux、Herdr、Yazi 等，用符号链接部署。终端、编辑器和 Herdr 统一用 Rose Pine 主题。
+我的 macOS（Apple Silicon）配置：Fish、Ghostty、Helix、tmux、Herdr、Yazi 等，用符号链接部署。
 
 ## 内容
 
