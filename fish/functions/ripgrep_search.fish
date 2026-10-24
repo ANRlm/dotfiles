@@ -14,6 +14,8 @@ function ripgrep_search --description "Live ripgrep search with fzf"
     set -l query (commandline -t)
     set -l result (
         fzf \
+            --min-height=20+ \
+            --bind=ctrl-z:ignore \
             --ansi \
             --disabled \
             --query "$query" \
@@ -21,8 +23,8 @@ function ripgrep_search --description "Live ripgrep search with fzf"
             --bind "start:reload:$RG_PREFIX {q} || true" \
             --bind "change:reload:$RG_PREFIX {q} || true" \
             --bind "ctrl-o:become($editor {1} +{2})" \
-            --preview 'bat --color=always {1} --highlight-line {2}' \
-            --preview-window 'right:60%:~3:+{2}+3/3'
+            --preview 'bat --style=numbers --color=always {1} --highlight-line {2}' \
+            --preview-window 'right:50%:+{2}-/2'
     )
     if test -n "$result"
         set -l parts (string split -m 2 : -- $result)
