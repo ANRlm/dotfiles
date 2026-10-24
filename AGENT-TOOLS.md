@@ -20,7 +20,7 @@
 
 ## 1. 前置条件
 
-1. 已按 [AGENTS.md](AGENTS.md#部署) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。
+1. 已按 [AGENTS.md](AGENTS.md#部署新机器) 部署 dotfiles，并执行过 `brew bundle --file=~/dotfiles/Brewfile`。
 2. 当前 Shell 是加载了 `fish/config.fish` 的 Fish。
 3. `jq` 可用（macOS 自带 `/usr/bin/jq`）：`u` 用它解析 Claude 的插件列表。
 
@@ -151,4 +151,4 @@ lark-cli、thcli 和 Firstmate 依赖的 `*-axi` 工具由 `u` 的 Node 一节�
 - **tcapi**：重新从 ClawHub 官方来源安装；`npx skills update` 不更新它。
 - **上游已删除的 skill**：`npx skills update -g -y` 会保留本机副本并告警，确认不再需要后再删除。
 
-修改 `__u_sync_skills` 后运行 `python3 fish/tests/sync-skills.test.py`，它只操作临时目录；完整的离线测试列表见 [AGENTS.md](AGENTS.md#离线测试)。
+修改 `__u_sync_skills` 后运行 `python3 fish/tests/sync-skills.test.py`，它只操作临时目录；完整的离线测试列表见 [AGENTS.md](AGENTS.md#测试)。
