@@ -143,6 +143,8 @@ function u --description "Update global tools, applications and plugins"
     # Claude Code reads per-skill symlinks in CLAUDE_CONFIG_DIR.
     __u_section "Agent skills & plugins"
     __u_run "Shared skills updated" npx -y skills update -g -y
+    # update only refreshes installed skills; re-adding picks up new upstream ones
+    __u_run "mattpocock skills synced" npx -y skills add mattpocock/skills --skill '*' -g -a claude-code -a codex -a pi -y
     __u_run "TokenHub skills updated" thcli +connect --target $HOME/.agents/skills </dev/null
     __u_run "Claude skill links synced" __u_sync_skills
     if __u_run "Claude marketplaces updated" claude plugin marketplace update
@@ -157,6 +159,7 @@ function u --description "Update global tools, applications and plugins"
     end
     __u_run "Codex marketplaces upgraded" codex plugin marketplace upgrade
     __u_run "Pi packages updated" pi update --extensions
+    __u_run "Grok plugins updated" grok plugin update
 
     # ── Python (uv) ───────────────────────────────────────────────────
 

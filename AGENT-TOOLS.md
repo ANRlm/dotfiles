@@ -14,7 +14,8 @@
 | Grok | 原生读取共享目录 | `~/.grok/skills` 同样不建链接；ego lite 应用自己放在这里的 `ego-browser` 链接与共享目录同名，Grok 按名称去重，保留不动。它的 Claude 兼容层只扫描固定的 `~/.claude/skills`，看不到 Claude 的 skill 链接和插件 |
 | Claude Code | 只读取 `$CLAUDE_CONFIG_DIR/skills` | 每个 skill 需要一个指向共享目录的符号链接。`CLAUDE_CONFIG_DIR` 由 `fish/config.fish` 设置，本机为 `~/.claude-profiles/default`；未设置时 Claude 使用 `~/.claude` |
 
-- **安装方式**：skill 一律用 `npx skills add <来源> -g -a claude-code -a codex -a pi -y` 安装。它把内容放进共享目录，给 Claude 建链接，并写入 `~/.agents/.skill-lock.json`，之后由 `u` 统一更新。插件市场只用于带钩子的 ponytail 和 Claude 官方插件 context7。
+- **安装方式**：skill 一律用 `npx skills add <来源> -g -a claude-code -a codex -a pi -y` 安装。它把内容放进共享目录，给 Claude 建链接，并写入 `~/.agents/.skill-lock.json`，之后由 `u` 统一更新。插件市场只用于带钩子的 ponytail 和 Claude 官方插件 context7；Pi 和 Grok 的 ponytail 分别用 `pi install`、`grok plugin install` 安装，见第 4 节。
+- **四个 Agent 必装**：[ponytail](https://github.com/DietrichGebert/ponytail)（第 4 节）和 [mattpocock/skills](https://github.com/mattpocock/skills) 的全部 skill（3.1 节）。上游新增 skill 时，`u` 会自动补装。
 
 ## 1. 前置条件
 
@@ -83,20 +84,23 @@ __u_sync_skills
 
 ## 4. 插件与 MCP
 
-只给 Claude Code 和 Codex 装，Grok 不装插件和 MCP。
+ponytail 四个 Agent 都装，context7 只给 Claude Code 装，Grok 不装 MCP。
 
-| 名称 | Claude Code | Codex | 说明 |
-| --- | --- | --- | --- |
-| ponytail | `claude plugin marketplace add DietrichGebert/ponytail`，再 `claude plugin install ponytail@ponytail` | `codex plugin marketplace add DietrichGebert/ponytail`，再 `codex plugin add ponytail@ponytail` | 常驻模式依赖会话启动钩子，因此装成插件 |
-| context7 | `claude plugin install context7@claude-plugins-official` | — | 自带文档查询 MCP |
+| 名称 | Claude Code | Codex | Pi | Grok | 说明 |
+| --- | --- | --- | --- | --- | --- |
+| ponytail | `claude plugin marketplace add DietrichGebert/ponytail`，再 `claude plugin install ponytail@ponytail` | `codex plugin marketplace add DietrichGebert/ponytail`，再 `codex plugin add ponytail@ponytail` | `pi install npm:@dietrichgebert/ponytail` | `grok plugin install DietrichGebert/ponytail --trust`，再 `grok plugin enable ponytail` | 常驻模式依赖会话启动钩子或 Pi 扩展，因此装成插件而不用 `npx skills add`（后者只装 skill）；Pi 包自带 skill 和扩展 |
+| context7 | `claude plugin install context7@claude-plugins-official` | — | — | — | 自带文档查询 MCP |
 
 Codex 装完 ponytail 后，由本人在 Codex 的 `/hooks` 中信任它的两个生命周期钩子，并新开会话。
+
+Grok 的 ponytail 只有 skill，不常驻：Grok 的会话启动钩子无法注入指令，靠模型按描述自动调用或手动 `/ponytail`。`grok` 命令必须走 `~/.local/bin/grok` 包装脚本，它把 `GROK_HOME` 指向 `~/.grok-profiles/default`，插件和启用状态写在那里。
 
 **完成标准**：
 
 - `claude plugin list` 只有 ponytail 和 context7。
+- `pi list` 包含 `npm:@dietrichgebert/ponytail`。
 - `~/.codex/config.toml` 中没有 `mattpocock` 市场或插件。
-- `grok inspect` 的 Plugins 和 MCP Servers 两节均为 None。
+- `grok inspect` 的 Plugins 一节只有 `ponytail (user, enabled)`，MCP Servers 一节为 None。
 
 ## 5. Firstmate
 
@@ -129,11 +133,13 @@ Codex 装完 ponytail 后，由本人在 Codex 的 `/hooks` 中信任它的两�
 `u` 的「Agent skills & plugins」一节依次执行：
 
 1. `npx skills update -g -y`
-2. `thcli +connect --target ~/.agents/skills`
-3. `__u_sync_skills`，给新增的 skill 补齐 Claude 链接
-4. 更新 Claude 插件市场和已安装的插件
-5. `codex plugin marketplace upgrade`
-6. `pi update --extensions`
+2. 重新执行 3.1 节的 mattpocock 安装命令：`update` 只更新已装的 skill，上游新增的要靠重新 `add` 补上，保证四个 Agent 都有全套
+3. `thcli +connect --target ~/.agents/skills`
+4. `__u_sync_skills`，给新增的 skill 补齐 Claude 链接
+5. 更新 Claude 插件市场和已安装的插件
+6. `codex plugin marketplace upgrade`
+7. `pi update --extensions`
+8. `grok plugin update`
 
 lark-cli、thcli 和 Firstmate 依赖的 `*-axi` 工具由 `u` 的 Node 一节随 npm 全局包更新。
 
