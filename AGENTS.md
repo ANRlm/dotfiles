@@ -48,7 +48,7 @@ ln -s ~/dotfiles/lazygit/config.yml "$HOME/Library/Application Support/lazygit/c
 ```fish
 ya pkg install
 pi install npm:@narumitw/pi-starship
-pi install npm:@narumitw/pi-btw
+pi install npm:pi-btw
 pi install npm:@narumitw/pi-stamp
 pi install npm:@juicesharp/rpiv-ask-user-question
 pi install npm:@juicesharp/rpiv-todo
@@ -153,7 +153,7 @@ Pi 的扩展都是 npm 包，装在 `~/.pi/agent/npm/`，条目写在 `~/.pi/age
 
 | 包 | 作用 |
 | --- | --- |
-| `@narumitw/pi-btw` | `/btw <问题>` 开侧线程问问题，答案默认不进主对话 |
+| `pi-btw` | `/btw <问题>`（别名 `/side`）立刻开一个带工具的并行子会话，不打断主线程；`/btw:tangent` 不继承上下文，`/btw:ask` 只读，线程用 `/btw:inject` 或 `/btw:summarize` 注回主对话，内容默认不进主上下文 |
 | `@narumitw/pi-stamp` | 每条消息右侧的时间戳，可选响应耗时、模型、用量和工具耗时 |
 | `@juicesharp/rpiv-ask-user-question` | `ask_user_question` 工具：结构化选项弹窗，最多四题，每题可写自定义答案 |
 | `@juicesharp/rpiv-todo` | `todo` 工具和 `/todos` 命令，输入框上方常驻任务面板，列表从对话重建 |
