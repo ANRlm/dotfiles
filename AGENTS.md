@@ -9,6 +9,7 @@
 - 配置文件按功能分组，分组标题沿用 `fish/config.fish` 的 `# ── 类别 ──…` 样式；Lua 文件用 `--` 注释。
 - 登录、密钥、系统授权和覆盖已有配置，交给本人：给出完整命令，等本人确认完成。
 - 改了行为就更新本文件的对应小节。README 只写给人看，仅在目录、安装方式或常用命令变化时修改。
+- 文档只写当下的事实：读者是第一次打开仓库的人，不写「以前是…现在是…」「去掉了…保留了…」这类沿革。
 - Agent 的 skill、插件和配套工具只装在部分机器上，清单在 [AGENT-TOOLS.md](AGENT-TOOLS.md)，本人要求时才执行。
 
 ## 部署新机器
@@ -125,7 +126,7 @@ Spaces 面板每项两行：工作区名（Firstmate 子工作区同样用 `$sho
 样式上的取舍：
 
 - 本地机器名 `Local` 被规则隐藏，远端主机用 Rose Pine foam（`#9ccfd8`）标出。其余字段用主题默认色。
-- 项目名不设颜色，否则 Herdr 不再显示选中态高亮。
+- 项目名不设颜色，否则 Herdr 不显示选中态高亮。
 - `[theme.custom]` 调亮了 `surface_dim`，因为 Rose Pine 自带的分隔符色几乎和背景同色。
 - Pi 的标题带 `π - ` 前缀，Herdr 规则不能改写文字，保留原样。
 
@@ -147,25 +148,23 @@ Spaces 面板每项两行：工作区名（Firstmate 子工作区同样用 `$sho
 代码在 [pi/extensions/minimal-statusline.ts](pi/extensions/minimal-statusline.ts)，改完在 Pi 中 `/reload`。只有一种布局。
 
 ```text
-路径 [分支]                         ↑输入 ↓输出 · cache 命中率 · r 缓存读 w 缓存写
-ctx 剩余/窗口 进度条 剩余% left                        活动 · 本轮耗时 · ~tok/s · 模型 · effort
+路径 [分支]                                  cache 命中率
+ctx 剩余/窗口 进度条 剩余% left                             活动 · 模型 · effort
 ```
 
-- 第一行右侧是会话累计 token、会话加权的 cache 命中率和缓存读写。命中率低不标警告。
-- 第二行右侧是活动、本轮耗时、生成中的 `~tok/s`、模型和 effort；空闲时仍显示模型和 effort。
-- 活动文案用英文：`waiting`、`thinking`、`streaming`、`tool` / `tools×N`、`compacting`、`finishing`。工具按调用 ID 跟踪，直到 `agent_settled` 才停表。扩展 API 不暴露重试事件，所以不显示重试。
-- 其他扩展的状态全部显示，按宽度换行，带 warning、error、警告等字样的排前面。没有结构化的严重级别，这只是启发式。
-- 窄屏时路径和分支先缩短，放不下的指标追加到下面，不隐藏。
+- 第一行右侧只有 cache 命中率，按最近 20 次请求加权，长会话里的冷启动不会被历史摊平；命中率低不标警告。
+- 第二行右侧是活动、模型和 effort；空闲时仍显示模型和 effort。模型后跟提供商，如 `gpt-6.1-sol (openai-codex)`，同一款模型从 `openai` 和 `openai-codex` 两条路走时才分得清。
+- 活动文案用英文：`waiting`、`thinking`、`streaming`、`tool <名称>`、`compacting`、`finishing`。工具按调用 ID 跟踪，并发时显示最新的名字和数量，如 `tool Task ×2`；`agent_settled` 后整块消失。活动期间状态栏每 200ms 重绘一次，转圈不会卡住。扩展 API 不暴露重试事件，所以不显示重试。
+- 窄屏时路径和分支从尾部截断，仍放不下的指标追加到下面，不隐藏。
 
 **ctx** 显示整个窗口的剩余量，如 `ctx 108k/200k ━━━━━━━╸────── 54% left`：
 
-- 剩余低于 30% 变黄、低于 10% 变红。
+- 剩余低于 30% 变黄，低于 10% 变红并在数字前加 `!`，不只靠颜色区分。
 - 空间不够时进度条从 14 列缩到 10、6 列，再去掉，然后改用 `ctx 54% left`，仍放不下就换行。
 - 用量未知时显示 `ctx —/200k · usage pending`。
 
-**统计口径**：
+**切换**：
 
-- `~tok/s` 按中英文字符权重估算，按模型分别校准，结果按模型原子写入 `~/.pi/agent/statusline-rate.json.d/`，不同模型的并发会话互不覆盖；同模型更新前先读回最新记录，多个会话收敛。这是估算，不是服务端吞吐量。
 - `/statusline default` 临时切回默认状态栏，`/statusline custom` 切回来，不带参数时来回切换。
 
 ## 更新
