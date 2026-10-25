@@ -2,7 +2,20 @@
 
 macOS（Apple Silicon）上的个人配置。管的是终端里这一层：Fish、Ghostty、Helix、tmux、Herdr、Yazi，加上 Git、lazygit、starship、mise，以及几个编码 Agent 的配置。
 
-顶层每个目录对应一个应用，目录名就是应用名；`Brewfile` 是软件清单，几份 `.md` 是文档。仓库只放配置，凭证、会话和缓存留在本机，由 `.gitignore` 挡住。
+仓库只放配置，凭证、会话和缓存留在本机，由 `.gitignore` 挡住。
+
+| 路径 | 用途 |
+| --- | --- |
+| [fish/](fish/) | Shell：缩写、函数，更新命令 `u` |
+| [ghostty/](ghostty/) | 终端 |
+| [helix/](helix/) | 编辑器 |
+| [tmux/](tmux/) | 终端复用 |
+| [herdr/](herdr/) | Agent 终端复用 |
+| [yazi/](yazi/) | 文件管理器 |
+| [git/](git/)、[lazygit/](lazygit/) | Git 与 lazygit |
+| [starship/](starship/) | 提示符 |
+| [mise/](mise/) | 按项目切换 Node 版本 |
+| [Brewfile](Brewfile) | 软件清单 |
 
 ## 安装
 
