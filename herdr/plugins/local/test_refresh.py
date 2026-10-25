@@ -1,4 +1,4 @@
-"""Offline process-level regression checks for both metadata plugins."""
+"""Offline process-level regression checks for the fm-short-label metadata plugin."""
 import json
 import os
 from pathlib import Path
@@ -124,9 +124,7 @@ def check_session_isolation(command):
 
 
 if __name__ == "__main__":
-    check(["python3", str(ROOT / "sidebar-short-title/short_title.py")], "sidebar_title", "w1:p1", "pane_not_found")
     check(["bash", str(ROOT / "fm-short-label/short-label.sh")], "short", "w1", "workspace_not_found")
     check(["bash", str(ROOT / "fm-short-label/short-label.sh")], "short", "w1:p1", "pane_not_found")
-    check_session_isolation(["python3", str(ROOT / "sidebar-short-title/short_title.py")])
     check_session_isolation(["bash", str(ROOT / "fm-short-label/short-label.sh")])
     print("PASS: queued fresh snapshots; session isolation; vanished objects skipped; errors reported and locks released")

@@ -10,7 +10,7 @@
 | [ghostty/](ghostty/) | 终端：字体、主题、窗口、剪贴板 |
 | [helix/](helix/) | 编辑器：主题、编辑行为、快捷键 |
 | [tmux/](tmux/) | 终端复用：快捷键和 TPM 插件 |
-| [herdr/](herdr/) | Agent 终端复用：界面、侧栏、快捷键和三个本地插件 |
+| [herdr/](herdr/) | Agent 终端复用：界面、侧栏、快捷键和插件 |
 | [yazi/](yazi/) | 文件管理器：预览、快捷键、插件 |
 | [git/](git/)、[lazygit/](lazygit/) | Git 设置、Delta 差异显示、全局忽略规则 |
 | [starship/](starship/) | 提示符 |

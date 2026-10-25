@@ -48,24 +48,20 @@ ln -s ~/dotfiles/lazygit/config.yml "$HOME/Library/Application Support/lazygit/c
 ```fish
 ya pkg install
 herdr plugin install qu8n/herdr-automatic-rename
-for plugin in fm-short-label sidebar-short-title worktree-label
-    herdr plugin link ~/dotfiles/herdr/plugins/local/$plugin
-end
+herdr plugin link ~/dotfiles/herdr/plugins/local/fm-short-label
 ```
 
 tmux 首次启动时自动安装 TPM 和插件。
 
-Herdr 本地插件需要 Python 3（`worktree-label` 另需 Git 2.31+），`herdr-automatic-rename` 需要 Bash 和 jq。首次 link 不会触发 startup hook，要在每个目标 Herdr 会话的 pane 内手动刷新一次：
+`fm-short-label` 需要 Python 3，`herdr-automatic-rename` 需要 Bash 和 jq。首次 link 不会触发 startup hook，要在每个目标 Herdr 会话的 pane 内手动刷新一次：
 
 ```sh
 bash ~/.config/herdr/plugins/local/fm-short-label/short-label.sh
-python3 ~/.config/herdr/plugins/local/sidebar-short-title/short_title.py
-python3 ~/.config/herdr/plugins/local/worktree-label/worktree_label.py
 ```
 
-Herdr server 通过 SSH 跑在远端时，插件装在**远端**并在远端 link。三个本地插件共用 `herdr/plugins/local/metadata_refresh.py`，同步到别处时保留 `herdr/plugins/local/` 的目录结构。
+Herdr server 通过 SSH 跑在远端时，插件装在**远端**并在远端 link。`fm-short-label` 依赖 `herdr/plugins/local/metadata_refresh.py`，同步到别处时保留 `herdr/plugins/local/` 的目录结构。
 
-完成标准：以上命令都返回 0，Herdr 侧栏显示短任务名。
+完成标准：以上命令都返回 0，Firstmate 子工作区在 Herdr 侧栏中不显示 `p:<token>`。
 
 ### 4. 交给本人
 
@@ -90,56 +86,33 @@ Herdr server 通过 SSH 跑在远端时，插件装在**远端**并在远端 lin
 
 ### Herdr 侧栏
 
-Agent 面板按项目分组，每个 Agent 三行：
+布局贴近 Herdr 默认。
+
+Agent 面板每个 Agent 两行：
 
 | 行 | 内容 |
 | --- | --- |
-| 1 | 状态圆点、短任务名 `$sidebar_title` |
-| 2 | 远端主机名、项目名；Firstmate 子工作区用 `$short` 代替项目名 |
-| 3 | Agent 名称，如 `pi`、`claude` |
+| 1 | 状态圆点、终端标题 `terminal_title_stripped`（加粗，实时更新） |
+| 2 | 远端主机名、项目名（Firstmate 子工作区用 `$short` 代替）、Agent 名称 |
 
-Spaces 面板每项两行：工作区名（Firstmate 子工作区同样用 `$short`），以及分支和 Git 状态。Agent 在 linked worktree 中工作时，第二行先显示 worktree 信息，Herdr 自带的分支和状态排后，宽度不够时先被截掉，如 ` erp-admin · *3 · master`。
+Spaces 面板每项两行：工作区名（Firstmate 子工作区同样用 `$short`），以及 Herdr 自带的分支和 Git 状态。分支取 shell 的 cwd，Firstmate 子任务的 shell 停在主 clone，所以这里显示的是主 clone 的分支。
 
 样式上的取舍：
 
-- 本地机器名 `Local` 被规则隐藏，少一个 ` · `，远端主机更显眼。
-- 字段全部加粗、不加 `dim`。机器名、Agent 名和自定义字段默认跟分组标题、Pane 边框共用一个色槽，没法单独调亮，所以改用 Rose Pine 的固定色：任务名 `text`、远端主机 `teal`（foam）、Agent 名 `overlay1`、`$short` 用 `subtext0`。
+- 本地机器名 `Local` 被规则隐藏，远端主机用 Rose Pine foam（`#9ccfd8`）标出。其余字段用主题默认色。
 - 项目名不设颜色，否则 Herdr 不再显示选中态高亮。
-- 分隔符也用固定色，因为原本的 `surface_dim` 几乎和背景同色。Herdr 0.9.3 改不了分隔符字符本身。
-- 色值和用途集中在 [herdr/config.toml](herdr/config.toml) 的 `[theme]` 下，换主题时照着替换。
+- `[theme.custom]` 调亮了 `surface_dim`，因为 Rose Pine 自带的分隔符色几乎和背景同色。
+- Pi 的标题带 `π - ` 前缀，Herdr 规则不能改写文字，保留原样。
 
 ### Herdr 插件
 
-侧栏的自定义字段由三个本地插件发布，tab 名由一个 GitHub 插件维护。
+**`fm-short-label`**（本地）把 Firstmate 子工作区名 `└ task · p:<token>` 去掉 token 后作为 `$short` 发布到工作区和其中的 pane，不改工作区和 tab 的实际名称。刷新按 socket 串行，锁文件在 `~/.cache/herdr/plugin-locks/`；herdr 调用有 10 秒超时；刷新途中关掉的 pane 或工作区直接跳过。
 
-**`sidebar-short-title`** 生成 `$sidebar_title`，按顺序取第一个可用的：
-
-1. 原生 pane 名：`herdr pane rename <pane-id> <名字>` 设置，`--clear` 恢复。
-2. 手动改过的 tab 名：只在该 tab 仅有一个 Agent 时采用，避免重名。手动状态由 `herdr-automatic-rename` 记录，Firstmate 创建的 `fm-<mate>` 也算。
-3. 终端标题：去掉重复的项目名和目录名，Pi 标题再去掉开头的 `π - `。
-
-插件不截断，交给 Herdr 按侧栏宽度和中英文显示宽度截断。Herdr 0.9.3 没有标题变化事件，所以只在启动、Agent 状态变化、焦点切换和改名时刷新。
-
-**`fm-short-label`** 把 Firstmate 子工作区名 `└ task · p:<token>` 去掉 token 后作为 `$short` 发布，不改工作区和 tab 的实际名称。
-
-**`worktree-label`** 看工作区内 Agent pane（没有则取第一个 pane）的前台目录，位于 linked worktree 时发布：
-
-- `$worktree`：分支图标加仓库名。shell 不在该 worktree 时附上实际分支，但分支名末段已出现在工作区名中时省略（如 Firstmate 的 `fm/<task>`）。
-- `$worktree_status`：相对 upstream 的非零 `↑N ↓N`（shell 不在 worktree 内且不是 detached HEAD 时），加未提交文件数 `*N`。
-
-Herdr 的 `branch` 和 `git_status` 取的是 shell 的 cwd，而 Firstmate 子任务的 shell 停在主 clone，所以它们排在 worktree 信息之后。shell 本身就在干净的 detached worktree（Secondmate 的 home）时什么都不显示。
-
-**`herdr-automatic-rename`** 保留首次见到的自定义 tab 名，适合 Firstmate 的 `firstmate` / `fm-*`。不用 `kryptamine/herdr-auto-title`，因为它第一次轮询就会接管未锁定的 tab 和 pane 名。
-
-运行方式：
-
-- `worktree-label` 的 startup hook 以 `--watch` 常驻，每 20 秒刷新；单次失败只记日志，server 退出时它跟着退出。首次 link 后要等下次 server 启动才开始轮询。
-- git 和 herdr 调用都有 10 秒超时，单个工作区出错不影响其他的，也不会长期占用 Herdr 所有插件共用的 32 个并发名额。
-- 刷新按插件和 socket 串行，锁文件在 `~/.cache/herdr/plugin-locks/`，进程退出或出错时释放。刷新途中关掉的 pane 或工作区直接跳过。
+**`herdr-automatic-rename`**（GitHub）自动命名 tab，保留首次见到的自定义 tab 名，适合 Firstmate 的 `firstmate` / `fm-*`。不用 `kryptamine/herdr-auto-title`，因为它第一次轮询就会接管未锁定的 tab 和 pane 名。
 
 ### Pi 状态栏
 
-代码在 [pi/extensions/minimal-statusline.ts](pi/extensions/minimal-statusline.ts)，改完在 Pi 中 `/reload`。只有一种布局，不再读旧的 `~/.pi/agent/statusline.json`。
+代码在 [pi/extensions/minimal-statusline.ts](pi/extensions/minimal-statusline.ts)，改完在 Pi 中 `/reload`。只有一种布局。
 
 ```text
 路径 [分支]                         ↑输入 ↓输出 · ≈$成本 · cache 命中率 · r 缓存读 w 缓存写
@@ -162,7 +135,7 @@ ctx 剩余/窗口 进度条 剩余% left · auto in ≈余量        活动 · �
 **统计口径**：
 
 - `≈$` 按价格配置和已上报用量估算整个会话（含历史分支、工具和压缩），不是账单。
-- `~tok/s` 按中英文字符权重估算，按模型分别校准，结果原子写入 `~/.pi/agent/statusline-rate.json.d/`，不同模型的并发会话互不覆盖，同模型以最后写入为准。旧的 `statusline-rate.json` 仍可读取。这是估算，不是服务端吞吐量。
+- `~tok/s` 按中英文字符权重估算，按模型分别校准，结果原子写入 `~/.pi/agent/statusline-rate.json.d/`，不同模型的并发会话互不覆盖，同模型以最后写入为准。读取时先读 `~/.pi/agent/statusline-rate.json`，再由该目录中的记录覆盖。这是估算，不是服务端吞吐量。
 - `/statusline default` 临时切回默认状态栏，`/statusline custom` 切回来，不带参数时来回切换。
 
 ## 更新
@@ -188,6 +161,4 @@ python3 fish/tests/runtime.test.py
 python3 fish/tests/sync-skills.test.py
 python3 herdr/plugins/local/test_refresh.py
 python3 herdr/plugins/local/fm-short-label/test_short_label.py
-python3 herdr/plugins/local/sidebar-short-title/test_short_title.py
-python3 herdr/plugins/local/worktree-label/test_worktree_label.py
 ```

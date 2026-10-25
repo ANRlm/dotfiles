@@ -5,17 +5,6 @@ onboarding = false
 [theme]
 name = "rose-pine"
 
-# Every fixed color in this file comes from the Rose Pine palette (Herdr's
-# rose-pine slots in src/app/state.rs, or Rose Pine's own names). When switching
-# theme, replace these values:
-#   text           #e0def4   task titles
-#   subtext0       #c8c5dc   Firstmate $short, matching unfocused workspace names
-#   overlay1       #908caa   agent names (Rose Pine "subtle")
-#   teal           #9ccfd8   remote machine names (Rose Pine "foam"; blue/pine is too dark)
-#   rose           #ebbcba   $worktree repo names (Rose Pine "rose")
-#   gold           #f6c177   $worktree_status ahead/behind and uncommitted counts (Rose Pine "gold")
-#   highlight_med  #403d52   separators (surface_dim)
-
 # rose-pine's surface_dim (#26233a) barely differs from the panel background.
 [theme.custom]
 surface_dim = "#403d52"
@@ -42,36 +31,20 @@ window_title = "{hostname} · {workspace} · {tab}"
 show_agent_labels_on_pane_borders = true
 
 [ui.sidebar.agents]
-# Three rows: task title; machine and project; agent (the state icon shows status).
-# Herdr 0.9.3 rules cannot rewrite text; separators remain the native " · ".
-# Harness, machine, and project names are bold (no dim).
-# "Local" is hidden: fewer native " · " separators, and remote hosts stand out.
-# Machine, agent, and custom tokens default to overlay0, shared with headers and
-# borders, so they take palette colors listed under [theme]. An fg also drops
-# Herdr's focused-row variant, so workspace keeps its native text/subtext0.
+# Herdr's default two rows, with the live terminal title as the task name on top.
+# "Local" is hidden so remote hosts stand out; Rose Pine foam (#9ccfd8) marks them.
+# Firstmate's "└ task · p:<token>" children show $short (plugins/local/fm-short-label) instead.
 rows = [
-  ["state_icon", { token = "$sidebar_title", fg = "#e0def4", bold = true }],
-  [{ token = "machine", fg = "#9ccfd8", bold = true, rules = [
-    { equals = "Local", hide = true },
-  ] }, { token = "workspace", bold = true, rules = [
-    { starts_with = "└ ", hide = true },
-  ] }, { token = "$short", fg = "#c8c5dc", bold = true }],
-  [{ token = "agent", fg = "#908caa", bold = true }],
+  ["state_icon", { token = "terminal_title_stripped", bold = true }],
+  [{ token = "machine", fg = "#9ccfd8", rules = [{ equals = "Local", hide = true }] },
+   { token = "workspace", rules = [{ starts_with = "└ ", hide = true }] }, "$short", "agent"],
 ]
 
-# Top-level and Firstmate child names are bold, with theme-native colors.
-# Firstmate's "└ task · p:<token>" children show $short ("└ task", from
-# plugins/local/fm-short-label) so the token doesn't eat the width.
-# $short takes subtext0, the unfocused workspace color (custom tokens default to overlay1).
-# branch and git_status follow the shell's cwd (a Firstmate task's main clone), so the agent's
-# linked worktree ($worktree and $worktree_status, from plugins/local/worktree-label) leads the row.
 [ui.sidebar.spaces]
 rows = [
-  ["state_icon", { token = "workspace", bold = true, rules = [
-    { starts_with = "└ ", hide = true },
-  ] }, { token = "$short", fg = "#c8c5dc", bold = true }],
-  [{ token = "$worktree", fg = "#ebbcba" }, { token = "$worktree_status", fg = "#f6c177" },
-   "branch", "git_status"],
+  ["state_icon", { token = "workspace", bold = true, rules = [{ starts_with = "└ ", hide = true }] },
+   { token = "$short", bold = true }],
+  ["branch", "git_status"],
 ]
 
 # ── Notifications ─────────────────────────────────────────────────────
