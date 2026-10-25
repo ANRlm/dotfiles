@@ -75,7 +75,7 @@ function loadCalibrationFile(file: string): Map<string, RateCalibration> {
     if (raw && typeof raw === "object") {
       for (const [model, value] of Object.entries(raw)) {
         if (typeof value === "number" && Number.isFinite(value)) {
-          // Legacy single coefficient: it was learned from text messages only.
+          // A bare number is a text-only coefficient; tool output keeps the neutral 1.
           entries.set(model, { text: clampCalibration(value), tool: 1 });
         } else if (value && typeof value === "object") {
           const record = value as { text?: unknown; tool?: unknown };
@@ -102,7 +102,7 @@ export function loadRateCalibration(file: string = RATE_CALIBRATION_FILE): Map<s
       }
     }
   } catch {
-    // Older installations only have the single calibration file.
+    // The directory exists only after the first per-model save.
   }
   return entries;
 }
