@@ -53,6 +53,16 @@ herdr plugin link ~/dotfiles/herdr/plugins/local/fm-short-label
 
 tmux 首次启动时自动安装 TPM 和插件。
 
+Herdr 的 Agent 集成由 herdr 自己写进各 Agent 的配置目录，不在本仓库，要单独装：
+
+```fish
+herdr integration install claude
+herdr integration install codex
+herdr integration install pi
+set -lx GROK_HOME $HOME/.grok-profiles/default
+herdr integration install grok
+```
+
 `fm-short-label` 需要 Python 3，`herdr-automatic-rename` 需要 Bash 和 jq。首次 link 不会触发 startup hook，要在每个目标 Herdr 会话的 pane 内手动刷新一次：
 
 ```sh
@@ -61,7 +71,7 @@ bash ~/.config/herdr/plugins/local/fm-short-label/short-label.sh
 
 Herdr server 通过 SSH 跑在远端时，插件装在**远端**并在远端 link。`fm-short-label` 依赖 `herdr/plugins/local/metadata_refresh.py`，同步到别处时保留 `herdr/plugins/local/` 的目录结构。
 
-完成标准：以上命令都返回 0，Firstmate 子工作区在 Herdr 侧栏中不显示 `p:<token>`。
+完成标准：以上命令都返回 0，`herdr integration status` 里四个集成都列在各自的 profile 路径下，Firstmate 子工作区在 Herdr 侧栏中不显示 `p:<token>`。
 
 ### 4. 交给本人
 
@@ -83,6 +93,21 @@ Herdr server 通过 SSH 跑在远端时，插件装在**远端**并在远端 lin
 - **lazygit** 不读 `core.pager`，所以 Delta 在 [lazygit/config.yml](lazygit/config.yml) 里单独配置。Diff 视图关闭了自动换行：lazygit 的续行从第 0 列开始，会盖住 Delta 的行号栏。
 - **Git** 全局忽略 `.env`、`.env.*`、`*.key`、`*.pem` 等凭证文件，但放行 `.env.example` 和 `.env.template`。
 - **Ghostty** 把 Option 当 Alt 发送；终端程序读剪贴板时要确认。**Helix** 和 **tmux** 的复制都写入系统剪贴板。
+
+### Herdr 集成
+
+会话恢复靠 integration：herdr 在 Agent 的配置目录里挂一个 `SessionStart` 钩子记录会话 ID，状态仍由 Herdr 自己检测。脚本由 herdr 管理，改了会被下次安装覆盖，要加钩子就放在它旁边另建文件。
+
+| Agent | 集成 |
+| --- | --- |
+| Claude Code | `$CLAUDE_CONFIG_DIR/hooks/herdr-agent-state.sh`，注册在 `settings.json` |
+| Codex | `~/.codex/herdr-agent-state.sh`，注册在 `hooks.json` |
+| Grok | `$GROK_HOME/hooks/herdr-agent-state.sh`，注册在 `hooks/herdr.json` |
+| Pi | `~/.pi/agent/extensions/herdr-agent-state.ts`，扩展直报全生命周期，Herdr 跳过屏幕检测 |
+
+路径全跟环境变量走：Grok 不带 `GROK_HOME`、Claude 不带 `CLAUDE_CONFIG_DIR` 时，herdr 会写进并不存在的 `~/.grok` / `~/.claude`。Codex 的 `hooks.json` 同时有 Orca 和 Otty 的钩子，重装只动 herdr 自己那条。Codex 还会要求在新会话里信任钩子，交给本人在 `/hooks` 里确认。
+
+Herdr 每个版本可能升级集成版本号。`u` 拿 `herdr integration status` 比对，只重装标着 `outdated` 的那几款，因为它会改写 Agent 自己的配置文件；四款都 current 时只打一行 ✓。完全没装过的（`not installed`）不自动补，按部署步骤手动装。
 
 ### Herdr 侧栏
 
@@ -109,6 +134,13 @@ Spaces 面板每项两行：工作区名（Firstmate 子工作区同样用 `$sho
 **`fm-short-label`**（本地）把 Firstmate 子工作区名 `└ task · p:<token>` 去掉 token 后作为 `$short` 发布到工作区和其中的 pane，不改工作区和 tab 的实际名称。刷新按 socket 串行，锁文件在 `~/.cache/herdr/plugin-locks/`；herdr 调用有 10 秒超时；刷新途中关掉的 pane 或工作区直接跳过。
 
 **`herdr-automatic-rename`**（GitHub）自动命名 tab，保留首次见到的自定义 tab 名，适合 Firstmate 的 `firstmate` / `fm-*`。不用 `kryptamine/herdr-auto-title`，因为它第一次轮询就会接管未锁定的 tab 和 pane 名。
+
+### Herdr 输入法
+
+`[experimental]` 里开了两个为中文输入法准备的开关：
+
+- `reveal_hidden_cursor_for_cjk_ime`：Claude Code、Pi、Codex、Grok 自己画光标，不开时候选框会飘到 pane 左上角。`cjk_ime_agents` 只列这四款，vim 之类隐藏光标的程序保持原样。
+- `switch_ascii_input_source_in_prefix`：前缀键按下期间切到 ASCII 输入源，前缀快捷键不会被候选窗吞掉。
 
 ### Pi 状态栏
 
@@ -143,6 +175,7 @@ ctx 剩余/窗口 进度条 剩余% left                        活动 · 本轮
 - Homebrew：更新、升级、清理，并把本机新装的软件追加进 Brewfile。
 - Node：更新 npm 全局包，清理 pnpm store。
 - Agent skill 与插件：见 [AGENT-TOOLS.md](AGENT-TOOLS.md#更新)。
+- Herdr 集成：`herdr integration status` 里标 `outdated` 的，按 `herdr integration install <agent>` 重装；已是 current 的跳过。
 - 其他：清理 uv 缓存，更新 Mac App Store 应用、tmux 插件（Git 快进）、Herdr 的 GitHub 插件（保留 ref 和配置）、Yazi 插件（最多重试三次），最后跑 Mole 清理。
 
 单步失败不中断，结束时返回失败。`u` 不拉取本仓库。
