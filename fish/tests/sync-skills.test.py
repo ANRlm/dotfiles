@@ -95,5 +95,71 @@ class SkillLinkTests(unittest.TestCase):
         self.assertIn("Skill link conflict:", self.sync(success=False).stderr)
 
 
+DELETED_UPDATE = (
+    "Warning: The following skills from mattpocock/skills appear to have been deleted upstream:\n"
+    "  \x1b[2m\u2022\x1b[0m ghost-skill\n"
+    "  \x1b[2m\u2022\x1b[0m another-gone\n"
+    "\n"
+    "New skills available:\n"
+    "  \u2022 fresh-skill\n"
+)
+
+
+class SkillPruneTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.home = Path(self.temp.name).resolve()
+        self.bin = self.home / "bin"
+        self.bin.mkdir()
+        self.env = {**os.environ, "HOME": str(self.home), "UPDATE": str(UPDATE)}
+
+    def stub_npx(self, output, code=0):
+        # Records removals so the test never needs the network.
+        script = self.bin / "npx"
+        script.write_text(
+            "#!/bin/sh\n"
+            f'case "$*" in\n'
+            f'  *"skills remove"*) echo "$@" >> "$HOME/removed.txt" ;;\n'
+            f'  *"skills update"*) printf %s "$STUB_UPDATE_OUTPUT" ; exit "$STUB_UPDATE_EXIT" ;;\n'
+            "esac\n"
+            "exit 0\n"
+        )
+        script.chmod(0o755)
+        self.env.update({"STUB_UPDATE_OUTPUT": output, "STUB_UPDATE_EXIT": str(code),
+                         "PATH": f"{self.bin}:{os.environ['PATH']}"})
+
+    def update(self, success=True):
+        result = subprocess.run(
+            ["fish", "--no-config", "-c", 'source "$UPDATE"; __u_update_skills'],
+            env=self.env, capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode == 0, success, result.stdout + result.stderr)
+        return result
+
+    def test_parser_reads_only_the_warning_block(self):
+        result = subprocess.run(
+            ["fish", "--no-config", "-c", 'source "$UPDATE"; __u_deleted_skills'],
+            input=DELETED_UPDATE, env=self.env, capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.split(), ["ghost-skill", "another-gone"])
+
+    def test_deleted_skills_are_removed_after_update(self):
+        self.stub_npx(DELETED_UPDATE)
+        self.update()
+        self.assertIn("skills remove ghost-skill another-gone", (self.home / "removed.txt").read_text())
+
+    def test_nothing_removed_without_the_warning(self):
+        self.stub_npx("\u2713 All global skills are up to date\n")
+        self.update()
+        self.assertFalse((self.home / "removed.txt").exists())
+
+    def test_failed_update_still_fails(self):
+        self.stub_npx(DELETED_UPDATE, code=7)
+        self.update(success=False)
+        self.assertFalse((self.home / "removed.txt").exists())
+
+
 if __name__ == "__main__":
     unittest.main()

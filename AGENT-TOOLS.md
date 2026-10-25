@@ -136,7 +136,7 @@ Pi 的状态栏不显示 ponytail 状态条（规则照常生效）：`fish/conf
 
 `u` 的「Agent skills & plugins」一节依次执行：
 
-1. `npx skills update -g -y`
+1. `__u_update_skills`：`npx skills update -g -y`，再按它的告警删掉上游已删除的本地副本（`npx skills remove … -g -y`），本机与上游保持一致
 2. 重新执行 3.1 节的 mattpocock 安装命令：`update` 只更新已装的 skill，上游新增的要靠重新 `add` 补上，保证四个 Agent 都有全套
 3. `thcli +connect --target ~/.agents/skills`
 4. `__u_sync_skills`，给新增的 skill 补齐 Claude 链接
@@ -151,6 +151,5 @@ lark-cli、thcli 和 Firstmate 依赖的 `*-axi` 工具由 `u` 的 Node 一节�
 
 - **Firstmate**：在 Firstmate 会话中执行 `/updatefirstmate`，会同时更新所有二副。
 - **tcapi**：重新从 ClawHub 官方来源安装；`npx skills update` 不更新它。
-- **上游已删除的 skill**：`npx skills update -g -y` 会保留本机副本并告警，确认不再需要后再删除。
 
 修改 `__u_sync_skills` 后运行 `python3 fish/tests/sync-skills.test.py`，它只操作临时目录；完整的离线测试列表见 [AGENTS.md](AGENTS.md#测试)。

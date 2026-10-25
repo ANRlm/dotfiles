@@ -112,6 +112,30 @@ function __u_sync_skills
     return $failed
 end
 
+# Names that `skills update` reported as deleted upstream.
+function __u_deleted_skills
+    awk 'BEGIN { esc = sprintf("%c", 27) }
+        { gsub(esc "\\[[0-9;]*[A-Za-z]", "") }
+        /deleted upstream:/ { warned = 1; next }
+        warned && NF == 0 { next }
+        warned && /^[[:space:]]*•/ { sub(/^[[:space:]]*•[[:space:]]*/, ""); print; next }
+        warned { exit }'
+end
+
+# Update global skills, then drop the copies whose upstream stopped shipping them.
+# `skills update -y` only warns about those, so the pruning happens here.
+function __u_update_skills
+    set -l log (mktemp -t u-skills)
+    npx -y skills update -g -y 2>&1 | tee $log
+    set -l code $pipestatus[1]
+    set -l names (__u_deleted_skills <$log)
+    rm -f $log
+    test $code -eq 0; or return $code
+    test (count $names) -eq 0; and return 0
+    echo "  Removing skills deleted upstream: $names"
+    npx -y skills remove $names -g -y
+end
+
 function u --description "Update global tools, applications and plugins"
     if set -q argv[1]
         echo "Usage: u" >&2
@@ -144,7 +168,7 @@ function u --description "Update global tools, applications and plugins"
     # Shared skills live in ~/.agents/skills: Codex and Pi read it directly,
     # Claude Code reads per-skill symlinks in CLAUDE_CONFIG_DIR.
     __u_section "Agent skills & plugins"
-    __u_run "Shared skills updated" npx -y skills update -g -y
+    __u_run "Shared skills updated" __u_update_skills
     # update only refreshes installed skills; re-adding picks up new upstream ones
     __u_run "mattpocock skills synced" npx -y skills add mattpocock/skills --skill '*' -g -a claude-code -a codex -a pi -y
     __u_run "TokenHub skills updated" thcli +connect --target $HOME/.agents/skills </dev/null
