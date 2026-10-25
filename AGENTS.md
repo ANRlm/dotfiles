@@ -5,7 +5,7 @@
 ## 规则
 
 - 仓库固定在 `~/dotfiles`，符号链接和 `u` 都依赖这个路径。
-- 仓库只放配置。凭证、会话、缓存和插件下载留在本机目录，由 `.gitignore` 排除。`pi/` 用白名单：新增文件先确认不含凭证，再在 `.gitignore` 中显式放行。
+- 仓库只放配置。凭证、会话、缓存和插件下载留在本机目录，由 `.gitignore` 排除；`pi/` 整个目录不进仓库。
 - 配置文件按功能分组，分组标题沿用 `fish/config.fish` 的 `# ── 类别 ──…` 样式；Lua 文件用 `--` 注释。
 - 登录、密钥、系统授权和覆盖已有配置，交给本人：给出完整命令，等本人确认完成。
 - 改了行为就更新本文件的对应小节。README 只写给人看，仅在目录、安装方式或常用命令变化时修改。
@@ -150,6 +150,7 @@ Spaces 面板每项两行：工作区名（Firstmate 子工作区同样用 `$sho
 - 没有配置文件时保留 Pi 原生 footer，在 `/starship` 里选中预设或保存配置后才接管。
 - `/starship` 预览预设、管理 profile、开配置会话；`/starship settings` 编辑 TOML，`/starship status` 看生效来源和诊断，`/starship help` 看字段说明。
 - 需要解释或改写字段时用包内 skill：`/skill:configure-pi-starship`。
+- 升级由 `u` 的 `pi update --extensions` 负责：`~/.pi/agent/settings.json` 里的条目不带版本号，跟着 npm 最新版走。
 - 它和 `@narumitw/pi-statusline`、`pi-powerline-footer` 都占同一个 footer，同时装只有后加载的生效。
 
 ## 更新
@@ -157,7 +158,7 @@ Spaces 面板每项两行：工作区名（Firstmate 子工作区同样用 `$sho
 `u`（[fish/functions/u.fish](fish/functions/u.fish)）依次：
 
 - Homebrew：更新、升级、清理，并把本机新装的软件追加进 Brewfile。
-- Node：更新 npm 全局包，清理 pnpm store。
+- Node：更新 npm 全局包，清理 pnpm store。mise 按项目 `.node-version` / `.nvmrc` 装的运行时不动，需要时在项目里 `mise upgrade`。
 - Agent skill 与插件：见 [AGENT-TOOLS.md](AGENT-TOOLS.md#更新)。
 - Herdr 集成：`herdr integration status` 里标 `outdated` 的，按 `herdr integration install <agent>` 重装；已是 current 的跳过。
 - 其他：清理 uv 缓存，更新 Mac App Store 应用、tmux 插件（Git 快进）、Herdr 的 GitHub 插件（保留 ref 和配置）、Yazi 插件（最多重试三次），最后跑 Mole 清理。

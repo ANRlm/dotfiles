@@ -142,7 +142,7 @@ Pi 的状态栏不显示 ponytail 状态条（规则照常生效）：`fish/conf
 4. `__u_sync_skills`，给新增的 skill 补齐 Claude 链接
 5. 更新 Claude 插件市场和已安装的插件
 6. `codex plugin marketplace upgrade`
-7. `pi update --extensions`
+7. `pi update --extensions`，更新 `~/.pi/agent/settings.json` 里的 Pi 包（含状态栏 `@narumitw/pi-starship`）
 8. `grok plugin update`
 
 lark-cli、thcli 和 Firstmate 依赖的 `*-axi` 工具由 `u` 的 Node 一节随 npm 全局包更新。
