@@ -3,7 +3,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { stripVTControlCharacters } from "node:util";
-import type { CompactionSettings, ContextUsage, ExtensionAPI, ExtensionContext, SessionEntry, Theme } from "@earendil-works/pi-coding-agent";
+import type { ContextUsage, ExtensionAPI, ExtensionContext, SessionEntry, Theme } from "@earendil-works/pi-coding-agent";
 import { sliceByColumn, truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@earendil-works/pi-tui";
 
 /** Spinner frames for the live activity indicator, advanced every 100ms. */
@@ -93,7 +93,7 @@ function loadCalibrationFile(file: string): Map<string, RateCalibration> {
 }
 
 export function loadRateCalibration(file: string = RATE_CALIBRATION_FILE): Map<string, RateCalibration> {
-  const entries = loadCalibrationFile(file);
+  const entries = new Map<string, RateCalibration>();
   try {
     for (const name of readdirSync(`${file}.d`)) {
       if (!name.endsWith(".json")) continue;
@@ -107,13 +107,22 @@ export function loadRateCalibration(file: string = RATE_CALIBRATION_FILE): Map<s
   return entries;
 }
 
+function calibrationFile(model: string, file: string): string {
+  return join(`${file}.d`, `${createHash("sha256").update(model).digest("hex")}.json`);
+}
+
+/** Read one model's latest calibration, so concurrent sessions converge instead of overwriting blindly. */
+export function loadModelRateCalibration(model: string, file: string = RATE_CALIBRATION_FILE): RateCalibration | undefined {
+  return loadCalibrationFile(calibrationFile(model, file)).get(model);
+}
+
 export function saveRateCalibration(model: string, calibration: RateCalibration, file: string = RATE_CALIBRATION_FILE): void {
-  const target = join(`${file}.d`, `${createHash("sha256").update(model).digest("hex")}.json`);
+  const target = calibrationFile(model, file);
   const temporary = `${target}.${randomUUID()}.tmp`;
   try {
     mkdirSync(dirname(target), { recursive: true });
     // Each model owns a file, so a stale session cannot overwrite other models.
-    // shortcut: same-model writers keep the last estimate; serialize samples if exact aggregation is needed.
+    // shortcut: two same-model writers in the same instant can still lose one sample; serialize if that matters.
     writeFileSync(temporary, `${JSON.stringify({ [model]: calibration })}\n`, { mode: 0o600 });
     renameSync(temporary, target);
   } catch {
@@ -162,29 +171,6 @@ interface StreamState extends PartCounts {
   head?: PartCounts;
 }
 
-/**
- * `DEFAULT_COMPACTION_SETTINGS.reserveTokens` from pi's compaction module, used when
- * settings.json has no `compaction` key (the defaults apply at runtime, but
- * `getSettings().compaction` stays undefined then).
- */
-const DEFAULT_RESERVE_TOKENS = 16384;
-
-/**
- * The reserve Pi actually applies for a model: a per-model
- * `compaction.modelOverrides["provider/id"]` entry wins over the ordinary
- * `compaction.reserveTokens`, which wins over the built-in default. Mirrors
- * `SettingsManager.getCompactionReserveTokens`.
- */
-export function resolveAutoCompactReserve(
-  compaction: CompactionSettings | undefined,
-  model: { provider?: string; id?: string } | undefined,
-): number | undefined {
-  if (compaction?.enabled === false) return undefined;
-  const key = model ? `${model.provider}/${model.id}` : undefined;
-  const override = key ? compaction?.modelOverrides?.[key] : undefined;
-  return override?.reserveTokens ?? compaction?.reserveTokens ?? DEFAULT_RESERVE_TOKENS;
-}
-
 /** One footer: location/stats above, context and activity/model/effort below. */
 export interface FooterSnapshot {
   cwd: string;
@@ -196,12 +182,9 @@ export interface FooterSnapshot {
   usedPercent?: number | null;
   input?: number;
   output?: number;
-  cost?: number;
   cacheHitPercent?: number;
   cacheRead?: number;
   cacheWrite?: number;
-  /** Tokens auto-compaction keeps as headroom, after model overrides are applied. */
-  autoCompactReserve?: number;
   activity?: ActivitySnapshot;
   rate?: RateSnapshot;
 }
@@ -219,7 +202,7 @@ export function shortLabel(text: string, width: number): string {
   return sliceByColumn(text, 0, left, true) + "…" + sliceByColumn(text, visibleWidth(text) - (width - 1 - left), width - 1 - left, true);
 }
 
-/** Remaining-window gauge; color reflects room before the effective limit. */
+/** Remaining-window gauge; color follows the same remaining share it draws. */
 export function renderContext(state: FooterSnapshot, theme: Theme, budget: number): string {
   const dim = (text: string) => theme.fg("dim", text);
   const plain = (text: string) => theme.fg("text", text);
@@ -227,40 +210,28 @@ export function renderContext(state: FooterSnapshot, theme: Theme, budget: numbe
     ? state.window : undefined;
   const used = typeof state.usedPercent === "number" && Number.isFinite(state.usedPercent)
     ? Math.max(0, Math.min(100, state.usedPercent)) : undefined;
-  // Undefined means auto-compaction is disabled. Zero is a valid enabled reserve.
-  const auto = state.autoCompactReserve !== undefined;
-  const reserve = typeof state.autoCompactReserve === "number" && Number.isFinite(state.autoCompactReserve)
-    ? Math.max(0, state.autoCompactReserve) : 0;
   if (used === undefined || windowSize === undefined) {
-    return `${dim("ctx")} ${plain(`—/${formatWindow(windowSize)}`)} · ${dim("usage pending")}${auto ? "" : ` · ${dim("auto off")}`}`;
+    return `${dim("ctx")} ${plain(`—/${formatWindow(windowSize)}`)} · ${dim("usage pending")}`;
   }
   const remaining = 100 - used;
   const remainingTokens = windowSize * remaining / 100;
-  const usedTokens = windowSize * used / 100;
-  const limit = Math.max(0, windowSize - (auto ? reserve : 0));
-  const headroom = limit - usedTokens;
-  // Yellow below 30%, red below 10% of the effective capacity still available.
-  const fraction = limit > 0 ? headroom / limit : 0;
-  const color = fraction < 0.1 ? "error" : fraction < 0.3 ? "warning" : "text";
+  // Yellow below 30%, red below 10% remaining.
+  const color = remaining < 10 ? "error" : remaining < 30 ? "warning" : "text";
   const accent = (text: string) => theme.fg(color, text);
-  const headroomText = `≈${formatWindow(Math.max(1, Math.round(headroom)))}`;
-  const status = !auto ? dim("auto off") : headroom <= 0
-    ? accent("auto due") : `${dim("auto in")} ${accent(headroomText)}`;
-  const compactStatus = auto && headroom > 0 ? `${dim("auto")} ${accent(headroomText)}` : status;
   const prefix = `${dim("ctx")} ${plain(`${remainingTokens === 0 ? "0" : formatWindow(remainingTokens)}/${formatWindow(windowSize)}`)}`;
-  const percent = (auto ? plain : accent)(`${Math.round(remaining)}% left`);
+  const percent = plain(`${Math.round(remaining)}% left`);
   // Shrink the decoration before removing the redundant absolute remaining ratio.
   for (const size of [14, 10, 6]) {
     const halves = Math.floor(remaining * size * 2 / 100);
     const filled = Math.floor(halves / 2);
     const half = halves % 2;
     const bar = accent("━".repeat(filled) + (half ? "╸" : "")) + dim("─".repeat(size - filled - half));
-    const text = `${prefix} ${bar} ${percent} · ${status}`;
+    const text = `${prefix} ${bar} ${percent}`;
     if (visibleWidth(text) <= budget) return text;
   }
-  const withoutBar = `${prefix} ${percent} · ${status}`;
+  const withoutBar = `${prefix} ${percent}`;
   if (visibleWidth(withoutBar) <= budget) return withoutBar;
-  const compact = `${dim("ctx")} ${percent} · ${compactStatus}`;
+  const compact = `${dim("ctx")} ${percent}`;
   // If even the compact form cannot fit, let the caller wrap the complete values.
   return visibleWidth(compact) <= budget ? compact : withoutBar;
 }
@@ -332,38 +303,31 @@ export interface SessionUsage {
   output: number;
   cacheRead: number;
   cacheWrite: number;
-  cost: number;
   cacheHitPercent?: number;
 }
 
 function addUsage(
   totals: SessionUsage,
-  usage: { input: number; output: number; cacheRead?: number; cacheWrite?: number; cost: { total: number } },
+  usage: { input: number; output: number; cacheRead?: number; cacheWrite?: number },
 ): void {
   totals.input += usage.input;
   totals.output += usage.output;
   totals.cacheRead += usage.cacheRead ?? 0;
   totals.cacheWrite += usage.cacheWrite ?? 0;
-  totals.cost += usage.cost.total;
 }
 
 /**
  * Sum every usage-bearing session entry, exactly like Pi's built-in footer: plain
  * `usage` entries, assistant messages, tool results, and compaction/branch summaries.
  * Summing only the current branch would disagree with `/session` after branching or
- * compaction. The cache-hit rate comes from the latest assistant message, not an
- * average across the session.
+ * compaction. The cache-hit rate is weighted over the session's prompt tokens, so it
+ * shares the scale of the adjacent read/write totals.
  */
 export function readSessionUsage(entries: readonly SessionEntry[]): SessionUsage {
-  const totals: SessionUsage = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0 };
+  const totals: SessionUsage = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
   for (const entry of entries) {
     if (entry.type === "message" && entry.message.role === "assistant") {
-      const { usage } = entry.message;
-      addUsage(totals, usage);
-      // Mirrors the built-in footer: the rate comes from the latest assistant message,
-      // and a message with no prompt tokens clears it rather than keeping a stale one.
-      const promptTokens = usage.input + usage.cacheRead + usage.cacheWrite;
-      totals.cacheHitPercent = promptTokens > 0 ? (usage.cacheRead / promptTokens) * 100 : undefined;
+      addUsage(totals, entry.message.usage);
     } else if (entry.type === "message" && entry.message.role === "toolResult") {
       if (entry.message.usage) addUsage(totals, entry.message.usage);
     } else if (entry.type === "usage") {
@@ -372,6 +336,8 @@ export function readSessionUsage(entries: readonly SessionEntry[]): SessionUsage
       if (entry.usage) addUsage(totals, entry.usage);
     }
   }
+  const promptTokens = totals.input + totals.cacheRead + totals.cacheWrite;
+  totals.cacheHitPercent = promptTokens > 0 ? (totals.cacheRead / promptTokens) * 100 : undefined;
   return totals;
 }
 
@@ -428,10 +394,10 @@ export function renderFooter(state: FooterSnapshot, theme: Theme, width: number)
 
   const renderRight = (parts: RightPart[]) => parts.map((part) => part.text).join(separator);
 
-  // Token totals, cost, and cache stats ride the free right side of the location
+  // Token totals and cache stats ride the free right side of the location
   // line, so the context line keeps carrying only the current state. Each part is
   // omitted until there is something to show, matching the built-in footer.
-  interface StatsPart { key: "tokens" | "cost" | "cacheHit" | "cache"; text: string }
+  interface StatsPart { key: "tokens" | "cacheHit" | "cache"; text: string }
   const stats: StatsPart[] = [];
   {
     const counts = [
@@ -439,9 +405,6 @@ export function renderFooter(state: FooterSnapshot, theme: Theme, width: number)
       state.output ? muted(`↓${formatWindow(state.output)}`) : "",
     ].filter(Boolean).join(" ");
     if (counts) stats.push({ key: "tokens", text: counts });
-  }
-  if (state.cost !== undefined && state.cost > 0) {
-    stats.push({ key: "cost", text: plain(`≈$${state.cost.toFixed(3)}`) });
   }
   // `cacheRead`/`cacheWrite` gate this like the built-in footer: a provider that does
   // not report caching at all would otherwise show a fabricated 0% hit rate.
@@ -612,11 +575,9 @@ export default function minimalStatusline(pi: ExtensionAPI) {
             usedPercent: usage?.percent,
             input: sessionUsage?.input,
             output: sessionUsage?.output,
-            cost: sessionUsage?.cost,
             cacheHitPercent: sessionUsage?.cacheHitPercent,
             cacheRead: sessionUsage?.cacheRead,
             cacheWrite: sessionUsage?.cacheWrite,
-            autoCompactReserve: resolveAutoCompactReserve(pi.getSettings().compaction, model ?? undefined),
             activity: currentActivity(now),
             rate: currentRate(now, model),
           }, theme, width);
@@ -738,7 +699,8 @@ export default function minimalStatusline(pi: ExtensionAPI) {
           if (totalEstimate >= RATE_CALIBRATION_MIN_TOKENS) {
             const key = `${model.provider}/${model.id}`;
             const ratio = output / totalEstimate;
-            const previous = rateCalibration.get(key);
+            // Re-read first so another pi process's samples are not overwritten from stale memory.
+            const previous = loadModelRateCalibration(key) ?? rateCalibration.get(key);
             const text = updateRateCalibration(previous?.text, ratio * textEstimate, textEstimate);
             const tool = updateRateCalibration(previous?.tool, ratio * toolEstimate, toolEstimate);
             if (text !== undefined || tool !== undefined) {
@@ -759,7 +721,10 @@ export default function minimalStatusline(pi: ExtensionAPI) {
     stream = undefined;
     refresh?.();
   });
-  pi.on("thinking_level_select", () => refresh?.());
+  pi.on("thinking_level_select", (_event, ctx) => {
+    if (!owns(ctx)) return;
+    refresh?.();
+  });
   pi.on("session_tree", () => refresh?.());
   pi.on("session_shutdown", (_event, ctx) => {
     if (!owns(ctx)) return;

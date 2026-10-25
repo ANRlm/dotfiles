@@ -115,27 +115,25 @@ Spaces 面板每项两行：工作区名（Firstmate 子工作区同样用 `$sho
 代码在 [pi/extensions/minimal-statusline.ts](pi/extensions/minimal-statusline.ts)，改完在 Pi 中 `/reload`。只有一种布局。
 
 ```text
-路径 [分支]                         ↑输入 ↓输出 · ≈$成本 · cache 命中率 · r 缓存读 w 缓存写
-ctx 剩余/窗口 进度条 剩余% left · auto in ≈余量        活动 · 本轮耗时 · ~tok/s · 模型 · effort
+路径 [分支]                         ↑输入 ↓输出 · cache 命中率 · r 缓存读 w 缓存写
+ctx 剩余/窗口 进度条 剩余% left                        活动 · 本轮耗时 · ~tok/s · 模型 · effort
 ```
 
-- 第一行右侧是会话累计 token、估算成本，以及最近一次请求的 cache 命中率和缓存读写。命中率低不标警告。
+- 第一行右侧是会话累计 token、会话加权的 cache 命中率和缓存读写。命中率低不标警告。
 - 第二行右侧是活动、本轮耗时、生成中的 `~tok/s`、模型和 effort；空闲时仍显示模型和 effort。
-- 活动文案用英文：`waiting`、`thinking`、`streaming`、`tool` / `tools×N`、`compacting`、`finishing`。工具按调用 ID 跟踪，直到 `agent_settled` 才停表。Pi 1.1.0 没有重试事件，所以不显示重试。
+- 活动文案用英文：`waiting`、`thinking`、`streaming`、`tool` / `tools×N`、`compacting`、`finishing`。工具按调用 ID 跟踪，直到 `agent_settled` 才停表。扩展 API 不暴露重试事件，所以不显示重试。
 - 其他扩展的状态全部显示，按宽度换行，带 warning、error、警告等字样的排前面。没有结构化的严重级别，这只是启发式。
 - 窄屏时路径和分支先缩短，放不下的指标追加到下面，不隐藏。
 
-**ctx** 显示整个窗口的剩余量，如 `ctx 108k/200k ━━━━━━━╸────── 54% left · auto in ≈91.6k`：
+**ctx** 显示整个窗口的剩余量，如 `ctx 108k/200k ━━━━━━━╸────── 54% left`：
 
-- `auto in ≈…` 是离自动压缩阈值的估算余量；到阈值显示 `auto due`（不代表已开始压缩），关闭自动压缩显示 `auto off`。
-- 有效容量剩余低于 30% 变黄、低于 10% 变红。开启自动压缩时有效容量要扣掉预留量。
-- 空间不够时进度条从 14 列缩到 10、6 列，再去掉，然后改用 `ctx 54% left · auto ≈91.6k`，仍放不下就换行。
+- 剩余低于 30% 变黄、低于 10% 变红。
+- 空间不够时进度条从 14 列缩到 10、6 列，再去掉，然后改用 `ctx 54% left`，仍放不下就换行。
 - 用量未知时显示 `ctx —/200k · usage pending`。
 
 **统计口径**：
 
-- `≈$` 按价格配置和已上报用量估算整个会话（含历史分支、工具和压缩），不是账单。
-- `~tok/s` 按中英文字符权重估算，按模型分别校准，结果原子写入 `~/.pi/agent/statusline-rate.json.d/`，不同模型的并发会话互不覆盖，同模型以最后写入为准。读取时先读 `~/.pi/agent/statusline-rate.json`，再由该目录中的记录覆盖。这是估算，不是服务端吞吐量。
+- `~tok/s` 按中英文字符权重估算，按模型分别校准，结果按模型原子写入 `~/.pi/agent/statusline-rate.json.d/`，不同模型的并发会话互不覆盖；同模型更新前先读回最新记录，多个会话收敛。这是估算，不是服务端吞吐量。
 - `/statusline default` 临时切回默认状态栏，`/statusline custom` 切回来，不带参数时来回切换。
 
 ## 更新
@@ -153,7 +151,7 @@ Brewfile 是全量清单，本机只装了一部分。`u` 只追加新出现的�
 
 ## 测试
 
-改 `u.fish` 或 Herdr 本地插件后运行。全部离线，只用临时目录和 mock：
+改 `u.fish`、Herdr 本地插件或 Pi 状态栏后运行。全部离线，只用临时目录和 mock：
 
 ```sh
 fish --no-config --no-execute fish/functions/u.fish
@@ -161,4 +159,5 @@ python3 fish/tests/runtime.test.py
 python3 fish/tests/sync-skills.test.py
 python3 herdr/plugins/local/test_refresh.py
 python3 herdr/plugins/local/fm-short-label/test_short_label.py
+node --test pi/tests/statusline.test.mjs
 ```

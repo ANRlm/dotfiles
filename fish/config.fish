@@ -15,6 +15,8 @@ if not set -q CLAUDECODE
     end
 end
 
+set -gx PONYTAIL_HIDE_STATUS 1
+
 # ── Homebrew ──────────────────────────────────────────────────────────
 
 set -gx HOMEBREW_NO_AUTO_UPDATE 1
@@ -41,7 +43,6 @@ end
 
 # ── Interactive Integrations ──────────────────────────────────────────
 
-# Establish tool precedence before mise selects the project's runtimes.
 fish_add_path --move --prepend --path "$HOME/.local/bin" /opt/homebrew/bin /usr/local/bin
 
 functions -q claude; and functions -e claude

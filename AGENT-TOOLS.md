@@ -96,6 +96,8 @@ Codex 装完 ponytail 后，由本人在 Codex 的 `/hooks` 中信任它的两�
 
 Grok 的 ponytail 只有 skill，不常驻：Grok 的会话启动钩子无法注入指令，靠模型按描述自动调用或手动 `/ponytail`。
 
+Pi 的状态栏不显示 ponytail 状态条（规则照常生效）：`fish/config.fish` 设 `PONYTAIL_HIDE_STATUS=1`，级别用 `/ponytail status` 查。扩展在进程启动时读环境变量，改后重开 Pi 生效。
+
 **完成标准**：
 
 - `claude plugin list` 只有 ponytail 和 context7。
