@@ -43,7 +43,7 @@ brew bundle --file=~/dotfiles/Brewfile
 - **tmux**：前缀 `Ctrl-A`；`=` / `-` 分屏，`h/j/k/l` 切换窗格，`r` 调整大小，`R` 重载配置。
 - **Herdr**：前缀同为 `Ctrl-A`；`=` 分屏，`↑` / `↓` 切换 Agent，`1..9` 切换 Tab，`Shift+1..9` 切换工作区；`Alt+1..9` 直接跳到侧栏中的 Agent。
 - **Helix**：`Space+w` 保存，`Space+q` 退出，`:config-reload` 重载配置。
-- **Pi**：`/hotkeys` 查看快捷键，`/statusline` 切换状态栏。
+- **Pi**：`/hotkeys` 查看快捷键，`/starship` 配置状态栏。
 
 `u` 不会拉取本仓库，换机器同步配置用 `git pull`。
 

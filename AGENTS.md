@@ -32,13 +32,12 @@ brew bundle --file=~/dotfiles/Brewfile
 在 Fish 中运行。目标位置已有配置时，先交本人确认，再备份或移走。
 
 ```fish
-mkdir -p ~/.config ~/.pi/agent/extensions "$HOME/Library/Application Support/lazygit"
+mkdir -p ~/.config "$HOME/Library/Application Support/lazygit"
 for dir in fish ghostty git helix herdr mise starship tmux yazi
     ln -s ~/dotfiles/$dir ~/.config/$dir
 end
 ln -s ~/dotfiles/herdr/plugins/config/herdr-automatic-rename ~/.config/herdr-automatic-rename
-# Pi 和 lazygit 只链接单个文件，本机的凭证和会话留在原目录
-ln -s ~/dotfiles/pi/extensions/minimal-statusline.ts ~/.pi/agent/extensions/minimal-statusline.ts
+# lazygit 只链接配置文件，其余状态留在默认位置
 ln -s ~/dotfiles/lazygit/config.yml "$HOME/Library/Application Support/lazygit/config.yml"
 ```
 
@@ -48,6 +47,7 @@ ln -s ~/dotfiles/lazygit/config.yml "$HOME/Library/Application Support/lazygit/c
 
 ```fish
 ya pkg install
+pi install npm:@narumitw/pi-starship
 herdr plugin install qu8n/herdr-automatic-rename
 herdr plugin link ~/dotfiles/herdr/plugins/local/fm-short-label
 ```
@@ -145,27 +145,12 @@ Spaces 面板每项两行：工作区名（Firstmate 子工作区同样用 `$sho
 
 ### Pi 状态栏
 
-代码在 [pi/extensions/minimal-statusline.ts](pi/extensions/minimal-statusline.ts)，改完在 Pi 中 `/reload`。只有一种布局。
+状态栏由 Pi 包 `@narumitw/pi-starship` 渲染，配置放在 `~/.pi/agent/pi-starship.toml`，不在本仓库。
 
-```text
-路径 [分支]                                  cache 命中率
-ctx 剩余/窗口 进度条 剩余% left                             活动 · 模型 · effort
-```
-
-- 第一行右侧只有 cache 命中率，按最近 20 次请求加权，长会话里的冷启动不会被历史摊平；命中率低不标警告。
-- 第二行右侧是活动、模型和 effort；空闲时仍显示模型和 effort。模型后跟提供商，如 `gpt-6.1-sol (openai-codex)`，同一款模型从 `openai` 和 `openai-codex` 两条路走时才分得清。
-- 活动文案用英文：`waiting`、`thinking`、`streaming`、`tool <名称>`、`compacting`、`finishing`。工具按调用 ID 跟踪，并发时显示最新的名字和数量，如 `tool Task ×2`；`agent_settled` 后整块消失。活动期间状态栏每 200ms 重绘一次，转圈不会卡住。扩展 API 不暴露重试事件，所以不显示重试。
-- 窄屏时路径和分支从尾部截断，仍放不下的指标追加到下面，不隐藏。
-
-**ctx** 显示整个窗口的剩余量，如 `ctx 108k/200k ━━━━━━━╸────── 54% left`：
-
-- 剩余低于 30% 变黄，低于 10% 变红并在数字前加 `!`，不只靠颜色区分。
-- 空间不够时进度条从 14 列缩到 10、6 列，再去掉，然后改用 `ctx 54% left`，仍放不下就换行。
-- 用量未知时显示 `ctx —/200k · usage pending`。
-
-**切换**：
-
-- `/statusline default` 临时切回默认状态栏，`/statusline custom` 切回来，不带参数时来回切换。
+- 没有配置文件时保留 Pi 原生 footer，在 `/starship` 里选中预设或保存配置后才接管。
+- `/starship` 预览预设、管理 profile、开配置会话；`/starship settings` 编辑 TOML，`/starship status` 看生效来源和诊断，`/starship help` 看字段说明。
+- 需要解释或改写字段时用包内 skill：`/skill:configure-pi-starship`。
+- 它和 `@narumitw/pi-statusline`、`pi-powerline-footer` 都占同一个 footer，同时装只有后加载的生效。
 
 ## 更新
 
@@ -183,7 +168,7 @@ Brewfile 是全量清单，本机只装了一部分。`u` 只追加新出现的�
 
 ## 测试
 
-改 `u.fish`、Herdr 本地插件或 Pi 状态栏后运行。全部离线，只用临时目录和 mock：
+改 `u.fish` 或 Herdr 本地插件后运行。全部离线，只用临时目录和 mock：
 
 ```sh
 fish --no-config --no-execute fish/functions/u.fish
@@ -191,5 +176,4 @@ python3 fish/tests/runtime.test.py
 python3 fish/tests/sync-skills.test.py
 python3 herdr/plugins/local/test_refresh.py
 python3 herdr/plugins/local/fm-short-label/test_short_label.py
-node --test pi/tests/statusline.test.mjs
 ```

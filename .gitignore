@@ -24,12 +24,6 @@ herdr/session-snapshots/
 herdr/sessions/
 herdr/release-notes.json
 
-# ── Pi (only reviewed config files) ─────────────────────────────
+# ── Pi (config stays on the machine) ────────────────────────────
 
 /pi/*
-!/pi/extensions/
-/pi/extensions/*
-!/pi/extensions/minimal-statusline.ts
-!/pi/tests/
-/pi/tests/*
-!/pi/tests/statusline.test.mjs
