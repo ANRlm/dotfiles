@@ -136,6 +136,8 @@ function u --description "Update global tools, applications and plugins"
     __u_section Node
     __u_run "npm updated" env PUPPETEER_SKIP_DOWNLOAD=true npm update -g
     __u_run "pnpm store pruned" pnpm --dir "$HOME" store prune
+    # Run from $HOME so a project's mise.toml is never upgraded in place.
+    __u_run "mise tools upgraded" mise -C "$HOME" upgrade
 
     # ── Agent skills & plugins ────────────────────────────────────────
 

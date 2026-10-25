@@ -158,7 +158,7 @@ Spaces 面板每项两行：工作区名（Firstmate 子工作区同样用 `$sho
 `u`（[fish/functions/u.fish](fish/functions/u.fish)）依次：
 
 - Homebrew：更新、升级、清理，并把本机新装的软件追加进 Brewfile。
-- Node：更新 npm 全局包，清理 pnpm store。mise 按项目 `.node-version` / `.nvmrc` 装的运行时不动，需要时在项目里 `mise upgrade`。
+- Node：更新 npm 全局包，清理 pnpm store，按全局 mise 配置升级工具（在 `$HOME` 里跑，不碰项目自己的 `mise.toml`；`.node-version` 这种精确 pin 不会被改）。
 - Agent skill 与插件：见 [AGENT-TOOLS.md](AGENT-TOOLS.md#更新)。
 - Herdr 集成：`herdr integration status` 里标 `outdated` 的，按 `herdr integration install <agent>` 重装；已是 current 的跳过。
 - 其他：清理 uv 缓存，更新 Mac App Store 应用、tmux 插件（Git 快进）、Herdr 的 GitHub 插件（保留 ref 和配置）、Yazi 插件（最多重试三次），最后跑 Mole 清理。
