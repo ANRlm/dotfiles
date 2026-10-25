@@ -1,6 +1,6 @@
 # dotfiles
 
-我的 macOS（Apple Silicon）配置：Fish、Ghostty、Helix、tmux、Herdr、Yazi 等，用符号链接部署。
+我的 macOS（Apple Silicon）配置：Fish、Ghostty、Helix、tmux、Herdr、Yazi 等，用符号链接部署；Pi 的状态栏用 `@narumitw/pi-starship` 包，配置留在本机。
 
 ## 内容
 
@@ -15,7 +15,6 @@
 | [git/](git/)、[lazygit/](lazygit/) | Git 设置、Delta 差异显示、全局忽略规则 |
 | [starship/](starship/) | 提示符 |
 | [mise/](mise/) | 按项目切换 Node 版本 |
-| [pi/](pi/) | Pi 的状态栏扩展 |
 | [Brewfile](Brewfile) | 软件清单 |
 
 ## 安装
