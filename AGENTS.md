@@ -48,6 +48,10 @@ ln -s ~/dotfiles/lazygit/config.yml "$HOME/Library/Application Support/lazygit/c
 ```fish
 ya pkg install
 pi install npm:@narumitw/pi-starship
+pi install npm:@narumitw/pi-btw
+pi install npm:@narumitw/pi-stamp
+pi install npm:@juicesharp/rpiv-ask-user-question
+pi install npm:@juicesharp/rpiv-todo
 herdr plugin install qu8n/herdr-automatic-rename
 herdr plugin link ~/dotfiles/herdr/plugins/local/fm-short-label
 ```
@@ -142,6 +146,23 @@ Spaces 面板每项两行：工作区名（Firstmate 子工作区同样用 `$sho
 
 - `reveal_hidden_cursor_for_cjk_ime`：Claude Code、Pi、Codex、Grok 自己画光标，不开时候选框会飘到 pane 左上角。`cjk_ime_agents` 只列这四款，vim 之类隐藏光标的程序保持原样。
 - `switch_ascii_input_source_in_prefix`：前缀键按下期间切到 ASCII 输入源，前缀快捷键不会被候选窗吞掉。
+
+### Pi 扩展
+
+Pi 的扩展都是 npm 包，装在 `~/.pi/agent/npm/`，条目写在 `~/.pi/agent/settings.json` 的 `packages` 里，随 `u` 的 `pi update --extensions` 升级。
+
+| 包 | 作用 |
+| --- | --- |
+| `@narumitw/pi-btw` | `/btw <问题>` 开侧线程问问题，答案默认不进主对话 |
+| `@narumitw/pi-stamp` | 每条消息右侧的时间戳，可选响应耗时、模型、用量和工具耗时 |
+| `@juicesharp/rpiv-ask-user-question` | `ask_user_question` 工具：结构化选项弹窗，最多四题，每题可写自定义答案 |
+| `@juicesharp/rpiv-todo` | `todo` 工具和 `/todos` 命令，输入框上方常驻任务面板，列表从对话重建 |
+
+`pi-stamp` 的时间戳只写会话记录，不进模型上下文。状态栏那款见下一节。
+
+两款 rpiv 会带进 `@juicesharp/rpiv-config` 和 `rpiv-i18n`（提供 `/languages`），它们不是独立条目。
+
+不用 `@narumitw/pi-plan-mode`：它的策略默认拦掉其它扩展注册的工具，`todo` 和 `ask_user_question` 进 `/plan` 后就失效，除非在 `/plan tools` 里逐项勾选。
 
 ### Pi 状态栏
 
