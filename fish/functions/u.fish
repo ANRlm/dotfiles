@@ -193,6 +193,21 @@ function u --description "Update global tools, applications and plugins"
     __u_section Herdr
     # Bulk update keeps each install's ref and config and skips linked plugins.
     __u_run "Herdr plugins updated" herdr plugin update -y
+    # Hook scripts live outside the repo, so a Herdr upgrade leaves them stale.
+    # Install only the stale ones: reinstalling rewrites the agent's own config.
+    # Grok keeps its hooks under GROK_HOME, which only the grok wrapper sets.
+    set -l integrations (env GROK_HOME=$HOME/.grok-profiles/default herdr integration status)
+    set -l outdated
+    for agent in claude codex pi grok
+        string match -q -- "$agent: outdated*" $integrations; and set -a outdated $agent
+    end
+    if test -z "$outdated"
+        __u_ok "Herdr integrations current"
+    else
+        for agent in $outdated
+            __u_run "$agent integration updated" env GROK_HOME=$HOME/.grok-profiles/default herdr integration install $agent
+        end
+    end
 
     # ── Yazi ──────────────────────────────────────────────────────────
 
