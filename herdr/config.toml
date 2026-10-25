@@ -70,3 +70,15 @@ switch_workspace = "prefix+shift+1..9"
 [keys.indexed]
 # alt+1..9 focuses sidebar agent rows; Ghostty sends Option as Alt.
 agents = "alt"
+
+# ── Input ─────────────────────────────────────────────────────────────
+
+[experimental]
+# Claude Code, Pi, Codex and Grok paint their own cursor, so the IME candidate
+# window otherwise drifts to the pane origin. Limited to the four harnesses so
+# vim-style panes keep their hidden cursor.
+reveal_hidden_cursor_for_cjk_ime = true
+cjk_ime_agents = ["claude", "codex", "grok", "pi"]
+
+# Prefix shortcuts still arrive while the Chinese IME is composing.
+switch_ascii_input_source_in_prefix = true
