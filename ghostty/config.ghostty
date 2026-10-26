@@ -5,7 +5,7 @@ shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 # ── macOS ─────────────────────────────────────────────────────────────
 
 macos-titlebar-style = transparent
-macos-option-as-alt  = true
+macos-option-as-alt = true
 macos-titlebar-proxy-icon = hidden
 
 # ── Font ──────────────────────────────────────────────────────────────
@@ -19,18 +19,18 @@ font-size = 15
 # ── Theme & Colors ────────────────────────────────────────────────────
 
 theme = Rose Pine
-background-opacity      = 1
-background-blur         = 85
-window-colorspace       = display-p3
+background-opacity = 1
+background-blur = 85
+window-colorspace = display-p3
 
 # ── Window & Splits ───────────────────────────────────────────────────
 
 unfocused-split-opacity = 0.8
-window-padding-x        = 12
-window-padding-y        = 8
-window-padding-balance  = true
-window-width            = 140
-window-height           = 45
+window-padding-x = 12
+window-padding-y = 8
+window-padding-balance = true
+window-width = 140
+window-height = 45
 
 # ── Mouse & Clipboard ─────────────────────────────────────────────────
 

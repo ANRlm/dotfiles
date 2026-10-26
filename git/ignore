@@ -12,5 +12,3 @@
 !.env.template
 *.key
 *.pem
-# Qoder local files (private, not committed)
-AGENTS.local.md

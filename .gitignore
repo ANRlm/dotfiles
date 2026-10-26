@@ -1,3 +1,5 @@
+# ── Local Files ───────────────────────────────────────────────────────
+
 .DS_Store
 .claude/worktrees/
 
@@ -24,6 +26,6 @@ herdr/session-snapshots/
 herdr/sessions/
 herdr/release-notes.json
 
-# ── Pi (config stays on the machine) ────────────────────────────
+# ── Pi (config stays on the machine) ──────────────────────────────────
 
 /pi/*

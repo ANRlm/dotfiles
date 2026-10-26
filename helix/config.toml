@@ -2,10 +2,9 @@
 
 theme = "rose_pine"
 
+# ── Appearance ────────────────────────────────────────────────────────
+
 [editor]
-
-# ── Editor: Appearance ────────────────────────────────────────────────
-
 line-number = "relative"
 cursorline = true
 bufferline = "multiple"
@@ -13,16 +12,20 @@ color-modes = true
 popup-border = "all"
 scrolloff = 8
 
-# ── Editor: Editing ───────────────────────────────────────────────────
+# ── Editing ───────────────────────────────────────────────────────────
 
 default-yank-register = "+"
 trim-trailing-whitespace = true
 
-# ── Editor: Diagnostics ───────────────────────────────────────────────
+# ── Diagnostics ───────────────────────────────────────────────────────
 
 end-of-line-diagnostics = "hint"
 
-# ── Appearance: Cursor & Status Line ──────────────────────────────────
+[editor.inline-diagnostics]
+cursor-line = "warning"
+other-lines = "disable"
+
+# ── Cursor & Status Line ──────────────────────────────────────────────
 
 [editor.cursor-shape]
 insert = "bar"
@@ -33,7 +36,7 @@ left = ["mode", "spinner", "version-control"]
 center = ["file-name", "file-modification-indicator"]
 right = ["diagnostics", "selections", "position", "file-type"]
 
-# ── Appearance: Whitespace ────────────────────────────────────────────
+# ── Whitespace ────────────────────────────────────────────────────────
 
 [editor.indent-guides]
 render = true
@@ -50,12 +53,6 @@ newline = "none"
 [editor.file-picker]
 hidden = false
 git-ignore = true
-
-# ── Inline Diagnostics ────────────────────────────────────────────────
-
-[editor.inline-diagnostics]
-cursor-line = "warning"
-other-lines = "disable"
 
 # ── Keybindings ───────────────────────────────────────────────────────
 

@@ -1,4 +1,10 @@
+# ── General ───────────────────────────────────────────────────────────
+
 onboarding = false
+
+# Homebrew handles upgrades; the in-app check keeps failing to fetch.
+[update]
+version_check = false
 
 # ── Theme ─────────────────────────────────────────────────────────────
 
@@ -8,12 +14,6 @@ name = "rose-pine"
 # rose-pine's surface_dim (#26233a) barely differs from the panel background.
 [theme.custom]
 surface_dim = "#403d52"
-
-# ── Updates ───────────────────────────────────────────────────────────
-
-# Homebrew handles upgrades; the in-app check keeps failing to fetch.
-[update]
-version_check = false
 
 # ── UI ────────────────────────────────────────────────────────────────
 

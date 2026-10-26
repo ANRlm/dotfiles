@@ -1,0 +1,6 @@
+# ── Agents ────────────────────────────────────────────────────────────
+
+# Claude Code and Codex run commands in zsh; they use the 1Password service account, not the personal login
+if [ -n "$CLAUDECODE" ] || [ -n "$CODEX_THREAD_ID" ]; then
+  export OP_SERVICE_ACCOUNT_TOKEN="$(security find-generic-password -a "$USER" -s op-sa-lighthouser-test -w 2>/dev/null)"
+fi

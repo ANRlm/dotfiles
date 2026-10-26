@@ -3,19 +3,8 @@ set -g fish_greeting ""
 # ── Core Environment ──────────────────────────────────────────────────
 
 set -gx EDITOR hx
-
 set -gx STARSHIP_CONFIG $HOME/.config/starship/starship.toml
 set -gx PNPM_HOME $HOME/Library/pnpm
-
-if not set -q CLAUDECODE
-    set -e CLAUDE_CONFIG_DIR
-    set -l selector $HOME/.config/claudecode-cchost/default-profile
-    if test -r $selector; and read -l claude_profile <$selector; and test -n "$claude_profile" -a "$claude_profile" != legacy
-        set -gx CLAUDE_CONFIG_DIR $HOME/.claude-profiles/$claude_profile
-    end
-end
-
-set -gx PONYTAIL_HIDE_STATUS 1
 
 # ── Homebrew ──────────────────────────────────────────────────────────
 
@@ -37,6 +26,24 @@ end
 
 fish_add_path -g $extra_paths
 
+# ── Agents ────────────────────────────────────────────────────────────
+
+# Shells started by Claude Code keep the profile Claude already runs with.
+if not set -q CLAUDECODE
+    set -e CLAUDE_CONFIG_DIR
+    set -l selector $HOME/.config/claudecode-cchost/default-profile
+    if test -r $selector; and read -l claude_profile <$selector; and test -n "$claude_profile" -a "$claude_profile" != legacy
+        set -gx CLAUDE_CONFIG_DIR $HOME/.claude-profiles/$claude_profile
+    end
+end
+
+# Claude Code and Codex use the 1Password service account, not the personal login.
+if set -q CLAUDECODE; or set -q CODEX_THREAD_ID
+    set -gx OP_SERVICE_ACCOUNT_TOKEN (security find-generic-password -a "$USER" -s op-sa-lighthouser-test -w 2>/dev/null)
+end
+
+set -gx PONYTAIL_HIDE_STATUS 1
+
 if not status is-interactive
     return
 end
@@ -44,8 +51,6 @@ end
 # ── Interactive Integrations ──────────────────────────────────────────
 
 fish_add_path --move --prepend --path "$HOME/.local/bin" /opt/homebrew/bin /usr/local/bin
-
-functions -q claude; and functions -e claude
 
 if command -q mise
     mise activate fish | source
@@ -63,6 +68,14 @@ if command -q starship
     starship init fish --print-full-init | source
 end
 
+for _f in $HOME/.config/herdr/plugins/github-installations/herdr-automatic-rename-*/*/checkout/shell/hook.fish
+    test -r "$_f"; and source "$_f"; and break
+end
+
+if test -n "$OTTY_SHELL_INTEGRATION" -a -r "$OTTY_SHELL_INTEGRATION/otty-integration.fish"
+    source "$OTTY_SHELL_INTEGRATION/otty-integration.fish"
+end
+
 # ── Abbreviations: General ────────────────────────────────────────────
 
 abbr -a c clear
@@ -71,6 +84,8 @@ abbr -a lg lazygit
 abbr -a copy pbcopy
 abbr -a ip 'ipconfig getifaddr en0'
 abbr -a ports 'lsof -nP -iTCP -sTCP:LISTEN'
+
+functions -q claude; and functions -e claude
 abbr -a claude 'claude --allow-dangerously-skip-permissions'
 
 # ── Abbreviations: Homebrew ───────────────────────────────────────────
@@ -115,15 +130,4 @@ end
 
 function fish_user_key_bindings
     bind \cg ripgrep_search
-end
-
-# ── Herdr ─────────────────────────────────────────────────────────────
-
-for _f in $HOME/.config/herdr/plugins/github-installations/herdr-automatic-rename-*/*/checkout/shell/hook.fish
-    test -r "$_f"; and source "$_f"; and break
-end
-
-# ── Otty ─────────────────────────────────────────────────────────────
-if test -n "$OTTY_SHELL_INTEGRATION" -a -r "$OTTY_SHELL_INTEGRATION/otty-integration.fish"
-    source "$OTTY_SHELL_INTEGRATION/otty-integration.fish"
 end

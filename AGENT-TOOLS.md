@@ -98,7 +98,7 @@ Grok 的 ponytail 只有 skill，不常驻：Grok 的会话启动钩子无法注
 
 Pi 的状态栏不显示 ponytail 状态条（规则照常生效）：`fish/config.fish` 设 `PONYTAIL_HIDE_STATUS=1`，级别用 `/ponytail status` 查。扩展在进程启动时读环境变量，改后重开 Pi 生效。
 
-只针对 Pi 本身的 `@narumitw/*` 和 `@juicesharp/*` 扩展（状态栏、btw、stamp、问答、todo）不在本表，安装与说明见 [AGENTS.md](AGENTS.md#pi-扩展)。
+Pi 专用的扩展（状态栏、btw、stamp、问答、todo）不在本表，见 [AGENTS.md](AGENTS.md#pi)。
 
 **完成标准**：
 

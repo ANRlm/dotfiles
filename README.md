@@ -7,6 +7,7 @@ macOS（Apple Silicon）上的个人配置。管的是终端里这一层：Fish�
 | 路径 | 用途 |
 | --- | --- |
 | [fish/](fish/) | Shell：缩写、函数，更新命令 `u` |
+| [zsh/](zsh/) | 编码 Agent 执行命令用的 zsh 环境 |
 | [ghostty/](ghostty/) | 终端 |
 | [helix/](helix/) | 编辑器 |
 | [tmux/](tmux/) | 终端复用 |
