@@ -152,6 +152,9 @@ Pi 的扩展都是 npm 包，装在 `~/.pi/agent/npm/`，条目写在 `~/.pi/age
 | --- | --- |
 | `@narumitw/pi-starship` | 状态栏，见下文 |
 | `pi-btw` | `/btw <问题>`（别名 `/side`）立刻开一个带工具的并行子会话，不打断主线程；`/btw:tangent` 不继承上下文，`/btw:ask` 只读，线程用 `/btw:inject` 或 `/btw:summarize` 注回主对话，内容默认不进主上下文 |
+| `billion-context` | 上下文压缩：`compress`、`decompress`、`search_context`、`acp_status`、`acp_cache` 工具，把已消耗的对话换成自写摘要；配置读 `~/.pi/agent/billion-context.json`，没有配置文件时走默认值 |
+| `pi-web-access` | 联网工具：`web_search`、`fetch_content`、`get_search_content`、`source_check`；provider 和代理读 `~/.pi/agent/web-search.json`，没有配置文件时用环境变量或默认 provider；搜索结果缓存在 `~/.pi/agent/web-search-cache/` |
+| `pi-subagents` | 委派子会话的 `subagent` 工具，配 `bg_wait`、`contact_supervisor`、`subagent_supervisor`；附 `council-mode`、`pi-subagents` 两个 skill，用法见包内 `docs/` 和 `/subagents-guide` |
 | `@narumitw/pi-stamp` | 每条消息右侧的时间戳，可选响应耗时、模型、用量和工具耗时；只写会话记录，不进模型上下文 |
 | `@juicesharp/rpiv-ask-user-question` | `ask_user_question` 工具：结构化选项弹窗，最多四题，每题可写自定义答案 |
 | `@juicesharp/rpiv-todo` | `todo` 工具和 `/todos` 命令，输入框上方常驻任务面板，列表从对话重建 |
