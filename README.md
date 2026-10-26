@@ -1,8 +1,6 @@
 # dotfiles
 
-macOS（Apple Silicon）上的个人配置。管的是终端里这一层：Fish、Ghostty、Helix、tmux、Herdr、Yazi，加上 Git、lazygit、starship、mise，以及几个编码 Agent 的配置。
-
-仓库只放配置，凭证、会话和缓存留在本机，由 `.gitignore` 挡住。
+Apple Silicon macOS 个人配置
 
 | 路径 | 用途 |
 | --- | --- |
@@ -28,12 +26,6 @@ brew bundle --file=~/dotfiles/Brewfile
 ```
 
 装完软件后的链接、插件和 Agent 集成的步骤在 [AGENTS.md](AGENTS.md#部署新机器)，可以直接交给 Agent 跑。
-
-## 日常
-
-`u` 一条命令更新软件、Agent 的技能与插件并清理缓存；它不拉取本仓库，同步配置用 `git pull`。其余常用入口：`s` 重启 Shell，`y` 开 Yazi 并在退出后进入所选目录，`lg` 开 lazygit，`ts` 重载 tmux 配置。
-
-按键和别名都在各自的配置里，改了立即或重载后生效。
 
 ## 文档
 

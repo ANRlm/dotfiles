@@ -85,7 +85,6 @@ abbr -a copy pbcopy
 abbr -a ip 'ipconfig getifaddr en0'
 abbr -a ports 'lsof -nP -iTCP -sTCP:LISTEN'
 
-functions -q claude; and functions -e claude
 abbr -a claude 'claude --allow-dangerously-skip-permissions'
 
 # ── Abbreviations: Homebrew ───────────────────────────────────────────

@@ -42,17 +42,14 @@ right = ["diagnostics", "selections", "position", "file-type"]
 render = true
 
 [editor.whitespace.render]
-space = "none"
 tab = "all"
 nbsp = "all"
 nnbsp = "all"
-newline = "none"
 
 # ── File Picker ───────────────────────────────────────────────────────
 
 [editor.file-picker]
 hidden = false
-git-ignore = true
 
 # ── Keybindings ───────────────────────────────────────────────────────
 

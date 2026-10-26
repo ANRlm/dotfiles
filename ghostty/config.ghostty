@@ -4,7 +4,6 @@ shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 
 # ── macOS ─────────────────────────────────────────────────────────────
 
-macos-titlebar-style = transparent
 macos-option-as-alt = true
 macos-titlebar-proxy-icon = hidden
 
@@ -32,7 +31,6 @@ window-padding-balance = true
 window-width = 140
 window-height = 45
 
-# ── Mouse & Clipboard ─────────────────────────────────────────────────
+# ── Mouse ─────────────────────────────────────────────────────────────
 
 mouse-hide-while-typing = true
-clipboard-read = ask

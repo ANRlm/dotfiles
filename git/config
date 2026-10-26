@@ -7,7 +7,6 @@
 # ── Core ──────────────────────────────────────────────────────────────
 
 [core]
-    excludesfile = ~/.config/git/ignore
     editor = hx
     pager = delta
 
