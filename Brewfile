@@ -63,6 +63,7 @@ cask "typora"
 cask "upscayl"
 cask "visual-studio-code"
 cask "zed"
+cask "token-monitor"
 mas "QQ", id: 451108668
 mas "WPS Office", id: 1443749478
 mas "微信", id: 836500024
