@@ -99,6 +99,7 @@ Herdr server 通过 SSH 跑在远端时，插件装在**远端**并在远端 lin
 ### 终端工具
 
 - **Ghostty** 把 Option 当 Alt 发送；终端程序读剪贴板时要确认。**Helix** 和 **tmux** 的复制都写入系统剪贴板。
+- **Helix** 普通模式的 `l` 停在行尾最后一个字符，不跨到下一行。Helix 没有对应选项，`l` 是一串命令组合；多光标时它只保留最上面的一个，此时改用 `→`。
 - **Git** 全局忽略 `.env`、`.env.*`、`*.key`、`*.pem` 等凭证文件，但放行 `.env.example` 和 `.env.template`。
 - **lazygit** 不读 `core.pager`，所以 Delta 在 [lazygit/config.yml](lazygit/config.yml) 里单独配置。Diff 视图关闭了自动换行：lazygit 的续行从第 0 列开始，会盖住 Delta 的行号栏。
 

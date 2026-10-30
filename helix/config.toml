@@ -56,6 +56,8 @@ hidden = false
 [keys.normal]
 tab = "move_parent_node_end"
 S-tab = "move_parent_node_start"
+# Stop at the last character instead of wrapping onto the newline / next line
+l = ["collapse_selection", "extend_char_right", "split_selection_on_newline", "keep_primary_selection", "collapse_selection"]
 
 [keys.normal.space]
 q = ":quit"
