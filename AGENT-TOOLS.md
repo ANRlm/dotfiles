@@ -107,25 +107,7 @@ Pi 专用的扩展（状态栏、btw、stamp、问答、todo）不在本表，�
 - `~/.codex/config.toml` 中没有 `mattpocock` 市场或插件。
 - `grok inspect` 的 Plugins 一节只有 `ponytail (user, enabled)`，MCP Servers 一节为 None。
 
-## 5. Firstmate
-
-[Firstmate](https://github.com/kunchenguid/firstmate) 让一个 Agent 担任「大副」，统一派发和监督多个编码 Agent。仓库本身就是发行版，没有单独的安装程序。
-
-1. **克隆**：本人完成 `gh auth login` 后，执行 `git clone https://github.com/kunchenguid/firstmate ~/firstmate`。
-2. **启动**：在 Herdr 的终端中进入 `~/firstmate`，运行 `claude`、`pi` 或 `codex` 之一作为主会话；在 Herdr 内启动时，worker 会自动开在 Herdr 里。
-   - 同一时间只运行一个主会话；要换一个 Agent 当主会话，先退出原来的。
-   - 首次启动时，项目目录的信任提示由本人确认；用 Pi 时，还要信任仓库自带的扩展。
-3. **依赖**：首次启动时，Firstmate 会列出缺少的工具和安装命令，经本人同意后安装：
-   - `treehouse`：官方 curl 安装器；
-   - `no-mistakes`：本机不使用，提示安装时拒绝，项目登记为 `direct-PR` 或 `local-only` 模式；
-   - `gh-axi`、`tasks-axi`、`quota-axi`、`chrome-devtools-axi`、`lavish-axi`：`npm install -g`。
-
-   上游建议的 `<工具> setup hooks` 会改动各 Agent 的全局设置，本机没有执行；需要时由本人决定。
-4. **私有数据**：`~/firstmate` 下的 `data/`、`config/`、`projects/`、`state/` 被它自己的 Git 忽略，不随 dotfiles 迁移，其中包括项目登记、二副（工作区在 `~/.treehouse`）和本机配置。新机器上在 Firstmate 会话里重新登记项目、重新创建二副。
-
-**完成标准**：Firstmate 主会话在 Herdr 中启动，依赖检查除 `no-mistakes` 外不再报告缺少的工具。
-
-## 6. 收尾
+## 5. 收尾
 
 1. 重启 Claude Code、Codex 和 Grok 会话。
 2. 在 Pi 中执行 `/reload`，再用 `pi list` 确认 Pi 扩展包。
@@ -147,11 +129,10 @@ Pi 专用的扩展（状态栏、btw、stamp、问答、todo）不在本表，�
 7. `pi update --extensions`，更新 `~/.pi/agent/settings.json` 里的 Pi 包（含状态栏 `@narumitw/pi-starship`）
 8. `grok plugin update`
 
-lark-cli、thcli 和 Firstmate 依赖的 `*-axi` 工具由 `u` 的 Node 一节随 npm 全局包更新。
+lark-cli 和 thcli 由 `u` 的 Node 一节随 npm 全局包更新。
 
-以下几项需要手动更新：
+以下需要手动更新：
 
-- **Firstmate**：在 Firstmate 会话中执行 `/updatefirstmate`，会同时更新所有二副。
 - **tcapi**：重新从 ClawHub 官方来源安装；`npx skills update` 不更新它。
 
 修改 `__u_sync_skills` 后运行 `python3 fish/tests/sync-skills.test.py`，它只操作临时目录；完整的离线测试列表见 [AGENTS.md](AGENTS.md#测试)。

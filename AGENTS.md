@@ -36,8 +36,9 @@ mkdir -p ~/.config "$HOME/Library/Application Support/lazygit"
 for dir in fish ghostty git helix herdr mise starship tmux yazi
     ln -s ~/dotfiles/$dir ~/.config/$dir
 end
-# zsh 只从 $HOME 读 .zshenv
+# zsh 只从 $HOME 读 .zshenv 和 .zshrc
 ln -s ~/dotfiles/zsh/zshenv ~/.zshenv
+ln -s ~/dotfiles/zsh/zshrc ~/.zshrc
 ln -s ~/dotfiles/herdr/plugins/config/herdr-automatic-rename ~/.config/herdr-automatic-rename
 # lazygit 只链接配置文件，其余状态留在默认位置
 ln -s ~/dotfiles/lazygit/config.yml "$HOME/Library/Application Support/lazygit/config.yml"
@@ -55,7 +56,6 @@ pi install npm:@narumitw/pi-stamp
 pi install npm:@juicesharp/rpiv-ask-user-question
 pi install npm:@juicesharp/rpiv-todo
 herdr plugin install qu8n/herdr-automatic-rename
-herdr plugin link ~/dotfiles/herdr/plugins/local/fm-short-label
 ```
 
 tmux 首次启动时自动安装 TPM 和插件。
@@ -70,15 +70,9 @@ set -lx GROK_HOME $HOME/.grok-profiles/default
 herdr integration install grok
 ```
 
-`fm-short-label` 需要 Python 3，`herdr-automatic-rename` 需要 Bash 和 jq。首次 link 不会触发 startup hook，要在每个目标 Herdr 会话的 pane 内手动刷新一次：
+`herdr-automatic-rename` 需要 Bash 和 jq。Herdr server 通过 SSH 跑在远端时，插件装在**远端**。
 
-```sh
-bash ~/.config/herdr/plugins/local/fm-short-label/short-label.sh
-```
-
-Herdr server 通过 SSH 跑在远端时，插件装在**远端**并在远端 link。`fm-short-label` 依赖 `herdr/plugins/local/metadata_refresh.py`，同步到别处时保留 `herdr/plugins/local/` 的目录结构。
-
-完成标准：以上命令都返回 0，`herdr integration status` 里四个集成都列在各自的 profile 路径下，Firstmate 子工作区在 Herdr 侧栏中不显示 `p:<token>`。
+完成标准：以上命令都返回 0，`herdr integration status` 里四个集成都列在各自的 profile 路径下。
 
 ### 4. 交给本人
 
@@ -116,7 +110,7 @@ Herdr server 通过 SSH 跑在远端时，插件装在**远端**并在远端 lin
 | Grok | `$GROK_HOME/hooks/herdr-agent-state.sh`，注册在 `hooks/herdr.json` |
 | Pi | `~/.pi/agent/extensions/herdr-agent-state.ts`，扩展直报全生命周期，Herdr 跳过屏幕检测 |
 
-路径全跟环境变量走：Grok 不带 `GROK_HOME`、Claude 不带 `CLAUDE_CONFIG_DIR` 时，herdr 会写进并不存在的 `~/.grok` / `~/.claude`。Codex 的 `hooks.json` 同时有 Orca 和 Otty 的钩子，重装只动 herdr 自己那条。Codex 还会要求在新会话里信任钩子，交给本人在 `/hooks` 里确认。升级集成的方式见[更新](#更新)。
+路径全跟环境变量走：Grok 不带 `GROK_HOME`、Claude 不带 `CLAUDE_CONFIG_DIR` 时，herdr 会写进并不存在的 `~/.grok` / `~/.claude`。Codex 的 `hooks.json` 同时有 Orca 的钩子，重装只动 herdr 自己那条。Codex 还会要求在新会话里信任钩子，交给本人在 `/hooks` 里确认。升级集成的方式见[更新](#更新)。
 
 #### 侧栏
 
@@ -127,16 +121,14 @@ Herdr server 通过 SSH 跑在远端时，插件装在**远端**并在远端 lin
 | Agent | 状态圆点、终端标题 `terminal_title_stripped`（加粗，实时更新） | 远端主机名、项目名、Agent 名称 |
 | Spaces | 工作区名 | Herdr 自带的分支和 Git 状态 |
 
-- Firstmate 子工作区的项目名和工作区名都用 `$short` 代替（见下文插件）。
-- 分支取 shell 的 cwd，Firstmate 子任务的 shell 停在主 clone，所以显示的是主 clone 的分支。
+- 分支取 shell 的 cwd。
 - 本地机器名 `Local` 被规则隐藏，远端主机用 Rose Pine foam（`#9ccfd8`）标出，其余字段用主题默认色。项目名不设颜色，否则 Herdr 不显示选中态高亮。
 - `[theme.custom]` 调亮了 `surface_dim`，因为 Rose Pine 自带的分隔符色几乎和背景同色。
 - Pi 的标题带 `π - ` 前缀，Herdr 规则不能改写文字，保留原样。
 
 #### 插件
 
-- **`fm-short-label`**（本地）把 Firstmate 子工作区名 `└ task · p:<token>` 去掉 token 后作为 `$short` 发布到工作区和其中的 pane，不改工作区和 tab 的实际名称。刷新按 socket 串行，锁文件在 `~/.cache/herdr/plugin-locks/`；herdr 调用有 10 秒超时；刷新途中关掉的 pane 或工作区直接跳过。
-- **`herdr-automatic-rename`**（GitHub）自动命名 tab，保留首次见到的自定义 tab 名，适合 Firstmate 的 `firstmate` / `fm-*`。不用 `kryptamine/herdr-auto-title`，因为它第一次轮询就会接管未锁定的 tab 和 pane 名。
+- **`herdr-automatic-rename`**（GitHub）自动命名 tab，保留首次见到的自定义 tab 名。不用 `kryptamine/herdr-auto-title`，因为它第一次轮询就会接管未锁定的 tab 和 pane 名。
 
 #### 输入法
 
@@ -186,12 +178,10 @@ Brewfile 是全量清单，本机只装了一部分，按 tap、brew、cask、ma
 
 ## 测试
 
-改 `u.fish` 或 Herdr 本地插件后运行。全部离线，只用临时目录和 mock：
+改 `u.fish` 后运行。全部离线，只用临时目录和 mock：
 
 ```sh
 fish --no-config --no-execute fish/functions/u.fish
 python3 fish/tests/runtime.test.py
 python3 fish/tests/sync-skills.test.py
-python3 herdr/plugins/local/test_refresh.py
-python3 herdr/plugins/local/fm-short-label/test_short_label.py
 ```

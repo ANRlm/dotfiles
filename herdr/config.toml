@@ -33,17 +33,15 @@ show_agent_labels_on_pane_borders = true
 [ui.sidebar.agents]
 # Herdr's default two rows, with the live terminal title as the task name on top.
 # "Local" is hidden so remote hosts stand out; Rose Pine foam (#9ccfd8) marks them.
-# Firstmate's "└ task · p:<token>" children show $short (plugins/local/fm-short-label) instead.
 rows = [
   ["state_icon", { token = "terminal_title_stripped", bold = true }],
   [{ token = "machine", fg = "#9ccfd8", rules = [{ equals = "Local", hide = true }] },
-   { token = "workspace", rules = [{ starts_with = "└ ", hide = true }] }, "$short", "agent"],
+   "workspace", "agent"],
 ]
 
 [ui.sidebar.spaces]
 rows = [
-  ["state_icon", { token = "workspace", bold = true, rules = [{ starts_with = "└ ", hide = true }] },
-   { token = "$short", bold = true }],
+  ["state_icon", { token = "workspace", bold = true }],
   ["branch", "git_status"],
 ]
 
