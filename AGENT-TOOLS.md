@@ -53,6 +53,7 @@ npx skills add https://open.feishu.cn/lark-cli/skills/regular --skill '*' -g -a 
 # 阿里云 CLI / AgentLoop：依赖 aliyun-cli
 npx skills add aliyun/alibabacloud-aiops-skills --skill alibabacloud-cli-guidance --skill alibabacloud-agentloop-management --full-depth -g -a claude-code -a codex -a pi -y
 npx skills add herdrdev/herdr --skill herdr -g -a claude-code -a codex -a pi -y
+npx skills add lighthouser-agent/lighthouser-skills --skill onboarding -g -a claude-code -a codex -a pi -y
 # ego-browser：浏览器自动化，依赖 ego lite 应用
 npx skills add citrolabs/ego-lite -g -a claude-code -a codex -a pi -y
 ```

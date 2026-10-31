@@ -50,6 +50,9 @@ ln -s ~/dotfiles/lazygit/config.yml "$HOME/Library/Application Support/lazygit/c
 
 ```fish
 ya pkg install
+pi install npm:billion-context
+pi install npm:pi-web-access
+pi install npm:pi-subagents
 pi install npm:@narumitw/pi-starship
 pi install npm:pi-btw
 pi install npm:@narumitw/pi-stamp
