@@ -1,4 +1,3 @@
-tap "multica-ai/tap"
 tap "oven-sh/bun", trusted: true
 tap "stablyai/orca"
 tap "tencentcloud/tccli"
@@ -22,7 +21,6 @@ brew "mas"
 brew "maven"
 brew "mise"
 brew "mole"
-brew "multica-ai/tap/multica", trusted: true
 brew "node"
 brew "openjdk@17"
 brew "oven-sh/bun/bun", trusted: true
