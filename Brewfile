@@ -1,5 +1,4 @@
 tap "oven-sh/bun", trusted: true
-tap "stablyai/orca"
 tap "tencentcloud/tccli"
 tap "tw93/tap", trusted: true
 brew "aliyun-cli"
@@ -53,7 +52,6 @@ cask "orbstack"
 cask "pearcleaner"
 cask "raycast"
 cask "shottr"
-cask "stablyai/orca/orca", trusted: true
 cask "tailscale-app"
 cask "typeless"
 cask "typora"

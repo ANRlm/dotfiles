@@ -113,7 +113,7 @@ herdr integration install grok
 | Grok | `$GROK_HOME/hooks/herdr-agent-state.sh`，注册在 `hooks/herdr.json` |
 | Pi | `~/.pi/agent/extensions/herdr-agent-state.ts`，扩展直报全生命周期，Herdr 跳过屏幕检测 |
 
-路径全跟环境变量走：Grok 不带 `GROK_HOME`、Claude 不带 `CLAUDE_CONFIG_DIR` 时，herdr 会写进并不存在的 `~/.grok` / `~/.claude`。Codex 的 `hooks.json` 同时有 Orca 的钩子，重装只动 herdr 自己那条。Codex 还会要求在新会话里信任钩子，交给本人在 `/hooks` 里确认。升级集成的方式见[更新](#更新)。
+路径全跟环境变量走：Grok 不带 `GROK_HOME`、Claude 不带 `CLAUDE_CONFIG_DIR` 时，herdr 会写进并不存在的 `~/.grok` / `~/.claude`。Codex 还会要求在新会话里信任钩子，交给本人在 `/hooks` 里确认。升级集成的方式见[更新](#更新)。
 
 #### 侧栏
 
