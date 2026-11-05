@@ -34,9 +34,10 @@
 | tccli | Brewfile（tcapi 依赖） | `tccli auth login` |
 | lark-cli | `npm install -g @larksuite/cli` | 登录命令见 lark-shared skill |
 | thcli（TokenHub） | `npm install -g tencent-tokenhub-cli` | `thcli auth login` |
+| bl（阿里云百炼） | `npm install -g bailian-cli`（只用 npm，不用 pnpm） | `bl auth login --console`，用 `bl auth status --output json` 确认 |
 | ego lite | 从 [官网](https://lite.ego.app/) 下载安装 `ego lite.app` | 在应用中完成首次引导，它会把 `ego-browser` 命令注册到 `~/.local/bin` |
 
-**完成标准**：`aliyun version`、`tccli --version`、`lark-cli --version`、`thcli --version` 都能运行，`command -v ego-browser` 有输出（npm 安装成功不代表二进制已在 PATH 中）；需要本人执行的首次配置均已确认完成。
+**完成标准**：`aliyun version`、`tccli --version`、`lark-cli --version`、`thcli --version`、`bl --version` 都能运行，`command -v ego-browser` 有输出（npm 安装成功不代表二进制已在 PATH 中）；需要本人执行的首次配置均已确认完成。
 
 ## 3. Skill
 
@@ -54,6 +55,8 @@ npx skills add https://open.feishu.cn/lark-cli/skills/regular --skill '*' -g -a 
 npx skills add aliyun/alibabacloud-aiops-skills --skill alibabacloud-cli-guidance --skill alibabacloud-agentloop-management --full-depth -g -a claude-code -a codex -a pi -y
 npx skills add herdrdev/herdr --skill herdr -g -a claude-code -a codex -a pi -y
 npx skills add lighthouser-agent/lighthouser-skills --skill onboarding -g -a claude-code -a codex -a pi -y
+# 百炼 skills：依赖 bl。不用 `bl skill init`，它会在 ~/.codex/skills、~/.grok/skills 建链接
+npx skills add modelstudioai/cli --skill '*' -g -a claude-code -a codex -a pi -y
 # ego-browser：浏览器自动化，依赖 ego lite 应用
 npx skills add citrolabs/ego-lite -g -a claude-code -a codex -a pi -y
 ```
@@ -130,7 +133,7 @@ Pi 专用的扩展（状态栏、btw、stamp、问答、todo）不在本表，�
 7. `pi update --extensions`，更新 `~/.pi/agent/settings.json` 里的 Pi 包（含状态栏 `@narumitw/pi-starship`）
 8. `grok plugin update`
 
-lark-cli 和 thcli 由 `u` 的 Node 一节随 npm 全局包更新。
+lark-cli、thcli 和 bl 由 `u` 的 Node 一节随 npm 全局包更新。
 
 以下需要手动更新：
 
