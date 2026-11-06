@@ -1,5 +1,6 @@
 """Offline tests; only temporary HOME/profile directories are modified."""
 
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -88,6 +89,23 @@ class SkillLinkTests(unittest.TestCase):
         self.skill("default")
         self.sync()
         self.assertTrue((self.home / ".claude/skills/default").is_symlink())
+
+    def test_skills_from_user_plugins_are_not_linked(self):
+        source = self.skill("from-plugin")
+        kept = self.skill("from-project-plugin")
+        plugins = self.profile / "plugins"
+        for name, scope in [("from-plugin", "user"), ("from-project-plugin", "project")]:
+            (plugins / "cache" / name / name).mkdir(parents=True)
+            (plugins / "cache" / name / name / "SKILL.md").write_text("Plugin fixture")
+        (plugins / "installed_plugins.json").write_text(json.dumps({"version": 2, "plugins": {
+            f"{name}@m": [{"scope": scope, "installPath": str(plugins / "cache" / name)}]
+            for name, scope in [("from-plugin", "user"), ("from-project-plugin", "project")]}}))
+        target = self.profile / "skills"
+        target.mkdir(parents=True)
+        (target / source.name).symlink_to(source)
+        self.sync()
+        self.assertFalse((target / source.name).is_symlink())
+        self.assertTrue((target / kept.name).is_symlink())
 
     def test_duplicate_basename_is_reported(self):
         self.skill("@one/duplicate")

@@ -6,7 +6,7 @@
 
 ## 约定
 
-所有 skill 实体只放在共享目录 `~/.agents/skills`，各 Agent 的读取方式不同：
+通过 `npx skills` 等方式安装的 skill 放在共享目录 `~/.agents/skills`，各 Agent 的读取方式不同：
 
 | Agent | 读取方式 | 注意 |
 | --- | --- | --- |
@@ -14,8 +14,9 @@
 | Grok | 原生读取共享目录 | `~/.grok/skills` 同样不建链接；ego lite 应用自己放在这里的 `ego-browser` 链接与共享目录同名，Grok 按名称去重，保留不动。它的 Claude 兼容层只扫描固定的 `~/.claude/skills`，看不到 Claude 的 skill 链接和插件 |
 | Claude Code | 只读取 `$CLAUDE_CONFIG_DIR/skills` | 每个 skill 需要一个指向共享目录的符号链接。`CLAUDE_CONFIG_DIR` 由 `fish/config.fish` 设置，本机为 `~/.claude-profiles/default`；未设置时 Claude 使用 `~/.claude` |
 
-- **安装方式**：skill 一律用 `npx skills add <来源> -g -a claude-code -a codex -a pi -y` 安装。它把内容放进共享目录，给 Claude 建链接，并写入 `~/.agents/.skill-lock.json`，之后由 `u` 统一更新。只有需要钩子或 MCP 的才装成插件，见第 4 节。
-- **四个 Agent 必装**：[ponytail](https://github.com/DietrichGebert/ponytail)（第 4 节）和 [mattpocock/skills](https://github.com/mattpocock/skills) 的全部 skill（3.1 节）。上游新增 skill 时，`u` 会自动补装。
+- **安装方式**：按各来源 README 推荐的方式安装，每种方式都要能由 `u` 更新。上游提供插件时，Claude Code 和 Codex 装插件，见第 4 节；只发布 skill 的用 `npx skills add <来源> -g -a claude-code -a codex -a pi -y`，它把内容放进共享目录，给 Claude 建链接，并写入 `~/.agents/.skill-lock.json`。
+- **不重复加载**：Codex、Pi、Grok 都读取共享目录，所以插件已经提供的 skill 不能再留在共享目录里，Pi 和 Grok 另用 Pi 包和 Grok 插件装同一份（见 mattpocock）。`__u_sync_skills` 不给 Claude 插件自带的 skill 建链接。Codex 和 Pi 按真实路径去重，指向同一实体的多个链接只加载一次。
+- **四个 Agent 必装**：[ponytail](https://github.com/DietrichGebert/ponytail) 和 [mattpocock/skills](https://github.com/mattpocock/skills) 的稳定版 skill（`engineering/`、`productivity/`，都在第 4 节），上游新增的稳定版 skill 随插件和 Pi 包更新。
 - **Grok 配置目录**：`grok` 命令必须走 `~/.local/bin/grok` 包装脚本，它把 `GROK_HOME` 指向 `~/.grok-profiles/default`，插件和启用状态写在那里。
 
 ## 1. 前置条件
@@ -44,21 +45,21 @@
 ### 3.1 用 npx skills 安装
 
 ```fish
-# mattpocock skills：Claude 和 Codex 的 mattpocock 插件提供同样的 skill，只用这一种安装方式
-npx skills add mattpocock/skills --skill '*' -g -a claude-code -a codex -a pi -y
 # show-me：只在手动调用时生效
 npx skills add humanlayer/skills --skill show-me -g -a claude-code -a codex -a pi -y
 npx skills add vercel-labs/skills --skill find-skills -g -a claude-code -a codex -a pi -y
 # lark skills：飞书官方，依赖 lark-cli
 npx skills add https://open.feishu.cn/lark-cli/skills/regular --skill '*' -g -a claude-code -a codex -a pi -y
+# 这 4 个只是转交 lark-meeting 的旧名称，装完即删；`npx skills update` 不会补回
+npx skills remove lark-minutes lark-note lark-vc lark-vc-agent -g -y
 # 阿里云 CLI / AgentLoop：依赖 aliyun-cli
 npx skills add aliyun/alibabacloud-aiops-skills --skill alibabacloud-cli-guidance --skill alibabacloud-agentloop-management --full-depth -g -a claude-code -a codex -a pi -y
 npx skills add herdrdev/herdr --skill herdr -g -a claude-code -a codex -a pi -y
 npx skills add lighthouser-agent/lighthouser-skills --skill onboarding -g -a claude-code -a codex -a pi -y
-# 百炼 skills：依赖 bl。不用 `bl skill init`，它会在 ~/.codex/skills、~/.grok/skills 建链接
-npx skills add modelstudioai/cli --skill '*' -g -a claude-code -a codex -a pi -y
 # ego-browser：浏览器自动化，依赖 ego lite 应用
 npx skills add citrolabs/ego-lite -g -a claude-code -a codex -a pi -y
+# answer-me-with-html：把回答渲染成 HTML 页面，依赖 Node 20+。Claude 用插件（第 4 节），上游没有 Codex 插件，Codex、Pi、Grok 用这份 skill，设置用 `/answer-me-with-html config`
+npx skills add QingYunA/answer-me-with-html -g -a codex -a pi -y
 ```
 
 ### 3.2 其他来源
@@ -66,6 +67,7 @@ npx skills add citrolabs/ego-lite -g -a claude-code -a codex -a pi -y
 | 名称 | 安装 | 说明 |
 | --- | --- | --- |
 | TokenHub（`thcli-*`） | `thcli +connect --target ~/.agents/skills` | thcli 自带 |
+| 百炼（`bailian-*`） | `bl skill init` | bl 自带，从百炼 skill 仓库安装全部 `bailian-*`。实体在 `~/.bailian/skills`，在共享目录、`$CLAUDE_CONFIG_DIR/skills`、`~/.codex/skills`、`~/.pi/agent/skills` 各建一个链接 |
 | 腾讯云 API（tcapi） | 从 [ClawHub](https://clawhub.ai/user/tencent-adm) 安装 `@tencent-adm/tencentcloud-api-skill` 到 `~/.agents/skills/@tencent-adm/tencentcloud-api-skill` | 官方只在 ClawHub 发布，GitHub 上的同名仓库是非官方翻译版。依赖 tccli |
 
 ### 3.3 给 Claude 建链接
@@ -77,24 +79,27 @@ source ~/dotfiles/fish/functions/u.fish
 __u_sync_skills
 ```
 
-`__u_sync_skills` 递归查找 `SKILL.md`，支持 `@tencent-adm/...` 这类作用域目录，已有的指向同一实体的链接保持不变。遇到同名目录、指向其他位置的链接或坏链接时，它报告冲突并返回失败，不覆盖任何文件；把冲突列给本人确认后再处理。
+`__u_sync_skills` 递归查找 `SKILL.md`，支持 `@tencent-adm/...` 这类作用域目录，已有的指向同一实体的链接保持不变。`$CLAUDE_CONFIG_DIR/plugins/installed_plugins.json` 中 user 作用域插件自带的 skill 不建链接，指向共享目录的旧链接会被删除。遇到同名目录、指向其他位置的链接或坏链接时，它报告冲突并返回失败，不覆盖任何文件；把冲突列给本人确认后再处理。
 
 **完成标准**：
 
-- `npx skills ls -g` 列出 3.1 中安装的所有 skill。
+- `npx skills ls -g` 列出 3.1 中安装的所有 skill，其中没有 mattpocock 的 skill 和 `bailian-*`。
+- `bl skill list` 显示全部 `bailian-*` 已安装。
 - `~/.agents/skills/@tencent-adm/tencentcloud-api-skill/.clawhub/origin.json` 中 `ownerHandle` 为 `tencent-adm`。
 - `__u_sync_skills` 返回 0；共享目录中的每个 skill 在 `$CLAUDE_CONFIG_DIR/skills` 都有同名链接，且没有坏链接。
-- `~/.codex/skills`、`~/.pi/agent/skills` 和 `~/.grok/skills` 中没有指向 `~/.agents/skills` 的链接（Codex 自带的 `.system/` 和 ego lite 的 `ego-browser` 不算）。
+- `~/.codex/skills`、`~/.pi/agent/skills` 和 `~/.grok/skills` 中没有指向 `~/.agents/skills` 的链接（Codex 自带的 `.system/`、ego lite 的 `ego-browser` 和 bl 指向 `~/.bailian/skills` 的链接不算）。
 - 在 Git 仓库之外运行 `grok inspect`，Skills 一节列出共享目录中的全部 skill。
 
 ## 4. 插件与 MCP
 
-ponytail 四个 Agent 都装，context7 只给 Claude Code 装，Grok 不装 MCP。
+ponytail 和 mattpocock 四个 Agent 都装，context7 和 answer-me-with-html 只给 Claude Code 装，Grok 不装 MCP。
 
 | 名称 | Claude Code | Codex | Pi | Grok | 说明 |
 | --- | --- | --- | --- | --- | --- |
 | ponytail | `claude plugin marketplace add DietrichGebert/ponytail`，再 `claude plugin install ponytail@ponytail` | `codex plugin marketplace add DietrichGebert/ponytail`，再 `codex plugin add ponytail@ponytail` | `pi install npm:@dietrichgebert/ponytail` | `grok plugin install DietrichGebert/ponytail --trust`，再 `grok plugin enable ponytail` | 常驻模式依赖会话启动钩子或 Pi 扩展，因此装成插件而不用 `npx skills add`（后者只装 skill）；Pi 包自带 skill 和扩展 |
+| mattpocock | `claude plugin install mattpocock-skills@claude-plugins-official` | `codex plugin marketplace add mattpocock/skills`，再 `codex plugin add mattpocock-skills@mattpocock` | `pi install git:github.com/mattpocock/skills`，再按下文加过滤 | `grok plugin install mattpocock/skills --trust`，再 `grok plugin enable mattpocock-skills` | 只装稳定版 27 个 skill；测试版（`in-progress/`）和杂项（`misc/`）不装 |
 | context7 | `claude plugin install context7@claude-plugins-official` | — | — | — | 自带文档查询 MCP |
+| answer-me-with-html | `claude plugin marketplace add QingYunA/answer-me-with-html`，再 `claude plugin install answer-me-with-html@answer-me-with-html` | — | — | — | 带 `/answer-me-with-html:config` 和 `:clean` 命令；其他 Agent 用 3.1 节的 skill |
 
 Codex 装完 ponytail 后，由本人在 Codex 的 `/hooks` 中信任它的两个生命周期钩子，并新开会话。
 
@@ -102,14 +107,23 @@ Grok 的 ponytail 只有 skill，不常驻：Grok 的会话启动钩子无法注
 
 Pi 的状态栏不显示 ponytail 状态条（规则照常生效）：`fish/config.fish` 设 `PONYTAIL_HIDE_STATUS=1`，级别用 `/ponytail status` 查。扩展在进程启动时读环境变量，改后重开 Pi 生效。
 
+mattpocock 的 Pi 包会递归发现仓库里的全部 skill，包括不装的测试版和杂项。在 `~/.pi/agent/settings.json` 的 `packages` 中把它改成只加载稳定版：
+
+```json
+{
+  "source": "git:github.com/mattpocock/skills",
+  "skills": ["skills/engineering/*", "skills/productivity/*"]
+}
+```
+
 Pi 专用的扩展（状态栏、btw、stamp、问答、todo）不在本表，见 [AGENTS.md](AGENTS.md#pi)。
 
 **完成标准**：
 
-- `claude plugin list` 只有 ponytail 和 context7。
-- `pi list` 包含 `npm:@dietrichgebert/ponytail`。
-- `~/.codex/config.toml` 中没有 `mattpocock` 市场或插件。
-- `grok inspect` 的 Plugins 一节只有 `ponytail (user, enabled)`，MCP Servers 一节为 None。
+- `claude plugin list` 只有 ponytail、mattpocock-skills、context7 和 answer-me-with-html，`$CLAUDE_CONFIG_DIR/skills` 中没有这些插件自带 skill 的链接。
+- `codex plugin list` 中 `ponytail@ponytail` 和 `mattpocock-skills@mattpocock` 为 installed, enabled。
+- `pi list` 包含 `npm:@dietrichgebert/ponytail` 和 `git:github.com/mattpocock/skills`。
+- `grok inspect` 的 Plugins 一节只有 `ponytail (user, enabled)` 和 `mattpocock-skills (user, enabled)`，MCP Servers 一节为 None。
 
 ## 5. 收尾
 
@@ -125,12 +139,12 @@ Pi 专用的扩展（状态栏、btw、stamp、问答、todo）不在本表，�
 `u` 的「Agent skills & plugins」一节依次执行：
 
 1. `__u_update_skills`：`npx skills update -g -y`，再按它的告警删掉上游已删除的本地副本（`npx skills remove … -g -y`），本机与上游保持一致
-2. 重新执行 3.1 节的 mattpocock 安装命令：`update` 只更新已装的 skill，上游新增的要靠重新 `add` 补上，保证四个 Agent 都有全套
-3. `thcli +connect --target ~/.agents/skills`
+2. `thcli +connect --target ~/.agents/skills`
+3. `bl skill init`：重新安装全部 `bailian-*`，包括百炼仓库新增的 skill；`bl skill update` 不修复本地改过的文件，所以不用它
 4. `__u_sync_skills`，给新增的 skill 补齐 Claude 链接
 5. 更新 Claude 插件市场和已安装的插件
 6. `codex plugin marketplace upgrade`
-7. `pi update --extensions`，更新 `~/.pi/agent/settings.json` 里的 Pi 包（含状态栏 `@narumitw/pi-starship`）
+7. `pi update --extensions`，更新 `~/.pi/agent/settings.json` 里的 Pi 包（含状态栏 `@narumitw/pi-starship` 和 mattpocock 的 Git 包）
 8. `grok plugin update`
 
 lark-cli、thcli 和 bl 由 `u` 的 Node 一节随 npm 全局包更新。

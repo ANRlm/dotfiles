@@ -94,10 +94,29 @@ function __u_sync_skills
     mkdir -p "$target"; or return
     # Follow local skill links and discover scoped packages such as @tencent-adm.
     set -l manifests (find -L "$shared" -type f -name SKILL.md -print); or return
+    # Skills that a user-scope Claude plugin ships would load twice through a link.
+    set -l plugin_skills
+    set -l installed "$profile/plugins/installed_plugins.json"
+    if test -f "$installed"
+        set -l dirs (jq -r '.plugins[][] | select(.scope == "user") | .installPath' "$installed"); or return
+        for dir in $dirs
+            test -d "$dir"; or continue
+            for plugin_manifest in (find -L "$dir" -type f -name SKILL.md -print)
+                set -a plugin_skills (path basename (path dirname "$plugin_manifest"))
+            end
+        end
+    end
     set -l failed 0
     for manifest in $manifests
         set -l source (path dirname "$manifest")
         set -l link "$target/"(path basename "$source")
+        if contains -- (path basename "$source") $plugin_skills
+            # Drop only a link this function made; anything else stays.
+            if test -L "$link"; and test (path resolve "$link") = (path resolve "$source")
+                rm "$link"; or set failed 1
+            end
+            continue
+        end
         if test -e "$link"; or test -L "$link"
             set -l resolved (path resolve "$link")
             set -l expected (path resolve "$source")
@@ -169,9 +188,9 @@ function u --description "Update global tools, applications and plugins"
     # Claude Code reads per-skill symlinks in CLAUDE_CONFIG_DIR.
     __u_section "Agent skills & plugins"
     __u_run "Shared skills updated" __u_update_skills
-    # update only refreshes installed skills; re-adding picks up new upstream ones
-    __u_run "mattpocock skills synced" npx -y skills add mattpocock/skills --skill '*' -g -a claude-code -a codex -a pi -y
     __u_run "TokenHub skills updated" thcli +connect --target $HOME/.agents/skills </dev/null
+    # init, not update: update leaves locally edited files as they are
+    __u_run "Bailian skills updated" bl skill init --quiet
     __u_run "Claude skill links synced" __u_sync_skills
     if __u_run "Claude marketplaces updated" claude plugin marketplace update
         set -l plugins (__u_plugin_list claude)
