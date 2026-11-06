@@ -12,6 +12,11 @@ source "$AUDIT_ROOT/fish/functions/u.fish"
 for name in brew env pnpm mise npx thcli bl codex pi grok uv mas git ya bash __u_brewfile_merge __u_sync_skills
     eval "function $name; return 0; end"
 end
+# Pretend the CLIs in $MISSING are not installed, even if the machine has them.
+function type
+    contains -- $argv[-1] (string split ' ' -- "$MISSING"); and return 1
+    builtin type $argv
+end
 function claude
     if test "$argv[2]" = list
         printf '%s\n' "$CLAUDE_LIST"
@@ -57,6 +62,13 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(result.stdout.count('UPDATED claude a@market'), 1)
         self.assertEqual(result.stdout.count('HERDR plugin update -y'), 1)
         self.assertNotIn('UPDATED claude local', result.stdout)
+
+    def test_missing_cloud_skill_clis_are_skipped(self):
+        result = self.update(MISSING='thcli bl')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('thcli not installed, skipped', result.stdout)
+        self.assertIn('bl not installed, skipped', result.stdout)
+        self.assertNotIn('TokenHub skills updated', result.stdout)
 
     def test_mise_node_remains_first_after_config_initialization(self):
         node = self.home / 'mise/bin/node'

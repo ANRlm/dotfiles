@@ -139,8 +139,8 @@ Pi 专用的扩展（状态栏、btw、stamp、问答、todo）不在本表，�
 `u` 的「Agent skills & plugins」一节依次执行：
 
 1. `__u_update_skills`：`npx skills update -g -y`，再按它的告警删掉上游已删除的本地副本（`npx skills remove … -g -y`），本机与上游保持一致
-2. `thcli +connect --target ~/.agents/skills`
-3. `bl skill init`：重新安装全部 `bailian-*`，包括百炼仓库新增的 skill；`bl skill update` 不修复本地改过的文件，所以不用它
+2. `thcli +connect --target ~/.agents/skills`；未安装 thcli 时跳过
+3. `bl skill init`：重新安装全部 `bailian-*`，包括百炼仓库新增的 skill；`bl skill update` 不修复本地改过的文件，所以不用它。未安装 bl 时跳过
 4. `__u_sync_skills`，给新增的 skill 补齐 Claude 链接
 5. 更新 Claude 插件市场和已安装的插件
 6. `codex plugin marketplace upgrade`

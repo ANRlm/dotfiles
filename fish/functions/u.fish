@@ -188,9 +188,18 @@ function u --description "Update global tools, applications and plugins"
     # Claude Code reads per-skill symlinks in CLAUDE_CONFIG_DIR.
     __u_section "Agent skills & plugins"
     __u_run "Shared skills updated" __u_update_skills
-    __u_run "TokenHub skills updated" thcli +connect --target $HOME/.agents/skills </dev/null
-    # init, not update: update leaves locally edited files as they are
-    __u_run "Bailian skills updated" bl skill init --quiet
+    # Cloud vendor CLIs are only installed on development machines.
+    if type -q thcli
+        __u_run "TokenHub skills updated" thcli +connect --target $HOME/.agents/skills </dev/null
+    else
+        echo "  thcli not installed, skipped"
+    end
+    if type -q bl
+        # init, not update: update leaves locally edited files as they are
+        __u_run "Bailian skills updated" bl skill init --quiet
+    else
+        echo "  bl not installed, skipped"
+    end
     __u_run "Claude skill links synced" __u_sync_skills
     if __u_run "Claude marketplaces updated" claude plugin marketplace update
         set -l plugins (__u_plugin_list claude)
