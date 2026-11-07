@@ -172,7 +172,7 @@ Pi 的扩展都是 npm 包，装在 `~/.pi/agent/npm/`，条目写在 `~/.pi/age
 - Node：更新 npm 全局包，清理 pnpm store，按全局 mise 配置升级工具（在 `$HOME` 里跑，不碰项目自己的 `mise.toml`；`.node-version` 这种精确 pin 不会被改）。
 - Agent skill 与插件：见 [AGENT-TOOLS.md](AGENT-TOOLS.md#更新)。
 - uv 缓存清理、Mac App Store 应用、tmux 插件（Git 快进）。
-- Herdr：更新 GitHub 插件（保留 ref 和配置）。Herdr 升级可能提高集成版本号，`u` 只重装 `herdr integration status` 里标 `outdated` 的，因为重装会改写 Agent 自己的配置文件；全部 current 时只打一行 ✓，`not installed` 的不补，按部署步骤手动装。
+- Herdr：更新 GitHub 插件（保留 ref 和配置）。Herdr 升级可能提高集成版本号，`u` 只重装 `herdr integration status` 里标 `outdated` 的，因为重装会改写 Agent 自己的配置文件；全部 current 时只打一行 ✓，`not installed` 的不补，按部署步骤手动装。未安装 herdr 时整节跳过。
 - Yazi 插件（最多重试三次），最后跑 Mole 清理。
 
 单步失败不中断，结束时返回失败。`u` 不拉取本仓库。

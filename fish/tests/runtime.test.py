@@ -70,6 +70,12 @@ class RuntimeTests(unittest.TestCase):
         self.assertIn('bl not installed, skipped', result.stdout)
         self.assertNotIn('TokenHub skills updated', result.stdout)
 
+    def test_missing_herdr_is_skipped(self):
+        result = self.update(MISSING='herdr')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('herdr not installed, skipped', result.stdout)
+        self.assertNotIn('HERDR', result.stdout)
+
     def test_mise_node_remains_first_after_config_initialization(self):
         node = self.home / 'mise/bin/node'
         node.parent.mkdir(parents=True)
