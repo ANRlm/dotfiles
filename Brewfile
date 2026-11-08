@@ -13,7 +13,6 @@ brew "gh"
 brew "git"
 brew "git-delta"
 brew "helix"
-brew "herdr"
 brew "lazygit"
 brew "macmon"
 brew "mas"
@@ -28,7 +27,6 @@ brew "pnpm"
 brew "ripgrep"
 brew "starship"
 brew "tencentcloud/tccli/tccli", trusted: true
-brew "tmux"
 brew "uv"
 brew "yazi"
 brew "zoxide"
@@ -58,6 +56,7 @@ cask "typora"
 cask "upscayl"
 cask "zed"
 cask "token-monitor"
+cask "font-monaspace"
 mas "QQ", id: 451108668
 mas "WPS Office", id: 1443749478
 mas "微信", id: 836500024

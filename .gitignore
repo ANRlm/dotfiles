@@ -5,22 +5,8 @@
 
 # ── Plugins (installed by their managers) ─────────────────────────────
 
-tmux/plugins/
 yazi/plugins/
-yazi/flavors/
-fish/completions/
-herdr/plugins/github-installations/
-herdr/plugins/.locks/
-herdr/plugins.json
-herdr/.plugins.lock
-herdr/plugins/local/**/__pycache__/
 
 # ── Runtime State ─────────────────────────────────────────────────────
 
 fish/fish_variables
-herdr/*.log
-herdr/*.sock
-herdr/*.sock.agent
-herdr/session.json
-herdr/session-snapshots/
-herdr/release-notes.json

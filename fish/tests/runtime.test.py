@@ -9,7 +9,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 UPDATE_SCRIPT = r'''
 source "$AUDIT_ROOT/fish/functions/u.fish"
-for name in brew env pnpm mise npx thcli bl codex pi grok uv mas git ya bash __u_brewfile_merge __u_sync_skills
+for name in brew npm pnpm mise npx thcli bl aliyun rex codex pi grok uv mas ya mo bash __u_brewfile_merge __u_sync_skills __u_add_skill_families
     eval "function $name; return 0; end"
 end
 # Pretend the CLIs in $MISSING are not installed, even if the machine has them.
@@ -22,11 +22,8 @@ function claude
         printf '%s\n' "$CLAUDE_LIST"
         return $CLAUDE_EXIT
     end
-    test "$argv[2]" != update; or echo "UPDATED claude $argv[3]"
+    test "$argv[2]" != update; or echo "UPDATED claude $argv[3] $argv[5] in $PWD"
     return 0
-end
-function herdr
-    echo "HERDR $argv"
 end
 u
 '''
@@ -37,6 +34,7 @@ class RuntimeTests(unittest.TestCase):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         self.home = Path(temp.name)
+        (self.home / '.agents/skills').mkdir(parents=True)
         self.env = dict(os.environ, HOME=temp.name, XDG_CONFIG_HOME=temp.name + '/config',
                         TERM='xterm-256color', AUDIT_ROOT=str(ROOT),
                         CLAUDE_LIST='[]', CLAUDE_EXIT='0')
@@ -60,21 +58,48 @@ class RuntimeTests(unittest.TestCase):
         result = self.update(CLAUDE_LIST='[{"id":"a@market"},{"id":"a@market"},{"id":"local@skills-dir"}]')
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.count('UPDATED claude a@market'), 1)
-        self.assertEqual(result.stdout.count('HERDR plugin update -y'), 1)
         self.assertNotIn('UPDATED claude local', result.stdout)
 
+    def test_project_scope_plugins_update_inside_their_project(self):
+        project = self.home / 'project'
+        project.mkdir()
+        listing = ('[{"id":"a@m","scope":"user"},{"id":"a@m","scope":"project","projectPath":"%s"},'
+                   '{"id":"a@m","scope":"project","projectPath":"%s/gone"},{"id":"b@m","scope":"managed"}]'
+                   % (project, self.home))
+        result = subprocess.run(['fish', '--no-config', '-c', 'cd $HOME; ' + UPDATE_SCRIPT + '; pwd'],
+                                env={**self.env, 'CLAUDE_LIST': listing}, capture_output=True, text=True, timeout=20)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn(f'UPDATED claude a@m user in {self.home}', result.stdout)
+        self.assertIn(f'UPDATED claude a@m project in {project}', result.stdout)
+        self.assertIn('is gone', result.stdout)
+        self.assertNotIn('b@m', result.stdout)
+        self.assertTrue(result.stdout.rstrip().endswith(str(self.home)), result.stdout)
+
+    def test_listed_skill_names_are_parsed(self):
+        listing = ('\x1b[2m│\x1b[0m\n│    lark-im\n│\n│      Files: 30\n│      Description text\n'
+                   '│    alibabacloud-agentloop-dataset\n└  Run without --list to install\n')
+        result = subprocess.run(['fish', '--no-config', '-c',
+                                 'source "$AUDIT_ROOT/fish/functions/u.fish"; printf "$LISTING" | __u_listed_skills'],
+                                env={**self.env, 'LISTING': listing}, capture_output=True, text=True, timeout=20)
+        self.assertEqual(result.stdout.split(), ['lark-im', 'alibabacloud-agentloop-dataset'])
+
     def test_missing_cloud_skill_clis_are_skipped(self):
-        result = self.update(MISSING='thcli bl')
+        result = self.update(MISSING='thcli bl aliyun rex')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn('thcli not installed, skipped', result.stdout)
         self.assertIn('bl not installed, skipped', result.stdout)
+        self.assertIn('aliyun not installed, skipped', result.stdout)
+        self.assertIn('rex not installed, skipped', result.stdout)
         self.assertNotIn('TokenHub skills updated', result.stdout)
 
-    def test_missing_herdr_is_skipped(self):
-        result = self.update(MISSING='herdr')
+    def test_machine_without_agent_tools_succeeds(self):
+        (self.home / '.agents/skills').rmdir()
+        result = self.update(MISSING='claude codex pi grok aliyun uv mas ya mo')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn('herdr not installed, skipped', result.stdout)
-        self.assertNotIn('HERDR', result.stdout)
+        self.assertIn('shared skills skipped', result.stdout)
+        for name in ('claude', 'codex', 'pi', 'grok', 'mo'):
+            self.assertIn(f'{name} not installed, skipped', result.stdout)
+        self.assertNotIn('UPDATED claude', result.stdout)
 
     def test_mise_node_remains_first_after_config_initialization(self):
         node = self.home / 'mise/bin/node'

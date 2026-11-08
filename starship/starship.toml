@@ -1,7 +1,5 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# ── Prompt ────────────────────────────────────────────────────────────
-
 continuation_prompt = "[.](bright-black) "
 
 [character]
@@ -11,22 +9,6 @@ vimcmd_symbol = "[<](bold green)"
 vimcmd_visual_symbol = "[<](bold yellow)"
 vimcmd_replace_symbol = "[<](bold purple)"
 vimcmd_replace_one_symbol = "[<](bold purple)"
-
-[directory]
-read_only = " ro"
-
-[status]
-symbol = "[x](bold red) "
-not_executable_symbol = "noexec"
-not_found_symbol = "notfound"
-sigint_symbol = "sigint"
-signal_symbol = "sig"
-
-# ── Version Control ───────────────────────────────────────────────────
-
-[git_branch]
-symbol = "git "
-truncation_symbol = "..."
 
 [git_commit]
 tag_symbol = " tag "
@@ -38,19 +20,21 @@ diverged = "<>"
 renamed = "r"
 deleted = "x"
 
-[fossil_branch]
-symbol = "fossil "
-truncation_symbol = "..."
+[aws]
+symbol = "aws "
 
-[hg_branch]
-symbol = "hg "
-truncation_symbol = "..."
+[azure]
+symbol = "az "
 
-[pijul_channel]
-symbol = "pijul "
-truncation_symbol = "..."
+[battery]
+full_symbol = "full "
+charging_symbol = "charging "
+discharging_symbol = "discharging "
+unknown_symbol = "unknown "
+empty_symbol = "empty "
 
-# ── Languages & Runtimes ──────────────────────────────────────────────
+[buf]
+symbol = "buf "
 
 [bun]
 symbol = "bun "
@@ -64,8 +48,17 @@ symbol = "C++ "
 [cobol]
 symbol = "cobol "
 
+[conda]
+symbol = "conda "
+
+[container]
+symbol = "container "
+
 [crystal]
 symbol = "cr "
+
+[cmake]
+symbol = "cmake "
 
 [daml]
 symbol = "daml "
@@ -79,6 +72,12 @@ symbol = "deno "
 [dotnet]
 format = "via [$symbol($version )(target $tfm )]($style)"
 symbol = ".NET "
+
+[directory]
+read_only = " ro"
+
+[docker_context]
+symbol = "docker "
 
 [elixir]
 symbol = "exs "
@@ -95,11 +94,28 @@ symbol = "fnl "
 [fortran]
 symbol = "fortran "
 
+[fossil_branch]
+symbol = "fossil "
+truncation_symbol = "..."
+
+[gcloud]
+symbol = "gcp "
+
+[git_branch]
+symbol = "git "
+truncation_symbol = "..."
+
 [gleam]
 symbol = "gleam "
 
 [golang]
 symbol = "go "
+
+[gradle]
+symbol = "gradle "
+
+[guix_shell]
+symbol = "guix "
 
 [haskell]
 symbol = "haskell "
@@ -107,8 +123,31 @@ symbol = "haskell "
 [haxe]
 symbol = "hx "
 
+[helm]
+symbol = "helm "
+
+[hg_branch]
+symbol = "hg "
+truncation_symbol = "..."
+
+[hostname]
+ssh_symbol = "ssh "
+
 [java]
 symbol = "java "
+
+[jj_bookmark]
+symbol = "jj "
+truncation_symbol = "..."
+
+[jj_status]
+description_empty = "e"
+immutable = "i"
+deleted = "x"
+renamed = "r"
+
+[jobs]
+symbol = "*"
 
 [julia]
 symbol = "jl "
@@ -116,17 +155,39 @@ symbol = "jl "
 [kotlin]
 symbol = "kt "
 
+[kubernetes]
+symbol = "kubernetes "
+
 [lua]
 symbol = "lua "
+
+[maven]
+symbol = "maven "
+
+[nodejs]
+symbol = "nodejs "
+
+[memory_usage]
+symbol = "memory "
+
+[meson]
+symbol = "meson "
+truncation_symbol = "..."
 
 [mojo]
 symbol = "mojo "
 
+[nats]
+symbol = "nats "
+
+[netns]
+symbol = "netns "
+
 [nim]
 symbol = "nim "
 
-[nodejs]
-symbol = "nodejs "
+[nix_shell]
+symbol = "nix "
 
 [ocaml]
 symbol = "ml "
@@ -137,150 +198,8 @@ symbol = "odin "
 [opa]
 symbol = "opa "
 
-[perl]
-symbol = "pl "
-
-[php]
-symbol = "php "
-
-[purescript]
-symbol = "purs "
-
-[python]
-symbol = "py "
-
-[raku]
-symbol = "raku "
-
-[red]
-symbol = "red "
-
-[rlang]
-symbol = "r "
-
-[ruby]
-symbol = "rb "
-
-[rust]
-symbol = "rs "
-
-[scala]
-symbol = "scala "
-
-[solidity]
-symbol = "solidity "
-
-[swift]
-symbol = "swift "
-
-[zig]
-symbol = "zig "
-
-# ── Build & Packages ──────────────────────────────────────────────────
-
-[buf]
-symbol = "buf "
-
-[cmake]
-symbol = "cmake "
-
-[gradle]
-symbol = "gradle "
-
-[maven]
-symbol = "maven "
-
-[meson]
-symbol = "meson "
-truncation_symbol = "..."
-
-[package]
-symbol = "pkg "
-
-[quarto]
-symbol = "quarto "
-
-[typst]
-symbol = "typst "
-
-[xmake]
-symbol = "xmake "
-
-# ── Environments ──────────────────────────────────────────────────────
-
-[conda]
-symbol = "conda "
-
-[guix_shell]
-symbol = "guix "
-
-[nix_shell]
-symbol = "nix "
-
-[pixi]
-symbol = "pixi "
-
-[spack]
-symbol = "spack "
-
-# ── Cloud & Infrastructure ────────────────────────────────────────────
-
-[aws]
-symbol = "aws "
-
-[azure]
-symbol = "az "
-
-[container]
-symbol = "container "
-
-[docker_context]
-symbol = "docker "
-
-[gcloud]
-symbol = "gcp "
-
-[helm]
-symbol = "helm "
-
-[kubernetes]
-symbol = "kubernetes "
-
-[nats]
-symbol = "nats "
-
-[netns]
-symbol = "netns "
-
 [openstack]
 symbol = "openstack "
-
-[pulumi]
-symbol = "pulumi "
-
-[terraform]
-symbol = "terraform "
-
-[vagrant]
-symbol = "vagrant "
-
-# ── System & Shell ────────────────────────────────────────────────────
-
-[battery]
-full_symbol = "full "
-charging_symbol = "charging "
-discharging_symbol = "discharging "
-unknown_symbol = "unknown "
-empty_symbol = "empty "
-
-[hostname]
-ssh_symbol = "ssh "
-
-[jobs]
-symbol = "*"
-
-[memory_usage]
-symbol = "memory "
 
 [os.symbols]
 AIX = "aix "
@@ -293,6 +212,7 @@ Android = "andr "
 AOSC = "aosc "
 Arch = "rch "
 Artix = "atx "
+Bazzite = "bazz "
 Bluefin = "blfn "
 CachyOS = "cach "
 CentOS = "cent "
@@ -306,10 +226,12 @@ FreeBSD = "fbsd "
 Garuda = "garu "
 Gentoo = "gent "
 HardenedBSD = "hbsd "
+Hurd = "hurd "
 Illumos = "lum "
 Ios = "ios "
 InstantOS = "inst "
 Kali = "kali "
+KDENeon = "kde "
 Linux = "lnx "
 Mabox = "mbox "
 Macos = "mac "
@@ -342,8 +264,85 @@ Void = "void "
 Windows = "win "
 Zorin = "zorn "
 
+[package]
+symbol = "pkg "
+
+[perl]
+symbol = "pl "
+
+[php]
+symbol = "php "
+
+[pijul_channel]
+symbol = "pijul "
+truncation_symbol = "..."
+
+[pixi]
+symbol = "pixi "
+
+[pulumi]
+symbol = "pulumi "
+
+[purescript]
+symbol = "purs "
+
+[python]
+symbol = "py "
+
+[quarto]
+symbol = "quarto "
+
+[raku]
+symbol = "raku "
+
+[red]
+symbol = "red "
+
+[rlang]
+symbol = "r "
+
+[ruby]
+symbol = "rb "
+
+[rust]
+symbol = "rs "
+
+[scala]
+symbol = "scala "
+
 [shlvl]
 symbol = "shlvl "
 
+[spack]
+symbol = "spack "
+
+[solidity]
+symbol = "solidity "
+
+[status]
+symbol = "[x](bold red) "
+not_executable_symbol = "noexec"
+not_found_symbol = "notfound"
+sigint_symbol = "sigint"
+signal_symbol = "sig"
+
 [sudo]
 symbol = "sudo "
+
+[swift]
+symbol = "swift "
+
+[typst]
+symbol = "typst "
+
+[vagrant]
+symbol = "vagrant "
+
+[terraform]
+symbol = "terraform "
+
+[xmake]
+symbol = "xmake "
+
+[zig]
+symbol = "zig "

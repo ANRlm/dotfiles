@@ -45,12 +45,19 @@ function __u_run --no-scope-shadowing --argument-names label
     return $status_code
 end
 
-function __u_plugin_list --argument-names tool
-    set -l json ($tool plugin list --json); or return
-    switch $tool
-        case claude
-            printf '%s\n' $json | jq -sr 'if length != 1 or (.[0] | type) != "array" then error("Expected one plugin array") else .[0] end | [.[] | select(.id | endswith("@skills-dir") | not) | .id] | unique[]'
+# Skip a step whose tool is missing: the Brewfile and agent tools differ per machine.
+function __u_has
+    for cmd in $argv
+        type -q $cmd; and continue
+        echo "  $cmd not installed, skipped"
+        return 1
     end
+end
+
+# One "id<TAB>scope<TAB>projectPath" line per updatable Claude plugin.
+function __u_claude_plugins
+    set -l json (claude plugin list --json); or return
+    printf '%s\n' $json | jq -sr 'if length != 1 or (.[0] | type) != "array" then error("Expected one plugin array") else .[0] end | [.[] | select((.id | endswith("@skills-dir") | not) and .scope != "managed") | [.id, (.scope // "user"), (.projectPath // "")] | @tsv] | unique[]'
 end
 
 function __u_brewfile_merge --argument-names brewfile
@@ -155,6 +162,39 @@ function __u_update_skills
     npx -y skills remove $names -g -y
 end
 
+# Skill names printed by `skills add <source> --list`.
+function __u_listed_skills
+    awk 'BEGIN { esc = sprintf("%c", 27) }
+        { gsub(esc "\\[[0-9;]*[A-Za-z]", "") }
+        /^│    [a-z0-9][a-z0-9._-]*[[:space:]]*$/ { print $2 }'
+end
+
+# `skills update` only refreshes names already installed, so sources taken whole
+# are added again to pick up skills that upstream added since.
+function __u_add_skill_families
+    set -l opts -g -a claude-code -a codex -a pi -y
+    npx -y skills add https://open.feishu.cn/lark-cli/skills/regular --skill '*' $opts </dev/null; or return
+    # Old names that only hand off to lark-meeting.
+    npx -y skills remove lark-minutes lark-note lark-vc lark-vc-agent -g -y </dev/null; or return
+    set -l repo aliyun/alibabacloud-aiops-skills
+    set -l agentloop (npx -y skills add $repo --full-depth --list </dev/null | __u_listed_skills | string match -- 'alibabacloud-agentloop-*')
+    if test (count $agentloop) -eq 0
+        echo "  No AgentLoop skills listed in $repo" >&2
+        return 1
+    end
+    npx -y skills add $repo --skill alibabacloud-cli-guidance $agentloop --full-depth $opts </dev/null
+end
+
+# Project and local scopes keep their own copy, updated from inside that project.
+function __u_claude_plugin_update --argument-names plugin scope dir
+    set -l here $PWD
+    test -z "$dir"; or cd $dir; or return
+    claude plugin update $plugin --scope $scope
+    set -l code $status
+    cd $here
+    return $code
+end
+
 function u --description "Update global tools, applications and plugins"
     if set -q argv[1]
         echo "Usage: u" >&2
@@ -162,13 +202,14 @@ function u --description "Update global tools, applications and plugins"
     end
 
     set -f __u_failures 0
-    set -lx PATH /opt/homebrew/bin $PATH
+    set -l shared $HOME/.agents/skills
 
     # ── Homebrew ──────────────────────────────────────────────────────
 
     __u_section Homebrew
     if __u_run "Homebrew metadata updated" brew update
-        __u_run "Homebrew packages upgraded" brew upgrade --no-ask
+        # --greedy also upgrades casks that update themselves.
+        __u_run "Homebrew packages upgraded" brew upgrade --greedy --no-ask
     end
     __u_run "Homebrew dependencies cleaned" brew autoremove
     __u_run "Homebrew cache cleaned" brew cleanup --prune=all
@@ -177,106 +218,77 @@ function u --description "Update global tools, applications and plugins"
     # ── Node ──────────────────────────────────────────────────────────
 
     __u_section Node
-    __u_run "npm updated" env PUPPETEER_SKIP_DOWNLOAD=true npm update -g
-    __u_run "pnpm store pruned" pnpm --dir "$HOME" store prune
+    __u_has npm; and __u_run "npm updated" npm update -g
+    __u_has pnpm; and __u_run "pnpm store pruned" pnpm --dir "$HOME" store prune
     # Run from $HOME so a project's mise.toml is never upgraded in place.
-    __u_run "mise tools upgraded" mise -C "$HOME" upgrade
+    __u_has mise; and __u_run "mise tools upgraded" mise -C "$HOME" upgrade
 
     # ── Agent skills & plugins ────────────────────────────────────────
 
-    # Shared skills live in ~/.agents/skills: Codex and Pi read it directly,
+    # Shared skills live in ~/.agents/skills: Codex, Pi and Grok read it directly,
     # Claude Code reads per-skill symlinks in CLAUDE_CONFIG_DIR.
     __u_section "Agent skills & plugins"
-    __u_run "Shared skills updated" __u_update_skills
-    # Cloud vendor CLIs are only installed on development machines.
-    if type -q thcli
-        __u_run "TokenHub skills updated" thcli +connect --target $HOME/.agents/skills </dev/null
-    else
-        echo "  thcli not installed, skipped"
-    end
-    if type -q bl
+    if test -d $shared
+        if __u_has npx
+            __u_run "Shared skills updated" __u_update_skills
+            __u_run "Lark and AgentLoop skill sets completed" __u_add_skill_families
+            # tcapi is published only on ClawHub; --force replaces locally edited files.
+            __u_run "ClawHub skills updated" npx -y clawhub --workdir $HOME/.agents --dir skills --no-input update --all --force
+        end
+        __u_has thcli; and __u_run "TokenHub skills updated" thcli +connect --target $shared </dev/null
         # init, not update: update leaves locally edited files as they are
-        __u_run "Bailian skills updated" bl skill init --quiet
+        __u_has bl; and __u_run "Bailian skills updated" bl skill init --quiet
+        # The skill text follows the rex CLI; setup only refreshes the stub and session hooks.
+        __u_has rex; and __u_run "Rex agent setup refreshed" rex skill setup </dev/null
     else
-        echo "  bl not installed, skipped"
+        echo "  $shared not found, shared skills skipped"
     end
-    __u_run "Claude skill links synced" __u_sync_skills
-    if __u_run "Claude marketplaces updated" claude plugin marketplace update
-        set -l plugins (__u_plugin_list claude)
-        if test $status -eq 0
-            for plugin in $plugins
-                __u_run "Claude plugin $plugin updated" claude plugin update $plugin
+    # AgentLoop and other product commands ship as aliyun CLI plugins.
+    __u_has aliyun; and __u_run "Aliyun CLI plugins updated" aliyun plugin update </dev/null
+    if __u_has claude
+        test -d $shared; and __u_run "Claude skill links synced" __u_sync_skills
+        if __u_run "Claude marketplaces updated" claude plugin marketplace update
+            set -l plugins (__u_claude_plugins)
+            if test $status -eq 0
+                for entry in $plugins
+                    set -l plugin (string split \t -- $entry)
+                    if test -z "$plugin[3]"
+                        __u_run "Claude plugin $plugin[1] updated" __u_claude_plugin_update $plugin
+                    else if test -d "$plugin[3]"
+                        __u_run "Claude plugin $plugin[1] updated in $plugin[3]" __u_claude_plugin_update $plugin
+                    else
+                        echo "  Claude plugin $plugin[1] skipped: $plugin[3] is gone"
+                    end
+                end
+            else
+                __u_run "Claude plugin list read" false
             end
-        else
-            __u_run "Claude plugin list read" false
         end
     end
-    __u_run "Codex marketplaces upgraded" codex plugin marketplace upgrade
-    __u_run "Pi packages updated" pi update --extensions
-    __u_run "Grok plugins updated" grok plugin update
+    __u_has codex; and __u_run "Codex marketplaces upgraded" codex plugin marketplace upgrade
+    __u_has pi; and __u_run "Pi packages updated" pi update --extensions
+    __u_has grok; and __u_run "Grok plugins updated" grok plugin update
 
     # ── Python (uv) ───────────────────────────────────────────────────
 
     __u_section "Python / uv"
-    __u_run "uv cache pruned" uv cache prune
+    __u_has uv; and __u_run "uv cache pruned" uv cache prune
 
     # ── Mac App Store ─────────────────────────────────────────────────
 
     __u_section "Mac App Store"
-    # The Brewfile lists more than this machine installs.
-    if type -q mas
-        __u_run "MAS updated" mas update
-    else
-        echo "  mas not installed, skipped"
-    end
-
-    # ── Tmux / TPM ────────────────────────────────────────────────────
-
-    __u_section "Tmux / TPM"
-    # TPM's parallel updater can return success when a plugin fails.
-    for plugin in (path filter -d ~/.config/tmux/plugins/*)
-        test -e "$plugin/.git"; or continue
-        set -l name (path basename "$plugin")
-        set -lx GIT_TERMINAL_PROMPT 0
-        __u_run "$name updated" git -C "$plugin" pull --ff-only
-        and __u_run "$name submodules updated" git -C "$plugin" submodule update --init --recursive
-    end
-
-    # ── Herdr ─────────────────────────────────────────────────────────
-
-    __u_section Herdr
-    if type -q herdr
-        # Bulk update keeps each install's ref and config and skips linked plugins.
-        __u_run "Herdr plugins updated" herdr plugin update -y
-        # Hook scripts live outside the repo, so a Herdr upgrade leaves them stale.
-        # Install only the stale ones: reinstalling rewrites the agent's own config.
-        # Grok keeps its hooks under GROK_HOME, which only the grok wrapper sets.
-        set -l integrations (env GROK_HOME=$HOME/.grok-profiles/default herdr integration status)
-        set -l outdated
-        for agent in claude codex pi grok
-            string match -q -- "$agent: outdated*" $integrations; and set -a outdated $agent
-        end
-        if test -z "$outdated"
-            __u_ok "Herdr integrations current"
-        else
-            for agent in $outdated
-                __u_run "$agent integration updated" env GROK_HOME=$HOME/.grok-profiles/default herdr integration install $agent
-            end
-        end
-    else
-        echo "  herdr not installed, skipped"
-    end
+    __u_has mas; and __u_run "MAS updated" mas update
 
     # ── Yazi ──────────────────────────────────────────────────────────
 
     __u_section Yazi
-    __u_run "Yazi plugins updated" __u_retry 3 ya pkg upgrade
+    __u_has ya; and __u_run "Yazi plugins updated" __u_retry 3 ya pkg upgrade
 
     # ── Mole ──────────────────────────────────────────────────────────
 
     __u_section Mole
     # Piped so Mole skips its clear-screen and keeps earlier results visible.
-    __u_run "Mole cleaned" bash -o pipefail -c 'mo clean </dev/null | cat'
+    __u_has mo; and __u_run "Mole cleaned" bash -o pipefail -c 'mo clean </dev/null | cat'
 
     # ── Done ──────────────────────────────────────────────────────────
 

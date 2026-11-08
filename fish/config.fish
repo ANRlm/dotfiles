@@ -16,7 +16,7 @@ end
 
 # ── PATH ──────────────────────────────────────────────────────────────
 
-set -l extra_paths "$HOME/.local/bin" "$PNPM_HOME/bin"
+set -l extra_paths "$PNPM_HOME/bin"
 
 set -l jdk /opt/homebrew/opt/openjdk@17
 if test -d $jdk/libexec/openjdk.jdk/Contents/Home
@@ -25,6 +25,8 @@ if test -d $jdk/libexec/openjdk.jdk/Contents/Home
 end
 
 fish_add_path -g $extra_paths
+# cchost wrappers in ~/.local/bin (claude, grok, ...) must win over Homebrew's copies.
+fish_add_path --move --prepend --path "$HOME/.local/bin" /opt/homebrew/bin /usr/local/bin
 
 # ── Agents ────────────────────────────────────────────────────────────
 
@@ -39,7 +41,7 @@ end
 
 # Claude Code and Codex use the 1Password service account, not the personal login.
 if set -q CLAUDECODE; or set -q CODEX_THREAD_ID
-    set -gx OP_SERVICE_ACCOUNT_TOKEN (security find-generic-password -a "$USER" -s op-sa-lighthouser-test -w 2>/dev/null)
+    set -gx OP_SERVICE_ACCOUNT_TOKEN (security find-generic-password -a "$USER" -s op-service-account -w 2>/dev/null)
 end
 
 set -gx PONYTAIL_HIDE_STATUS 1
@@ -49,8 +51,6 @@ if not status is-interactive
 end
 
 # ── Interactive Integrations ──────────────────────────────────────────
-
-fish_add_path --move --prepend --path "$HOME/.local/bin" /opt/homebrew/bin /usr/local/bin
 
 if command -q mise
     mise activate fish | source
@@ -66,10 +66,6 @@ end
 
 if command -q starship
     starship init fish --print-full-init | source
-end
-
-for _f in $HOME/.config/herdr/plugins/github-installations/herdr-automatic-rename-*/*/checkout/shell/hook.fish
-    test -r "$_f"; and source "$_f"; and break
 end
 
 # ── Abbreviations: General ────────────────────────────────────────────
@@ -94,16 +90,6 @@ abbr -a bl 'brew leaves; and brew list --cask'
 abbr -a bd 'brew deps --installed --tree'
 abbr -a bu 'brew update; and brew upgrade'
 abbr -a bc 'brew autoremove; and brew cleanup --prune=all'
-
-# ── Abbreviations: Tmux ───────────────────────────────────────────────
-
-abbr -a ts 'tmux source-file ~/.config/tmux/tmux.conf'
-abbr -a tls 'tmux ls'
-abbr -a tn 'tmux new -s'
-abbr -a tk 'tmux kill-session -t'
-abbr -a ta 'tmux attach'
-abbr -a trw 'tmux rename-window'
-abbr -a trs 'tmux rename-session'
 
 # ── Abbreviations: Eza ────────────────────────────────────────────────
 
