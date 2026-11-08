@@ -72,6 +72,8 @@ pi install npm:@juicesharp/rpiv-todo
 
 给 Claude Code、Codex、Pi、Grok 部署 skill、插件和配套命令行工具。前提：已完成「部署新机器」，当前 Shell 是加载了 `fish/config.fish` 的 Fish。
 
+云平台工具按机器选装：阿里云（aliyun-cli、AgentLoop）、腾讯云（tccli、tcapi）、TokenHub（thcli）、百炼（bl）和 ego lite 只在开发机部署，部署前问我本机是否需要。不装的机器跳过下文中它们的安装命令、skill、Grok `[skills].disabled` 配置和完成标准；`u` 按对应 CLI 是否存在跳过它们，不会自动补装。
+
 ### 约定
 
 skill 统一放在共享目录 `~/.agents/skills`：
@@ -87,7 +89,7 @@ skill 统一放在共享目录 `~/.agents/skills`：
 - `fish/config.fish` 清除 `CLAUDE_CONFIG_DIR`、`GROK_HOME`。包装脚本也清除对应的目录覆盖变量；Codex 使用独立的 cchost Profile。
 - `jq` 用 macOS 自带的 `/usr/bin/jq`，`u` 用它解析 Claude 插件列表。
 
-完成标准：`command -v claude codex pi grok node aliyun tccli jq` 每项有输出，`claude`、`grok` 分别为 `~/.local/bin/claude`、`~/.local/bin/grok`；`set -q CLAUDE_CONFIG_DIR`、`set -q GROK_HOME` 均返回 1（未设置）。
+完成标准：`command -v claude codex pi grok node jq` 每项有输出（装了云平台工具的机器还有 `aliyun tccli`），`claude`、`grok` 分别为 `~/.local/bin/claude`、`~/.local/bin/grok`；`set -q CLAUDE_CONFIG_DIR`、`set -q GROK_HOME` 均返回 1（未设置）。
 
 ### A1. 命令行工具与应用
 
@@ -123,7 +125,7 @@ __u_sync_skills
 | --- | --- |
 | show-me | 只能手动调用（`/show-me`） |
 | answer-me-with-html | 把回答渲染成 HTML 页面，需要 Node 20+；设置用 `/answer-me-with-html config` |
-| `__u_add_skill_families` | 飞书全部 skill，删掉只转交 `lark-meeting` 的 `lark-minutes`、`lark-note`、`lark-vc`、`lark-vc-agent`；`aliyun/alibabacloud-aiops-skills` 的 `alibabacloud-cli-guidance` 和全部 `alibabacloud-agentloop-*` |
+| `__u_add_skill_families` | 飞书全部 skill，删掉只转交 `lark-meeting` 的 `lark-minutes`、`lark-note`、`lark-vc`、`lark-vc-agent`；装了 `aliyun` 时再装 `aliyun/alibabacloud-aiops-skills` 的 `alibabacloud-cli-guidance` 和全部 `alibabacloud-agentloop-*` |
 | `thcli-*` | TokenHub skill，thcli 自带 |
 | `bailian-*` | 百炼仓库的全部 `bailian-*`。实体在 `~/.bailian/skills`，bl 在共享目录、`~/.claude/skills`、`~/.codex/skills`、`~/.grok/skills`、`~/.pi/agent/skills` 各建一个链接 |
 | `tcapi` | 腾讯云 API，依赖 tccli。官方只在 ClawHub 发布，GitHub 同名仓库是非官方翻译版 |
@@ -153,7 +155,7 @@ disabled = ["reference", "agent-store"]
 
 ### A3. 插件
 
-ponytail、mattpocock 四个 Agent 都装；context7（文档查询 MCP）和 answer-me-with-html 只在 Claude Code 中安装。Grok 通过兼容层加载这两者及 context7 MCP，无需独立安装；同名插件优先使用 Grok 自身的 user 作用域版本。
+ponytail、mattpocock 四个 Agent 都装；context7（文档查询 MCP）和 answer-me-with-html 只在 Claude Code 中安装。Grok 通过兼容层加载这两者及 context7 MCP，无需独立安装；同名插件优先使用 Grok 自身的 user 作用域版本。`~/.grok/config.toml` 的 `[skills].ignore` 含 `~/.agents/skills/answer-me-with-html`，只加载插件提供的同名 skill；`[compat.claude].hooks = false` 不运行 Claude 专用的额度 Hook（Grok 不支持其中的 `async`），Grok 额度由自己的状态栏显示。
 
 | 名称 | Claude Code | Codex | Pi | Grok |
 | --- | --- | --- | --- | --- |
@@ -228,8 +230,8 @@ ponytail、mattpocock 四个 Agent 都装；context7（文档查询 MCP）和 an
 2. **Node**：更新 npm 全局包（含 lark-cli、thcli、bl），清理 pnpm store，在 `$HOME` 中按全局 mise 配置升级工具（不改项目的 `mise.toml` 和 `.node-version` 等精确版本）。
 3. **Agent skill 与插件**：
    1. `__u_update_skills`：`npx skills update -g -y`，再删掉它报告为上游已删除的 skill。
-   2. `__u_add_skill_families`：`npx skills update` 只更新已装的 skill，所以重装飞书和 AgentLoop 整组，补上新增的。
-   3. `npx clawhub … update --all --force`：更新 tcapi，覆盖本地改动。
+   2. `__u_add_skill_families`：`npx skills update` 只更新已装的 skill，所以重装飞书整组（装了 `aliyun` 时连同 AgentLoop 整组），补上新增的。
+   3. `npx clawhub … update --all --force`：装了 `tccli` 时更新 tcapi，覆盖本地改动。
    4. `thcli +connect --target ~/.agents/skills`
    5. `bl skill init`：重装全部 `bailian-*`，含新增的；`bl skill update` 不修复本地改过的文件，不用。
    6. `rex skill setup`：刷新 Rex 的 skill 存根和钩子。

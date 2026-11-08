@@ -9,7 +9,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 UPDATE_SCRIPT = r'''
 source "$AUDIT_ROOT/fish/functions/u.fish"
-for name in brew npm pnpm mise npx thcli bl aliyun rex codex pi grok uv mas ya mo bash __u_brewfile_merge __u_sync_skills __u_add_skill_families
+for name in brew npm pnpm mise npx thcli bl aliyun tccli rex codex pi grok uv mas ya mo bash __u_brewfile_merge __u_sync_skills __u_add_skill_families
     eval "function $name; return 0; end"
 end
 # Pretend the CLIs in $MISSING are not installed, even if the machine has them.
@@ -84,13 +84,33 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(result.stdout.split(), ['lark-im', 'alibabacloud-agentloop-dataset'])
 
     def test_missing_cloud_skill_clis_are_skipped(self):
-        result = self.update(MISSING='thcli bl aliyun rex')
+        result = self.update(MISSING='thcli bl aliyun tccli rex')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('tccli not installed, skipped', result.stdout)
+        self.assertNotIn('ClawHub skills updated', result.stdout)
         self.assertIn('thcli not installed, skipped', result.stdout)
         self.assertIn('bl not installed, skipped', result.stdout)
         self.assertIn('aliyun not installed, skipped', result.stdout)
         self.assertIn('rex not installed, skipped', result.stdout)
         self.assertNotIn('TokenHub skills updated', result.stdout)
+
+    def test_agentloop_skills_need_aliyun(self):
+        script = r'''
+source "$AUDIT_ROOT/fish/functions/u.fish"
+function npx; echo "NPX $argv" >&2; end
+function type
+    contains -- $argv[-1] (string split ' ' -- "$MISSING"); and return 1
+    builtin type $argv
+end
+function aliyun; end
+__u_add_skill_families
+'''
+        for missing, expected in (('aliyun', False), ('', True)):
+            with self.subTest(missing=missing):
+                result = subprocess.run(['fish', '--no-config', '-c', script],
+                                        env={**self.env, 'MISSING': missing}, capture_output=True, text=True, timeout=20)
+                self.assertIn('lark-cli/skills/regular', result.stderr)
+                self.assertEqual('alibabacloud-aiops-skills' in result.stderr, expected, result.stderr)
 
     def test_machine_without_agent_tools_succeeds(self):
         (self.home / '.agents/skills').rmdir()

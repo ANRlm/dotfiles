@@ -172,6 +172,8 @@ function __u_add_skill_families
     npx -y skills add https://open.feishu.cn/lark-cli/skills/regular --skill '*' $opts </dev/null; or return
     # Old names that only hand off to lark-meeting.
     npx -y skills remove lark-minutes lark-note lark-vc lark-vc-agent -g -y </dev/null; or return
+    # AgentLoop skills drive the aliyun CLI; machines without it skip them.
+    type -q aliyun; or return 0
     set -l repo aliyun/alibabacloud-aiops-skills
     set -l agentloop (npx -y skills add $repo --full-depth --list </dev/null | __u_listed_skills | string match -- 'alibabacloud-agentloop-*')
     if test (count $agentloop) -eq 0
@@ -227,9 +229,9 @@ function u --description "Update global tools, applications and plugins"
     if test -d $shared
         if __u_has npx
             __u_run "Shared skills updated" __u_update_skills
-            __u_run "Lark and AgentLoop skill sets completed" __u_add_skill_families
-            # tcapi is published only on ClawHub; --force replaces locally edited files.
-            __u_run "ClawHub skills updated" npx -y clawhub --workdir $HOME/.agents --dir skills --no-input update --all --force
+            __u_run "Lark (and AgentLoop) skill sets completed" __u_add_skill_families
+            # tcapi is published only on ClawHub and drives tccli; --force replaces locally edited files.
+            __u_has tccli; and __u_run "ClawHub skills updated" npx -y clawhub --workdir $HOME/.agents --dir skills --no-input update --all --force
         end
         __u_has thcli; and __u_run "TokenHub skills updated" thcli +connect --target $shared </dev/null
         # init, not update: update leaves locally edited files as they are

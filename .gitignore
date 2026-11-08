@@ -10,3 +10,4 @@ yazi/plugins/
 # ── Runtime State ─────────────────────────────────────────────────────
 
 fish/fish_variables
+fish/completions/
