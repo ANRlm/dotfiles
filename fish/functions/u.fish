@@ -93,17 +93,13 @@ end
 function __u_sync_skills
     set -l shared "$HOME/.agents/skills"
     test -d "$shared"; or return 1
-    set -l profile "$HOME/.claude"
-    if set -q CLAUDE_CONFIG_DIR; and test -n "$CLAUDE_CONFIG_DIR"
-        set profile "$CLAUDE_CONFIG_DIR"
-    end
-    set -l target "$profile/skills"
+    set -l target "$HOME/.claude/skills"
     mkdir -p "$target"; or return
     # Follow local skill links and discover scoped packages such as @tencent-adm.
     set -l manifests (find -L "$shared" -type f -name SKILL.md -print); or return
     # Skills that a user-scope Claude plugin ships would load twice through a link.
     set -l plugin_skills
-    set -l installed "$profile/plugins/installed_plugins.json"
+    set -l installed "$HOME/.claude/plugins/installed_plugins.json"
     if test -f "$installed"
         set -l dirs (jq -r '.plugins[][] | select(.scope == "user") | .installPath' "$installed"); or return
         for dir in $dirs
@@ -226,7 +222,7 @@ function u --description "Update global tools, applications and plugins"
     # ── Agent skills & plugins ────────────────────────────────────────
 
     # Shared skills live in ~/.agents/skills: Codex, Pi and Grok read it directly,
-    # Claude Code reads per-skill symlinks in CLAUDE_CONFIG_DIR.
+    # Claude Code reads per-skill symlinks in ~/.claude/skills.
     __u_section "Agent skills & plugins"
     if test -d $shared
         if __u_has npx

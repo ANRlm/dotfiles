@@ -1,10 +1,8 @@
-set -g fish_greeting ""
-
 # ── Core Environment ──────────────────────────────────────────────────
 
+set -g fish_greeting ""
 set -gx EDITOR hx
 set -gx STARSHIP_CONFIG $HOME/.config/starship/starship.toml
-set -gx PNPM_HOME $HOME/Library/pnpm
 
 # ── Homebrew ──────────────────────────────────────────────────────────
 
@@ -16,6 +14,7 @@ end
 
 # ── PATH ──────────────────────────────────────────────────────────────
 
+set -gx PNPM_HOME $HOME/Library/pnpm
 set -l extra_paths "$PNPM_HOME/bin"
 
 set -l jdk /opt/homebrew/opt/openjdk@17
@@ -25,21 +24,13 @@ if test -d $jdk/libexec/openjdk.jdk/Contents/Home
 end
 
 fish_add_path -g $extra_paths
-# cchost wrappers in ~/.local/bin (claude, grok, ...) must win over Homebrew's copies.
 fish_add_path --move --prepend --path "$HOME/.local/bin" /opt/homebrew/bin /usr/local/bin
 
 # ── Agents ────────────────────────────────────────────────────────────
 
-# Shells started by Claude Code keep the profile Claude already runs with.
-if not set -q CLAUDECODE
-    set -e CLAUDE_CONFIG_DIR
-    set -l selector $HOME/.config/claudecode-cchost/default-profile
-    if test -r $selector; and read -l claude_profile <$selector; and test -n "$claude_profile" -a "$claude_profile" != legacy
-        set -gx CLAUDE_CONFIG_DIR $HOME/.claude-profiles/$claude_profile
-    end
-end
+set -e CLAUDE_CONFIG_DIR
+set -e GROK_HOME
 
-# Claude Code and Codex use the 1Password service account, not the personal login.
 if set -q CLAUDECODE; or set -q CODEX_THREAD_ID
     set -gx OP_SERVICE_ACCOUNT_TOKEN (security find-generic-password -a "$USER" -s op-service-account -w 2>/dev/null)
 end
@@ -76,6 +67,8 @@ abbr -a lg lazygit
 abbr -a copy pbcopy
 abbr -a ip 'ipconfig getifaddr en0'
 abbr -a ports 'lsof -nP -iTCP -sTCP:LISTEN'
+
+# ── Abbreviations: Agents ─────────────────────────────────────────────
 
 abbr -a claude 'claude --allow-dangerously-skip-permissions'
 

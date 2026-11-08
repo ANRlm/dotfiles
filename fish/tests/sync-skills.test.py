@@ -1,4 +1,4 @@
-"""Offline tests; only temporary HOME/profile directories are modified."""
+"""Offline tests; only temporary HOME directories are modified."""
 
 import json
 import os
@@ -13,14 +13,14 @@ UPDATE = Path(__file__).resolve().parents[1] / "functions/u.fish"
 
 class SkillLinkTests(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory()
+        self.temp = tempfile.TemporaryDirectory(prefix="skill sync 'quoted' ")
         self.addCleanup(self.temp.cleanup)
         self.home = Path(self.temp.name).resolve()
         self.shared = self.home / ".agents/skills"
         self.shared.mkdir(parents=True)
-        self.profile = self.home / ".claude-profiles/default profile"
-        self.env = {**os.environ, "HOME": str(self.home),
-                    "CLAUDE_CONFIG_DIR": str(self.profile), "UPDATE": str(UPDATE)}
+        self.claude = self.home / ".claude"
+        self.env = {**os.environ, "HOME": str(self.home), "UPDATE": str(UPDATE)}
+        self.env.pop("CLAUDE_CONFIG_DIR", None)
 
     def skill(self, name):
         directory = self.shared / name
@@ -42,7 +42,7 @@ class SkillLinkTests(unittest.TestCase):
         self.sync()
         self.sync()
         for source in [ordinary, scoped]:
-            link = self.profile / "skills" / source.name
+            link = self.claude / "skills" / source.name
             self.assertTrue(link.is_symlink())
             self.assertEqual(link.resolve(), source)
         self.assertFalse((self.home / ".codex/skills").exists())
@@ -54,11 +54,11 @@ class SkillLinkTests(unittest.TestCase):
         (source / "SKILL.md").write_text("Local fixture")
         (self.shared / "custom").symlink_to(source)
         self.sync()
-        self.assertEqual((self.profile / "skills/custom").resolve(), source)
+        self.assertEqual((self.claude / "skills/custom").resolve(), source)
 
     def test_existing_equivalent_link_is_preserved(self):
         source = self.skill("existing")
-        target = self.profile / "skills"
+        target = self.claude / "skills"
         target.mkdir(parents=True)
         link = target / source.name
         link.symlink_to(os.path.relpath(source, target))
@@ -68,7 +68,7 @@ class SkillLinkTests(unittest.TestCase):
 
     def test_conflicting_directory_is_preserved(self):
         self.skill("conflict")
-        conflict = self.profile / "skills/conflict"
+        conflict = self.claude / "skills/conflict"
         conflict.mkdir(parents=True)
         sentinel = conflict / "user-data"
         sentinel.write_text("keep")
@@ -77,30 +77,32 @@ class SkillLinkTests(unittest.TestCase):
 
     def test_broken_link_is_preserved_and_reported(self):
         self.skill("broken")
-        target = self.profile / "skills"
+        target = self.claude / "skills"
         target.mkdir(parents=True)
         link = target / "broken"
         link.symlink_to("/nonexistent/test-skill")
         self.assertIn("Skill link conflict:", self.sync(success=False).stderr)
         self.assertEqual(os.readlink(link), "/nonexistent/test-skill")
 
-    def test_default_profile(self):
-        self.env.pop("CLAUDE_CONFIG_DIR")
+    def test_inherited_directory_does_not_redirect_sync(self):
+        elsewhere = self.home / ".config/claude-elsewhere"
+        self.env["CLAUDE_CONFIG_DIR"] = str(elsewhere)
         self.skill("default")
         self.sync()
-        self.assertTrue((self.home / ".claude/skills/default").is_symlink())
+        self.assertTrue((self.claude / "skills/default").is_symlink())
+        self.assertFalse(elsewhere.exists())
 
     def test_skills_from_user_plugins_are_not_linked(self):
         source = self.skill("from-plugin")
         kept = self.skill("from-project-plugin")
-        plugins = self.profile / "plugins"
+        plugins = self.claude / "plugins"
         for name, scope in [("from-plugin", "user"), ("from-project-plugin", "project")]:
             (plugins / "cache" / name / name).mkdir(parents=True)
             (plugins / "cache" / name / name / "SKILL.md").write_text("Plugin fixture")
         (plugins / "installed_plugins.json").write_text(json.dumps({"version": 2, "plugins": {
             f"{name}@m": [{"scope": scope, "installPath": str(plugins / "cache" / name)}]
             for name, scope in [("from-plugin", "user"), ("from-project-plugin", "project")]}}))
-        target = self.profile / "skills"
+        target = self.claude / "skills"
         target.mkdir(parents=True)
         (target / source.name).symlink_to(source)
         self.sync()
@@ -125,7 +127,7 @@ DELETED_UPDATE = (
 
 class SkillPruneTests(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory()
+        self.temp = tempfile.TemporaryDirectory(prefix="skill sync 'quoted' ")
         self.addCleanup(self.temp.cleanup)
         self.home = Path(self.temp.name).resolve()
         self.bin = self.home / "bin"

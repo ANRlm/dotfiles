@@ -6,10 +6,10 @@ ANRlm 的 macOS（Apple Silicon）个人配置仓库。各目录通过符号链�
 
 - 仓库固定在 `~/dotfiles`，符号链接和 `u` 依赖这个路径。
 - 仓库只放配置；凭证、会话、缓存、插件下载留在本机，由 `.gitignore` 排除。
-- 配置文件按功能分组，分组标题用 `fish/config.fish` 的 `# ── 类别 ──…` 样式；Lua 文件用 `--` 注释。
+- 配置文件按功能分组，分组标题用 `fish/config.fish` 的 `# ── 类别 ──…` 样式；Lua 文件用 `--` 注释。`fish/config.fish` 只保留分组标题，不写其他注释。
 - 登录、密钥、系统授权、覆盖已有配置由本人执行：给出完整命令，等本人确认；凭据不经过 Agent。
 - 改了行为就更新本文件对应小节。README 写给人看，只在目录、安装方式或常用命令变化时修改。
-- 文档只写当下事实，不写沿革（「以前…现在…」「去掉了…」）。
+- 文档面向首次阅读的 Agent，只写当前配置、用途、操作与验收标准，不写沿革（「以前…现在…」「去掉了…」）。
 - 「部署 Agent 工具」只在本人要求时执行，不是每台机器都装。
 - 每一步满足完成标准再进入下一步。
 
@@ -78,15 +78,16 @@ skill 统一放在共享目录 `~/.agents/skills`：
 
 | Agent | 读取方式 | 注意 |
 | --- | --- | --- |
-| Codex、Pi、Grok | 直接读共享目录 | 不在 `~/.codex/skills`、`~/.pi/agent/skills`、`~/.grok/skills` 建指向共享目录的链接，否则重复加载。Grok 的 Claude 兼容层只扫描 `~/.claude/skills` |
-| Claude Code | 只读 `$CLAUDE_CONFIG_DIR/skills` | 每个 skill 需要指向共享目录的链接，由 `__u_sync_skills` 补齐。`fish/config.fish` 把 `CLAUDE_CONFIG_DIR` 设为 `~/.claude-profiles/default`；未设置时 Claude 用 `~/.claude` |
+| Codex、Pi、Grok | 直接读共享目录 | 不在 `~/.codex/skills`、`~/.pi/agent/skills`、`~/.grok/skills` 建指向共享目录的链接，否则重复加载。Grok 还通过 Claude 兼容层读取 `~/.claude` 中的 skill、插件、Hook 和 MCP 配置 |
+| Claude Code | 读取 `~/.claude/skills` | 每个 skill 需要指向共享目录的链接，由 `__u_sync_skills` 补齐；同步函数固定使用默认目录 |
 
 - 按上游推荐的方式安装，且必须能由 `u` 更新。上游有插件就装插件；只发布 skill 的用 `npx skills add <来源> -g -a claude-code -a codex -a pi -y`（放进共享目录、给 Claude 建链接、记入 `~/.agents/.skill-lock.json`）。
 - 同一个 skill 只装一份：插件已提供的 skill 不放进共享目录；Pi、Grok 用 Pi 包、Grok 插件装同一份。`__u_sync_skills` 不给 Claude 插件自带的 skill 建链接。Codex 和 Pi 按真实路径去重。
-- `grok` 必须解析到 `~/.local/bin/grok`：这个包装脚本把 `GROK_HOME` 设为 `~/.grok-profiles/default`，插件和配置写在那里。
+- `claude`、`grok` 必须分别解析到 `~/.local/bin/claude`、`~/.local/bin/grok`。cchost 管理默认目录 `~/.claude`、`~/.grok`，Claude 全局状态在 `~/.claude.json`。
+- `fish/config.fish` 清除 `CLAUDE_CONFIG_DIR`、`GROK_HOME`。包装脚本也清除对应的目录覆盖变量；Codex 使用独立的 cchost Profile。
 - `jq` 用 macOS 自带的 `/usr/bin/jq`，`u` 用它解析 Claude 插件列表。
 
-完成标准：`command -v claude codex pi grok node aliyun tccli jq` 每项有输出，`grok` 为 `~/.local/bin/grok`；`echo $CLAUDE_CONFIG_DIR` 输出 `~/.claude-profiles/default`。
+完成标准：`command -v claude codex pi grok node aliyun tccli jq` 每项有输出，`claude`、`grok` 分别为 `~/.local/bin/claude`、`~/.local/bin/grok`；`set -q CLAUDE_CONFIG_DIR`、`set -q GROK_HOME` 均返回 1（未设置）。
 
 ### A1. 命令行工具与应用
 
@@ -123,14 +124,14 @@ __u_sync_skills
 | answer-me-with-html | 把回答渲染成 HTML 页面，需要 Node 20+；设置用 `/answer-me-with-html config` |
 | `__u_add_skill_families` | 飞书全部 skill，删掉只转交 `lark-meeting` 的 `lark-minutes`、`lark-note`、`lark-vc`、`lark-vc-agent`；`aliyun/alibabacloud-aiops-skills` 的 `alibabacloud-cli-guidance` 和全部 `alibabacloud-agentloop-*` |
 | `thcli-*` | TokenHub skill，thcli 自带 |
-| `bailian-*` | 百炼仓库的全部 `bailian-*`。实体在 `~/.bailian/skills`，bl 在共享目录、`$CLAUDE_CONFIG_DIR/skills`、`~/.codex/skills`、`~/.pi/agent/skills` 各建一个链接 |
+| `bailian-*` | 百炼仓库的全部 `bailian-*`。实体在 `~/.bailian/skills`，bl 在共享目录、`~/.claude/skills`、`~/.codex/skills`、`~/.grok/skills`、`~/.pi/agent/skills` 各建一个链接 |
 | `tcapi` | 腾讯云 API，依赖 tccli。官方只在 ClawHub 发布，GitHub 同名仓库是非官方翻译版 |
 | ego-browser | ego lite 首次引导时创建：`~/.agents/skills/ego-browser` 链接到应用自带的 skill |
 | rex | 存根，内容每次从 `rex` 命令读取。`rex skill setup` 还给 Claude Code、Codex 装会话启动钩子，Codex 的钩子由本人在 `/hooks` 中信任 |
 
-`__u_sync_skills` 递归查找共享目录的 `SKILL.md`（含 `@tencent-adm/...` 作用域目录），在 `$CLAUDE_CONFIG_DIR/skills` 建同名链接，已有正确链接不动；user 作用域 Claude 插件自带的 skill 不建链接，已有的删除。遇到同名目录、指向别处的链接或坏链接时报告冲突并返回失败，不覆盖文件；冲突交本人确认。
+`__u_sync_skills` 递归查找共享目录的 `SKILL.md`（含 `@tencent-adm/...` 作用域目录），在 `~/.claude/skills` 建同名链接，已有正确链接不动；继承的 `CLAUDE_CONFIG_DIR` 不改变同步目标。user 作用域 Claude 插件自带的 skill 不建链接，已有的删除。遇到同名目录、指向别处的链接或坏链接时报告冲突并返回失败，不覆盖文件；冲突交本人确认。
 
-百炼 skill 里有名为 `skill.md` 的文档页；macOS 路径不区分大小写，Grok 把其中两页当成 skill（Codex、Pi 只认 `SKILL.md`）。在 `~/.grok-profiles/default/config.toml` 末尾加：
+百炼 skill 里有名为 `skill.md` 的文档页；macOS 路径不区分大小写，Grok 把其中两页当成 skill（Codex、Pi 只认 `SKILL.md`）。在 `~/.grok/config.toml` 末尾加：
 
 ```toml
 [skills]
@@ -144,13 +145,13 @@ disabled = ["reference", "agent-store"]
 - `npx skills ls -g` 不含 mattpocock 的 skill 和 `bailian-*`；`bl skill list` 中 `bailian-*` 都为 installed。
 - `~/.agents/skills/@tencent-adm/tencentcloud-api-skill/.clawhub/origin.json` 的 `ownerHandle` 为 `tencent-adm`。
 - `rex skill status` 中 Claude Code、Codex 的 skill 和 hook 都为 current。
-- 共享目录中除 Claude 插件已提供的以外，每个 skill 在 `$CLAUDE_CONFIG_DIR/skills` 有同名链接，无坏链接。
+- 共享目录中除 Claude 插件已提供的以外，每个 skill 在 `~/.claude/skills` 有同名链接，无坏链接。
 - `~/.codex/skills`、`~/.pi/agent/skills`、`~/.grok/skills` 无指向 `~/.agents/skills` 的链接（Codex 的 `.system/` 和 bl 指向 `~/.bailian/skills` 的链接除外）。
 - 在 Git 仓库外运行 `grok inspect`，Skills 列出共享目录全部 skill，`reference`、`agent-store` 为 `[disabled]`。
 
 ### A3. 插件
 
-ponytail、mattpocock 四个 Agent 都装；context7（文档查询 MCP）和 answer-me-with-html 只装 Claude Code。Grok 不装 MCP。
+ponytail、mattpocock 四个 Agent 都装；context7（文档查询 MCP）和 answer-me-with-html 只在 Claude Code 中安装。Grok 通过兼容层加载这两者及 context7 MCP，无需独立安装；同名插件优先使用 Grok 自身的 user 作用域版本。
 
 | 名称 | Claude Code | Codex | Pi | Grok |
 | --- | --- | --- | --- | --- |
@@ -160,7 +161,7 @@ ponytail、mattpocock 四个 Agent 都装；context7（文档查询 MCP）和 an
 | answer-me-with-html | `claude plugin marketplace add QingYunA/answer-me-with-html`，`claude plugin install answer-me-with-html@answer-me-with-html` | — | — | — |
 
 - ponytail 的常驻模式靠会话启动钩子或 Pi 扩展，所以装插件而不是 `npx skills add`。Codex 装完由本人在 `/hooks` 中信任钩子并新开会话。Grok 的钩子不能注入指令，ponytail 在 Grok 中不常驻，靠模型调用或手动 `/ponytail`。`fish/config.fish` 设 `PONYTAIL_HIDE_STATUS=1`，Pi 状态栏不显示 ponytail 状态条（规则照常生效，`/ponytail status` 查级别，改后重开 Pi）。
-- mattpocock 只装稳定版（`skills/engineering/`、`skills/productivity/`），插件清单本身只含稳定版。四个 Agent 都从作者仓库装；`claude-plugins-official` 中的同名插件固定在旧提交，不用。Pi 包会递归发现仓库全部 skill，所以把 `~/.pi/agent/settings.json` 的 `packages` 中它的条目改成：
+- mattpocock 只装稳定版（`skills/engineering/`、`skills/productivity/`），插件清单本身只含稳定版。四个 Agent 都从作者仓库装；`claude-plugins-official` 中的同名插件固定在较早的提交，不用。Pi 包会递归发现仓库全部 skill，所以把 `~/.pi/agent/settings.json` 的 `packages` 中它的条目改成：
 
   ```json
   {
@@ -171,10 +172,10 @@ ponytail、mattpocock 四个 Agent 都装；context7（文档查询 MCP）和 an
 
 完成标准：
 
-- `claude plugin list` 的 user 作用域只有 ponytail、mattpocock-skills、context7、answer-me-with-html；`$CLAUDE_CONFIG_DIR/skills` 无这些插件自带 skill 的链接。
+- `claude plugin list` 的 user 作用域只有 ponytail、mattpocock-skills、context7、answer-me-with-html；`~/.claude/skills` 无这些插件自带 skill 的链接。
 - `codex plugin list` 中 `ponytail@ponytail`、`mattpocock-skills@mattpocock` 为 installed, enabled。
 - `pi list` 含 `npm:@dietrichgebert/ponytail` 和 `git:github.com/mattpocock/skills (filtered)`。
-- `grok inspect` 的 Plugins 只有 `ponytail (user, enabled)`、`mattpocock-skills (user, enabled)`，MCP Servers 为 None。
+- 在 Git 仓库外运行 `grok inspect`，Plugins 含 ponytail、mattpocock-skills（来自 `~/.grok/installed-plugins`）以及 context7、answer-me-with-html（来自 `~/.claude/plugins`），均为 user、enabled；MCP Servers 含 context7。
 
 ### A4. 收尾
 
