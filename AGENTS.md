@@ -115,6 +115,7 @@ thcli +connect --target ~/.agents/skills
 bl skill init
 npx clawhub --workdir ~/.agents --dir skills install @tencent-adm/tencentcloud-api-skill
 rex skill setup
+ln -s "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Agent Skills/cchost-env" ~/.agents/skills/cchost-env
 __u_sync_skills
 ```
 
@@ -127,6 +128,7 @@ __u_sync_skills
 | `bailian-*` | 百炼仓库的全部 `bailian-*`。实体在 `~/.bailian/skills`，bl 在共享目录、`~/.claude/skills`、`~/.codex/skills`、`~/.grok/skills`、`~/.pi/agent/skills` 各建一个链接 |
 | `tcapi` | 腾讯云 API，依赖 tccli。官方只在 ClawHub 发布，GitHub 同名仓库是非官方翻译版 |
 | ego-browser | ego lite 首次引导时创建：`~/.agents/skills/ego-browser` 链接到应用自带的 skill |
+| cchost-env | 本人维护，源码在 iCloud Drive 的 `Agent Skills/cchost-env`，不在本仓库，也不由 `u` 更新；共享目录中是指向它的链接，链接前须等 iCloud 同步完该目录 |
 | rex | 存根，内容每次从 `rex` 命令读取。`rex skill setup` 还给 Claude Code、Codex 装会话启动钩子，Codex 的钩子由本人在 `/hooks` 中信任 |
 
 `__u_sync_skills` 递归查找共享目录的 `SKILL.md`（含 `@tencent-adm/...` 作用域目录），在 `~/.claude/skills` 建同名链接，已有正确链接不动；继承的 `CLAUDE_CONFIG_DIR` 不改变同步目标。user 作用域 Claude 插件自带的 skill 不建链接，已有的删除。遇到同名目录、指向别处的链接或坏链接时报告冲突并返回失败，不覆盖文件；冲突交本人确认。
