@@ -45,6 +45,16 @@ function __u_run --no-scope-shadowing --argument-names label
     return $status_code
 end
 
+# Show a noisy command's output only when it fails.
+function __u_quiet
+    set -l log (mktemp -t u-quiet); or return
+    $argv >$log 2>&1
+    set -l status_code $status
+    test $status_code -eq 0; or cat $log
+    rm -f $log
+    return $status_code
+end
+
 # Skip a step whose tool is missing: the Brewfile and agent tools differ per machine.
 function __u_has
     for cmd in $argv
@@ -169,9 +179,14 @@ end
 # are added again to pick up skills that upstream added since.
 function __u_add_skill_families
     set -l opts -g -a claude-code -a codex -a pi -y
-    npx -y skills add https://open.feishu.cn/lark-cli/skills/regular --skill '*' $opts </dev/null; or return
-    # Old names that only hand off to lark-meeting.
-    npx -y skills remove lark-minutes lark-note lark-vc lark-vc-agent -g -y </dev/null; or return
+    set -l lark_source https://open.feishu.cn/lark-cli/skills/regular
+    # Old names that only hand off to lark-meeting stay out.
+    set -l lark (npx -y skills add $lark_source --list </dev/null | __u_listed_skills | string match -v -r -- '^lark-(minutes|note|vc|vc-agent)$')
+    if test (count $lark) -eq 0
+        echo "  No Lark skills listed in $lark_source" >&2
+        return 1
+    end
+    __u_quiet npx -y skills add $lark_source --skill $lark $opts </dev/null; or return
     # AgentLoop skills drive the aliyun CLI; machines without it skip them.
     type -q aliyun; or return 0
     set -l repo aliyun/alibabacloud-aiops-skills
@@ -180,7 +195,17 @@ function __u_add_skill_families
         echo "  No AgentLoop skills listed in $repo" >&2
         return 1
     end
-    npx -y skills add $repo --skill alibabacloud-cli-guidance $agentloop --full-depth $opts </dev/null
+    __u_quiet npx -y skills add $repo --skill alibabacloud-cli-guidance $agentloop --full-depth $opts </dev/null
+end
+
+# Global packages except npm itself, which ships with Homebrew's node.
+function __u_npm_update
+    set -l root (npm root -g); or return
+    set -l listing (npm ls -g --depth=0 --parseable); or return
+    set -l packages (string replace -f -- "$root/" '' $listing | string match -v -- npm)
+    test (count $packages) -eq 0; and return 0
+    # npm 12 blocks install scripts: lark-cli's fetches its binary, bl's its wiki data.
+    npm update -g --allow-scripts=@larksuite/cli,bailian-cli $packages
 end
 
 # Project and local scopes keep their own copy, updated from inside that project.
@@ -216,7 +241,7 @@ function u --description "Update global tools, applications and plugins"
     # ── Node ──────────────────────────────────────────────────────────
 
     __u_section Node
-    __u_has npm; and __u_run "npm updated" npm update -g
+    __u_has npm; and __u_run "npm packages updated" __u_npm_update
     __u_has pnpm; and __u_run "pnpm store pruned" pnpm --dir "$HOME" store prune
     # Run from $HOME so a project's mise.toml is never upgraded in place.
     __u_has mise; and __u_run "mise tools upgraded" mise -C "$HOME" upgrade

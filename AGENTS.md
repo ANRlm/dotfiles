@@ -97,9 +97,9 @@ skill 统一放在共享目录 `~/.agents/skills`：
 | --- | --- | --- |
 | aliyun-cli | Brewfile；再 `aliyun plugin install --names agentloop` | `aliyun configure` |
 | tccli | Brewfile | `tccli auth login` |
-| lark-cli | `npm install -g @larksuite/cli` | 登录命令见 lark-shared skill |
+| lark-cli | `npm install -g --allow-scripts=@larksuite/cli @larksuite/cli` | 登录命令见 lark-shared skill |
 | thcli（TokenHub） | `npm install -g tencent-tokenhub-cli` | `thcli auth login` |
-| bl（百炼） | `npm install -g bailian-cli`（不用 pnpm） | `bl auth login --console`，再 `bl auth status --output json` 确认 |
+| bl（百炼） | `npm install -g --allow-scripts=bailian-cli bailian-cli`（不用 pnpm） | `bl auth login --console`，再 `bl auth status --output json` 确认 |
 | ego lite | 从[官网](https://lite.ego.app/)下载 `ego lite.app` | 在应用中完成首次引导，它把 `ego-browser` 放进 `~/.local/bin` |
 | Rex | 安装 `Rex Beta.app` | 打开一次应用，`rex` 命令随应用提供 |
 
@@ -194,7 +194,7 @@ ponytail、mattpocock 四个 Agent 都装；context7（文档查询 MCP）和 an
 - 缩写和函数在 [fish/config.fish](fish/config.fish) 和 [fish/functions/](fish/functions/)。`claude` 展开为 `claude --allow-dangerously-skip-permissions`。
 - PATH 在 `fish/config.fish` 开头设定，对所有 Fish Shell 生效：`~/.local/bin` 在最前，其中的 cchost 包装脚本（`claude`、`grok` 等）优先于 Homebrew 的同名命令。
 - Agent 相关环境变量在 `fish/config.fish` 的 Agents 一节。Claude Code、Codex 的 Shell（带 `CLAUDECODE` 或 `CODEX_THREAD_ID`）从钥匙串读取 1Password 服务账号令牌，导出为 `OP_SERVICE_ACCOUNT_TOKEN`；本人的 Shell 不导出，`op` 走 App 集成。这两个 Agent 在 zsh 中执行命令，[zsh/zshenv](zsh/zshenv) 有同样的判断。
-- 全局 Node 和 pnpm 来自 Homebrew。交互式 Shell 中 mise 按项目的 `.node-version` / `.nvmrc` 切换 Node，缺版本时在项目目录 `mise install`。pnpm 版本跟随 `package.json` 的 `packageManager`。
+- 全局 Node、npm 和 pnpm 来自 Homebrew；npm 随 Homebrew 的 node 升级，`u` 不单独更新它。交互式 Shell 中 mise 按项目的 `.node-version` / `.nvmrc` 切换 Node，缺版本时在项目目录 `mise install`。pnpm 版本跟随 `package.json` 的 `packageManager`。
 
 ### 终端工具
 
@@ -227,10 +227,10 @@ ponytail、mattpocock 四个 Agent 都装；context7（文档查询 MCP）和 an
 `u`（[fish/functions/u.fish](fish/functions/u.fish)）按顺序执行；本机没有的工具对应的步骤跳过，单步失败不中断，结束时返回失败；不拉取本仓库。
 
 1. **Homebrew**：更新、`brew upgrade --greedy`（含自更新的 cask，以及 aliyun-cli、tccli）、清理，把本机新装的软件追加进 Brewfile。
-2. **Node**：更新 npm 全局包（含 lark-cli、thcli、bl），清理 pnpm store，在 `$HOME` 中按全局 mise 配置升级工具（不改项目的 `mise.toml` 和 `.node-version` 等精确版本）。
+2. **Node**：更新 npm 本身以外的全局包（含 lark-cli、thcli、bl），放行 lark-cli 和 bl 的安装脚本（npm 12 默认拦截；前者下载二进制，后者下载 Wiki 数据），清理 pnpm store，在 `$HOME` 中按全局 mise 配置升级工具（不改项目的 `mise.toml` 和 `.node-version` 等精确版本）。
 3. **Agent skill 与插件**：
    1. `__u_update_skills`：`npx skills update -g -y`，再删掉它报告为上游已删除的 skill。
-   2. `__u_add_skill_families`：`npx skills update` 只更新已装的 skill，所以重装飞书整组（装了 `aliyun` 时连同 AgentLoop 整组），补上新增的。
+   2. `__u_add_skill_families`：`npx skills update` 只更新已装的 skill，所以按 `--list` 重装飞书整组（不含转交 `lark-meeting` 的四个旧名；装了 `aliyun` 时连同 AgentLoop 整组），补上新增的；安装输出只在失败时显示。第 1 步因此每次都提示这四个旧名可安装，属正常。
    3. `npx clawhub … update --all --force`：装了 `tccli` 时更新 tcapi，覆盖本地改动。
    4. `thcli +connect --target ~/.agents/skills`
    5. `bl skill init`：重装全部 `bailian-*`，含新增的；`bl skill update` 不修复本地改过的文件，不用。

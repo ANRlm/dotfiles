@@ -97,7 +97,15 @@ class RuntimeTests(unittest.TestCase):
     def test_agentloop_skills_need_aliyun(self):
         script = r'''
 source "$AUDIT_ROOT/fish/functions/u.fish"
-function npx; echo "NPX $argv" >&2; end
+function npx
+    echo "NPX $argv" >>$HOME/npx.calls
+    contains -- --list $argv; or return 0
+    if string match -q -- '*lark-cli*' $argv
+        printf '│    %s\n' lark-im lark-vc-agent
+    else
+        printf '│    %s\n' alibabacloud-agentloop-dataset
+    end
+end
 function type
     contains -- $argv[-1] (string split ' ' -- "$MISSING"); and return 1
     builtin type $argv
@@ -105,12 +113,62 @@ end
 function aliyun; end
 __u_add_skill_families
 '''
+        calls_file = self.home / 'npx.calls'
         for missing, expected in (('aliyun', False), ('', True)):
             with self.subTest(missing=missing):
+                calls_file.unlink(missing_ok=True)
                 result = subprocess.run(['fish', '--no-config', '-c', script],
                                         env={**self.env, 'MISSING': missing}, capture_output=True, text=True, timeout=20)
-                self.assertIn('lark-cli/skills/regular', result.stderr)
-                self.assertEqual('alibabacloud-aiops-skills' in result.stderr, expected, result.stderr)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertEqual(result.stdout + result.stderr, '')
+                calls = calls_file.read_text()
+                lark = [line for line in calls.splitlines() if 'lark-cli' in line and '--list' not in line]
+                self.assertEqual(len(lark), 1, calls)
+                self.assertIn('--skill lark-im -g', lark[0])
+                self.assertNotIn('remove', calls)
+                self.assertEqual('alibabacloud-aiops-skills' in calls, expected, calls)
+
+    def test_empty_lark_listing_fails_without_installing(self):
+        script = 'source "$AUDIT_ROOT/fish/functions/u.fish"; function npx; echo "NPX $argv" >>$HOME/npx.calls; end; __u_add_skill_families'
+        result = subprocess.run(['fish', '--no-config', '-c', script], env=self.env,
+                                capture_output=True, text=True, timeout=20)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('No Lark skills listed', result.stderr)
+        self.assertNotIn('--skill', (self.home / 'npx.calls').read_text())
+
+    def test_quiet_output_shows_only_on_failure(self):
+        for code, expected in ((0, ''), (3, 'noisy\n')):
+            with self.subTest(code=code):
+                result = subprocess.run(['fish', '--no-config', '-c',
+                                         f'source "$AUDIT_ROOT/fish/functions/u.fish"; __u_quiet sh -c "echo noisy; exit {code}"'],
+                                        env=self.env, capture_output=True, text=True, timeout=20)
+                self.assertEqual(result.returncode, code)
+                self.assertEqual(result.stdout, expected)
+
+    def test_npm_update_leaves_npm_to_homebrew(self):
+        script = r'''
+source "$AUDIT_ROOT/fish/functions/u.fish"
+function npm
+    switch $argv[1]
+        case root
+            echo /prefix/lib/node_modules
+        case ls
+            printf '%s\n' /prefix/lib (string split ' ' -- $GLOBALS)
+        case update
+            echo "NPM $argv"
+    end
+end
+__u_npm_update
+'''
+        for globals, expected in (
+                ('/prefix/lib/node_modules/@larksuite/cli /prefix/lib/node_modules/npm /linked/pkg',
+                 'NPM update -g --allow-scripts=@larksuite/cli,bailian-cli @larksuite/cli'),
+                ('/prefix/lib/node_modules/npm', '')):
+            with self.subTest(globals=globals):
+                result = subprocess.run(['fish', '--no-config', '-c', script], env={**self.env, 'GLOBALS': globals},
+                                        capture_output=True, text=True, timeout=20)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(result.stdout.strip(), expected)
 
     def test_machine_without_agent_tools_succeeds(self):
         (self.home / '.agents/skills').rmdir()
